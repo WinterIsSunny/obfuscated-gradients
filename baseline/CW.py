@@ -3,6 +3,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 from utils import mulvt
 import tensorflow as tf
+import numpy as np
 
 class CW(object):
     def __init__(self,model):
