@@ -6,7 +6,7 @@ import tensorflow as tf
 class PytorchModel(object):
     def __init__(self,model, bounds, num_classes):
         self.model = model
-        self.model.eval()
+        #self.model.eval()
         self.bounds = bounds
         self.num_classes = num_classes
         
