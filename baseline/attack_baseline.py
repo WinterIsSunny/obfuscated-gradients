@@ -48,8 +48,8 @@ print("attack %f %:" % (count/len(test_loader)))
 """ 
 print("type of image and label are :",type(image),"and ",type(label))
 print("original label is:",label)
-image = torch.tensor(image)
-label = torch.tensor(label)
+image = torch.from_numpy(image)
+label = torch.from_numpy(label)
 adversarial = attack(image,label,False)
 
 new_logits = model(adversarial)
