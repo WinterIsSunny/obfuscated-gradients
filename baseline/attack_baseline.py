@@ -16,6 +16,7 @@ import utils
 from models import PytorchModel
 from allmodels import load_mnist_data
 from torch.autograd import Variable
+import torch
 
 import cifar10_input
 from cifar_model import Model
@@ -45,8 +46,10 @@ for i, (xi,yi) in enumerate(test_loader):
         count+=1
 print("attack %f %:" % (count/len(test_loader)))
 """ 
-
+print("type of image and label are :",type(image),"and ",type(label))
 print("original label is:",label)
+image = torch.tensor(image)
+label = torch.tensor(label)
 adversarial = attack(image,label,False)
 
 new_logits = model(adversarial)
