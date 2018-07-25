@@ -17,10 +17,10 @@ from models import PytorchModel
 from allmodels import load_mnist_data
 from torch.autograd import Variable
 
-import cifar10_input
+#import cifar10_input
 from cifar_model import Model
 
-cifar = cifar10_input.CIFAR10Data("../cifar10_data")
+#cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
