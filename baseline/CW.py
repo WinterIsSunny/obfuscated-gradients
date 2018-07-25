@@ -14,7 +14,7 @@ class CW(object):
         loss1 = c*torch.sum(modifier*modifier)
         #output = net(torch.clamp(xi+modifier,0,1))
         #convert torch.tensor to tf.tensor
-        new_xi = tf.convert_to_tensor(np.array(xi_modifier))
+        new_xi = tf.convert_to_tensor(np.array(xi+modifier))
         output = self.model.predict(new_xi)
         print("the type of output is:", type(output))
         sess = tf.InteractiveSession()
