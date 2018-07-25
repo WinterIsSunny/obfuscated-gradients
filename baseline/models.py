@@ -21,7 +21,8 @@ class PytorchModel(object):
         #image = Variable(image, volatile=True) # ?? not supported by latest pytorch
         # convert image from torch to tf !!!
         image = tf.convert_to_tensor(np.array(image))
-        output = self.model(image)
+        image = tf.Variable(image)
+        output = self.model.predict(image)
         sess = tf.InteractiveSession()
         output = output.eval()
         return output
@@ -32,7 +33,8 @@ class PytorchModel(object):
             image = image.unsqueeze(0)
         image = Variable(image, volatile=True) # ?? not supported by latest pytorch
         image = tf.convert_to_tensor(np.array(image))
-        output = self.model(image)
+        image = tf.Variable(image)
+        output = self.model.predict(image)
         sess = tf.InteractiveSession()
         output = output.eval()
         ## output is an array???
