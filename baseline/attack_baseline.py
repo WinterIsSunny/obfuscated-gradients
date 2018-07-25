@@ -27,7 +27,7 @@ sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,[0,255],10)
 
-image = cifar.eval_data.xs[:1]
+image = cifar.eval_data.xs[:1]  # np.array
 label = cifar.eval_data.ys[:1]
 
 attack = CW(model)
@@ -48,8 +48,8 @@ print("attack %f %:" % (count/len(test_loader)))
 """ 
 print("type of image and label are :",type(image),"and ",type(label))
 print("original label is:",label)
-image = torch.from_numpy(image)
-label = torch.from_numpy(label)
+image = Variable(torch.from_numpy(image))
+label = Variable(torch.from_numpy(label))
 adversarial = attack(image,label,False)
 
 new_logits = model(adversarial)
