@@ -17,16 +17,20 @@ from models import PytorchModel
 from allmodels import load_mnist_data
 from torch.autograd import Variable
 
-#import cifar10_input
+import cifar10_input
 from cifar_model import Model
 
-#cifar = cifar10_input.CIFAR10Data("../cifar10_data")
+cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,[0,255],10)
-attack = CW(model)
 
+image = cifar.eval_data.xs[:1]
+label = cifar.eval_data.ys[:1]
+
+attack = CW(model)
+"""
 train_loader, test_loader, train_dataset, test_dataset = load_mnist_data()
 real_labels = []
 adv_labels = []
@@ -40,4 +44,14 @@ for i, (xi,yi) in enumerate(test_loader):
     if yi != new_label:
         count+=1
 print("attack %f %:" % (count/len(test_loader)))
-    
+""" 
+
+print("original label is:",label)
+adversarial = attack(image,label,False)
+
+new_logits = model(adversarial)
+sess = tf.InteractiveSession()
+new_logits = new_logits.eval()
+new_label = np.argmax(new_logits)
+print("new label is :", new_label)
+
