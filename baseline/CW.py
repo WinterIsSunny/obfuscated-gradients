@@ -2,8 +2,6 @@ import torch
 from torch.autograd import Variable
 import torch.optim as optim
 from utils import mulvt
-import tensorflow as tf
-import numpy as np
 
 class CW(object):
     def __init__(self,model):
@@ -13,13 +11,7 @@ class CW(object):
         #print(c.size(),modifier.size())
         loss1 = c*torch.sum(modifier*modifier)
         #output = net(torch.clamp(xi+modifier,0,1))
-        #convert torch.tensor to tf.tensor
-        new_xi = tf.convert_to_tensor(np.array(xi+modifier))
-        output = self.model.predict(new_xi)
-        print("the type of output is:", type(output))
-        sess = tf.InteractiveSession()
-        output = torch.tensor(output.eval())  # convert output from tf.tensor to torch.tensor
-        
+        output = self.model.predict(xi+modifier)
         real = torch.max(torch.mul(output, label_onehot_v), 1)[0]
         other = torch.max(torch.mul(output, (1-label_onehot_v))-label_onehot_v*10000,1)[0]
         #print(real,other)
