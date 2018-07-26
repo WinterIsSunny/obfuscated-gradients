@@ -144,7 +144,7 @@ class blackbox:
         
         #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        return x0 + g_theta*best_theta
+        return x0 + (g_theta*best_theta).byte()
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
