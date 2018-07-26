@@ -199,7 +199,7 @@ class blackbox:
 
     
     
-sess = tf.session()
+sess = tf.Session()
 orig = load_image('cat.jpg')
 TARGET = 924 # guacamole  
 
