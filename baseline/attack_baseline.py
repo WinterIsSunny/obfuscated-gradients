@@ -253,7 +253,7 @@ print("predicted label on clean data is: ", model.predict_label(image))
 
 image = torch.from_numpy(image)
 label = torch.from_numpy(label)
-adv = attack.attack_untargeted(image,label,alpha = 1, beta = 0.001, iterations = 1000)
+adv = attack.attack_untargeted(image,label,alpha = 0.5, beta = 0.005, iterations = 1000)
 
 new_logits = model.predict(adv)
 new_label = model.predict_label(adv)
