@@ -178,7 +178,7 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            if self.model.predict_label(x0+ current_best*theta.byte() == y0:
+            if self.model.predict_label(x0+ current_best*theta.byte()) == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
