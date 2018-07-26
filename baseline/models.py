@@ -13,8 +13,7 @@ class PytorchModel(object):
     
     def predict(self,image):
         sess = tf.Session()
-        prob = sess.run(self.model.pre_softmax, {self.model.x_input: image})
-        
+
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
 #        # how to use gpu ?
 #        #image = tf.clip_by_value(image, self.bounds)
@@ -28,11 +27,10 @@ class PytorchModel(object):
 #        sess = tf.InteractiveSession()
 #        output = output.eval()
         
-        return prob
+        return sess.run(self.model.pre_softmax, {self.model.x_input: image})
     
     def predict_label(self, image):
         sess = tf.Session()
-        label = sess.run(self.model.predictions, {self.model.x_input: image})
         
         
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
@@ -50,7 +48,7 @@ class PytorchModel(object):
         # ?? not supported by latest pytorch
 #        _, predict = torch.max(output.data, 1)
         
-        return label
+        return sess.run(self.model.predictions, {self.model.x_input: image})
         
     #def get_gradient(self,loss):
      #   loss.backward()
