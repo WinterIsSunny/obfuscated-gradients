@@ -34,8 +34,11 @@ class blackbox:
         #print(x0.type())
         #print(y0.type())
         #print(model.predict(x0).type())
-        y0 = y0.cuda()
-        print(y0)
+        #y0 = y0.cuda()
+        sess = tf.InteractiveSession()
+        y0 = y0.eval()
+        print("the type of y0 is : ",type(y0))
+        print("the value of y0 is: ", y0)
         print("pure label is: ",self.model.predict_label(x0))
         
         if (self.model.predict_label(x0) != y0):
