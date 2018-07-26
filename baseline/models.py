@@ -13,7 +13,7 @@ class PytorchModel(object):
     
     def predict(self,image):
         sess = tf.Session()
-        prob = sess.run(self.model.pre_softmax, {model.x_input: image})
+        prob = sess.run(self.model.pre_softmax, {self.model.x_input: image})
         
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
 #        # how to use gpu ?
@@ -32,7 +32,7 @@ class PytorchModel(object):
     
     def predict_label(self, image):
         sess = tf.Session()
-        label = sess.run(self.model.predictions, {model.x_input: image})
+        label = sess.run(self.model.predictions, {self.model.x_input: image})
         
         
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
