@@ -38,10 +38,10 @@ class blackbox:
         #print(model.predict(x0).type())
         #y0 = y0.cuda()
         y0 = np.array(y0)
-        print("the type of y0 is : ",type(y0))
-        print("the value of y0 is: ", y0)
-        print("pure label is: ",self.model.predict_label(x0))
-        print("the type of x0 is: ",type(x0))
+        #print("the type of y0 is : ",type(y0))
+        #print("the value of y0 is: ", y0)
+        #print("pure label is: ",self.model.predict_label(x0))
+        #print("the type of x0 is: ",type(x0))
         
         if (self.model.predict_label(x0) != y0):
             print("Fail to classify the image. No need to attack.")
@@ -253,7 +253,7 @@ print("predicted label on clean data is: ", model.predict_label(image))
 
 image = torch.from_numpy(image)
 label = torch.from_numpy(label)
-adv = attack.attack_untargeted(image,label,alpha = 0.5, beta = 0.005, iterations = 1000)
+adv = attack.attack_untargeted(image,label,alpha = 5, beta = 0.005, iterations = 1000)
 
 new_logits = model.predict(adv)
 new_label = model.predict_label(adv)
