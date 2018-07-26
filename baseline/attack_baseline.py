@@ -39,6 +39,7 @@ class blackbox:
         print("the type of y0 is : ",type(y0))
         print("the value of y0 is: ", y0)
         print("pure label is: ",self.model.predict_label(x0))
+        print("the type of x0 is: ",type(x0))
         
         if (self.model.predict_label(x0) != y0):
             print("Fail to classify the image. No need to attack.")
