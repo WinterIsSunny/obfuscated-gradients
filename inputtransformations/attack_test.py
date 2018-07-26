@@ -204,7 +204,9 @@ orig = load_image('cat.jpg')
 TARGET = 924 # guacamole  
 
 model = MyModel(inceptionv3,sess)
+print(orig.shape)
 image = tf.convert_to_tensor(orig)
+print(len(image),type(image))
 true_label = model.predict(image)
 print("true label of the original image is: ", true_label)
 attack = blackbox(model)
