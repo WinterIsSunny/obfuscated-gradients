@@ -36,6 +36,7 @@ class blackbox:
         #print(model.predict(x0).type())
         y0 = y0.cuda()
         print(y0.type())
+        print("pure label is: ",self.model.predict_label(x0))
         
         if (self.model.predict_label(x0) != y0):
             print("Fail to classify the image. No need to attack.")
