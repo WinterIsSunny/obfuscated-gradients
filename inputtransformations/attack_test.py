@@ -201,7 +201,7 @@ class blackbox:
     
 sess = tf.Session()
 orig = load_image('cat.jpg')
-print(len(orig))
+print("length of orig: ",len(orig))
 TARGET = 924 # guacamole  
 
 model = MyModel(inceptionv3,sess)
