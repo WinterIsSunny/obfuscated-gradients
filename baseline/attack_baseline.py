@@ -220,7 +220,7 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-model = PytorchModel(model,[0,255],10)
+model = PytorchModel(model,sess)
 
 image = cifar.eval_data.xs[:1]  # np.array
 label = cifar.eval_data.ys[:1]

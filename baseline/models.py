@@ -4,16 +4,14 @@ import numpy as np
 import tensorflow as tf
 
 class PytorchModel(object):
-    def __init__(self,model, bounds, num_classes):
+    def __init__(self,model, sess):
         self.model = model
         #self.model.eval()
-        self.bounds = bounds
-        self.num_classes = num_classes
+        self.sess = sess
         
     
     def predict(self,image):
-        sess = tf.Session()
-
+       
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
 #        # how to use gpu ?
 #        #image = tf.clip_by_value(image, self.bounds)
@@ -27,11 +25,9 @@ class PytorchModel(object):
 #        sess = tf.InteractiveSession()
 #        output = output.eval()
         
-        return sess.run(self.model.pre_softmax, {self.model.x_input: image})
+        return self.sess.run(self.model.pre_softmax, {self.model.x_input: image})
     
     def predict_label(self, image):
-        sess = tf.Session()
-        
         
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
 #        if len(image.size())!=4:
@@ -48,7 +44,7 @@ class PytorchModel(object):
         # ?? not supported by latest pytorch
 #        _, predict = torch.max(output.data, 1)
         
-        return sess.run(self.model.predictions, {self.model.x_input: image})
+        return self.sess.run(self.model.predictions, {self.model.x_input: image})
         
     #def get_gradient(self,loss):
      #   loss.backward()
