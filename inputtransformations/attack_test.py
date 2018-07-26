@@ -201,17 +201,19 @@ class blackbox:
     
 sess = tf.Session()
 orig = load_image('cat.jpg')
-print("type of orig:. ", type(orig))
-print("size of orig: ", orig.shape)
-print("length of orig: ",len(orig))
+#print("type of orig:. ", type(orig))
+#print("size of orig: ", orig.shape)
+#print("length of orig: ",len(orig))
 TARGET = 924 # guacamole  
 
 model = MyModel(inceptionv3,sess)
-print(orig.shape)
-#image = tf.convert_to_tensor(orig)
-image = orig
+#print(orig.shape)
+image = tf.convert_to_tensor(orig)
+image_extend = tf.expand_dims(image, axis=0)
+print("shape of image_extend: ", image_extend.shape)
+#image = orig
 #print(len(image),type(image))
-true_label = model.predict(image)
+true_label = model.predict(image_extend)
 print("true label of the original image is: ", true_label)
 attack = blackbox(model)
 adv = attack.attack_untargeted(image,true_label,TARGET)
