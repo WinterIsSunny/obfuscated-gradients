@@ -245,7 +245,7 @@ print("type of image and label are :",type(image),"and ",type(label))
 print("original label is:",label)
 image = torch.from_numpy(image)
 label = torch.from_numpy(label)
-adv = attack(image,label,False)
+adv = attack.attack_untargeted(image,label)
 
 new_logits = model.predict(adv)
 new_label = model.predict_label(adv)
