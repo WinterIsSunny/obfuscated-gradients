@@ -28,6 +28,8 @@ class blackbox:
     def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
+            alpha: learning rate 
+            beta: learning rate
             train_dataset: set of training data
             (x0, y0): original image
         """
@@ -251,7 +253,7 @@ print("predicted label on clean data is: ", model.predict_label(image))
 
 image = torch.from_numpy(image)
 label = torch.from_numpy(label)
-adv = attack.attack_untargeted(image,label)
+adv = attack.attack_untargeted(image,label,alpha = .5, beta = 0.01, iterations = 100)
 
 new_logits = model.predict(adv)
 new_label = model.predict_label(adv)
