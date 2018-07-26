@@ -145,11 +145,11 @@ class blackbox:
         nquery = 0
         lbd = initial_lbd
          
-        if self.model.predict(x0+lbd*theta) == y0:
+        if self.model.predict_label(x0+lbd*theta) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            while self.model.predict(x0+lbd_hi*theta) == y0:
+            while self.model.predict_label(x0+lbd_hi*theta) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -158,14 +158,14 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            while self.model.predict(x0+lbd_lo*theta) != y0 :
+            while self.model.predict_label(x0+lbd_lo*theta) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + lbd_mid*theta) != y0:
+            if self.model.predict_label(x0 + lbd_mid*theta) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -174,7 +174,7 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            if self.model.predict(x0+current_best*theta) == y0:
+            if self.model.predict_label(x0+current_best*theta) == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
@@ -208,7 +208,7 @@ class blackbox:
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + lbd_mid*theta) != y0:
+            if self.model.predict_label(x0 + lbd_mid*theta) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -243,6 +243,8 @@ print("attack %f %:" % (count/len(test_loader)))
 """ 
 print("type of image and label are :",type(image),"and ",type(label))
 print("original label is:",label)
+print("predicted label on clean data is: ", model.predict_label(image))
+
 image = torch.from_numpy(image)
 label = torch.from_numpy(label)
 adv = attack.attack_untargeted(image,label)

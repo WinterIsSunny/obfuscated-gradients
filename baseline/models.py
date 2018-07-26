@@ -12,37 +12,46 @@ class PytorchModel(object):
         
     
     def predict(self,image):
-        # image is torch.tensor
-        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
-        # how to use gpu ?
-        #image = tf.clip_by_value(image, self.bounds)
-        if len(image.size())!=4:
-            image = image.unsqueeze(0)
-        #image = Variable(image, volatile=True) # ?? not supported by latest pytorch
-        # convert image from torch to tf !!!
-        image = tf.convert_to_tensor(np.array(image))
-        image = tf.Variable(image)
-        output = self.model.predict(image)
-        sess = tf.InteractiveSession()
-        output = output.eval()
-        return output
+        sess = tf.Session()
+        prob = sess.run(self.model.pre_softmax, {model.x_input: image})
+        
+#        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
+#        # how to use gpu ?
+#        #image = tf.clip_by_value(image, self.bounds)
+#        if len(image.size())!=4:
+#            image = image.unsqueeze(0)
+#        #image = Variable(image, volatile=True) # ?? not supported by latest pytorch
+#        # convert image from torch to tf !!!
+#        image = tf.convert_to_tensor(np.array(image))
+#        image = tf.Variable(image)
+#        output = self.model(image)
+#        sess = tf.InteractiveSession()
+#        output = output.eval()
+        
+        return prob
     
     def predict_label(self, image):
-        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
-        if len(image.size())!=4:
-            image = image.unsqueeze(0)
-        image = Variable(image, volatile=True) # ?? not supported by latest pytorch
-        image = tf.convert_to_tensor(np.array(image))
-        image = tf.Variable(image)
-        output = self.model.predict(image)
-        sess = tf.InteractiveSession()
-        output = output.eval()
-        ## output is an array???
+        sess = tf.Session()
+        label = sess.run(self.model.predictions, {model.x_input: image})
         
-        #image = Variable(image, volatile=True) # ?? not supported by latest pytorch
-        _, predict = torch.max(output.data, 1)
-        return predict[0]
         
-    def get_gradient(self,loss):
-        loss.backward()
+#        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
+#        if len(image.size())!=4:
+#            image = image.unsqueeze(0)
+#        image = Variable(image, volatile=True) # ?? not supported by latest pytorch
+#        image = tf.convert_to_tensor(np.array(image))
+#        image = tf.Variable(image)
+#        output = self.model.predict(image)
+#        sess = tf.InteractiveSession()
+#        output = output.eval()
+#         output is an array???
+        
+        #image = Variable(image, volatile=True) 
+        # ?? not supported by latest pytorch
+#        _, predict = torch.max(output.data, 1)
+        
+        return label
+        
+    #def get_gradient(self,loss):
+     #   loss.backward()
         
