@@ -90,24 +90,25 @@ def _init_inception():
                     new_shape.append(s)
             o.set_shape = tf.TensorShape(new_shape)
     w = sess.graph.get_operation_by_name("softmax/logits/MatMul").inputs[1]
+    
     print("dim of w : ", tf.shape(w))
     print("dim of pool3 : ", tf.shape(pool3))
     print("dim of sequeezed pool3: ",tf.shape(tf.squeeze(pool3)))
     print("dim of expended squeezed pool3:  axis = 0 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
     print("dim of expended squeezed pool3:  axis = 1 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
 
-    logits1 = tf.matmul(tf.expand_dims(tf.squeeze(pool3),axis = 0),w)
+    logits = tf.matmul(tf.expand_dims(tf.squeeze(pool3),axis = 0),w)
     #logits2 = tf.matmul(tf.expand_dims(tf.squeeze(pool3),axis = 1),w)
 
-    print("dim of logits1: ", tf.shape(logits1))
+    print("dim of logits1: ", tf.shape(logits))
     #print("dim of logits2: ", tf.shape(logits2))
     
-    print("dim of sequeezed logits1: ", tf.squeeze(tf.shape(logits1)))
+    print("dim of sequeezed logits: ", tf.shape(tf.squeeze(tf.shape(logits))))
     #print("dim of sequeezed logits2: ", tf.squeeze(tf.shape(logits2)))
-    
+    print("dim of reduced sum of logits :",tf.shape(tf.reduce_sum(logits,axis = 0)))
     
     #logits = tf.matmul(tf.squeeze(pool3), w)
-    softmax = tf.nn.softmax(logits1)
+    softmax = tf.nn.softmax(logits)
 
 if softmax is None:
   _init_inception()
