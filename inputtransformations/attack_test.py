@@ -172,7 +172,7 @@ class blackbox:
         print("type of target is:",type(target))
         print(target)
         print("new lable is:",self.model.predict(x0 + np.array(lbd*theta))[0])
-        while self.model.predict(x0 + np.array(lbd*theta))[0] != t:
+        while self.model.predict(x0 + np.array(lbd*theta))[0] != target:
             lbd *= 1.05
             nquery += 1
             if lbd > 100: 
