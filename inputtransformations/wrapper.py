@@ -24,5 +24,6 @@ class MyModel:
         x_expanded = tf.expand_dims(x, axis=0)
         logits, preds = self.model.model(self.sess, x_expanded)
         preds = self.sess.run([preds], {x: image})
-        return preds[0][0]
+        print("type of preds[0] is: ",type(preds[0]))
+        return preds[0]
         
