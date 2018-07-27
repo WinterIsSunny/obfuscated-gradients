@@ -251,7 +251,7 @@ x_test /= 255.0
 
 
 print("True label", y_test[0])
-print("Preds",model.predict(x_test)[0])
+print("Preds",model.predict(x_test[:1]))
 
 res = []
 for i in range(30):

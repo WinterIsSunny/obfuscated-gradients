@@ -12,6 +12,7 @@ class Model:
     
     def predict(self,images):
         labels = self.model.predict(images)
+        print("dim of lables: ", labels.shape)
         return labels[0][0]
     
         
