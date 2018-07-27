@@ -29,31 +29,42 @@ class blackbox:
             (x0, y0): original image
             t: target
         """
-        print("type of target at the very beginning:",type(target))
-
-    
+        
+        # initialize the direction 
         if (self.model.predict(x0)[0] != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
     
         # STEP I: find initial direction (theta, g_theta)
-    
-        num_directions = 1000
+        
+        
+
+        num_samples = 100
         best_theta, g_theta = None, float('inf')
         query_count = 0
-        
+    
+        #print("Searching for the initial direction on %d samples: " % (num_samples))
         #timestart = time.time()
-        for i in range(num_directions):
-            theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            initial_lbd = torch.norm(theta)
-            theta = theta/torch.norm(theta)
-            lbd, count = self.fine_grained_binary_search_targeted(x0, y0, target,theta, initial_lbd)
-            query_count += count
-            if lbd < g_theta:
-                best_theta, g_theta = theta,lbd
-                print("--------> Found distortion %.4f" % g_theta)
+        samples = set(random.sample(range(len(train_dataset)), num_samples))
+        
+        ## use targeted picture to attain the initial direction !! 
+        
+        
+        for i, (xi, yi) in enumerate(train_dataset):
+            if i not in samples:
+                continue
+            query_count += 1
+            if model.predict(xi) == target:
+                theta = xi - x0
+                initial_lbd = torch.norm(theta)
+                theta = theta/torch.norm(theta)
+                lbd, count = fine_grained_binary_search_targeted(model, x0, y0, target, theta, initial_lbd)
+                query_count += count
+                if lbd < g_theta:
+                    best_theta, g_theta = theta, lbd
+                    print("--------> Found distortion %.4f" % g_theta)
     
-    
+        #timeend = time.time()
        
         #timeend = time.time()
         #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
