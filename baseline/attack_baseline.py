@@ -229,7 +229,7 @@ model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess)
 
 image = cifar.eval_data.xs[:1]  # np.array
-image /= 255
+#image /= 255
 label = cifar.eval_data.ys[:1]
 
 attack = blackbox(model)
