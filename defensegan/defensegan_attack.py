@@ -9,7 +9,7 @@ Created on Fri Jul 27 11:52:34 2018
 from keras.datasets import mnist
 #import matplotlib
 #%matplotlib inline
-import maatplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #import l2_attack
 import keras
 from defense import *
