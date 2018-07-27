@@ -12,7 +12,7 @@ class Model:
     
     def predict(self,images):
         labels = self.model.predict(images)
-        return labels[0]
+        return labels[0][0]
     
         
         
