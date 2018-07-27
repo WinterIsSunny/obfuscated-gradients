@@ -205,7 +205,7 @@ orig = load_image('cat.jpg')
 #print("type of orig:. ", type(orig))
 #print("size of orig: ", orig.shape)
 #print("length of orig: ",len(orig))
-TARGET = 924 # guacamole  
+TARGET = np.array(924) # guacamole  
 
 model = MyModel(inceptionv3,sess)
 #print(orig.shape)
