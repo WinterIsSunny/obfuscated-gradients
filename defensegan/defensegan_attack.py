@@ -54,7 +54,7 @@ class blackbox:
             
             #timestart = time.time()
             for i in range(num_directions):
-                theta = torch.randn(x0.size()).type(torch.FloatTensor)
+                theta = torch.randn(x0.shape).type(torch.FloatTensor)
                 #print(theta.size())
                 initial_lbd = torch.norm(theta)
                 theta = theta/torch.norm(theta)
