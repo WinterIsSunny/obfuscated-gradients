@@ -208,10 +208,10 @@ TARGET = 924 # guacamole
 
 model = MyModel(inceptionv3,sess)
 #print(orig.shape)
-image = tf.convert_to_tensor(orig)
+#image = tf.convert_to_tensor(orig)
 #image_extend = tf.expand_dims(image, axis=0)
 #print("shape of image_extend: ", image_extend.shape)
-#image = orig
+image = orig
 #print(len(image),type(image))
 true_label = model.predict(image)
 print("true label of the original image is: ", true_label)
