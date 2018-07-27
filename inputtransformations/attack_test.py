@@ -134,16 +134,16 @@ class blackbox:
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         return x0 + np.array(g_theta*best_theta)
     
-    def fine_grained_binary_search_local_targeted(self, x0, y0, t, theta, initial_lbd = 1.0, tol=1e-5):
+    def fine_grained_binary_search_local_targeted(self, x0, y0, target, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
         
         
-        if self.model.predict(x0+np.array(lbd*theta))[0] != t:
+        if self.model.predict(x0+np.array(lbd*theta))[0] != target:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            while self.model.predict(x0+np.array(lbd_hi*theta))[0] != t:
+            while self.model.predict(x0+np.array(lbd_hi*theta))[0] != target:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 100: 
@@ -152,25 +152,25 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            while self.model.predict(x0+tf.np.array(lbd_lo*theta))[0] == t:
+            while self.model.predict(x0+tf.np.array(lbd_lo*theta))[0] == target:
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta))[0] == t:
+            if self.model.predict(x0 + np.array(lbd_mid*theta))[0] == target:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
     
-    def fine_grained_binary_search_targeted(self, x0, y0, t, theta, initial_lbd = 1.0):
+    def fine_grained_binary_search_targeted(self, x0, y0, target, theta, initial_lbd = 1.0):
         nquery = 0
         lbd = initial_lbd
         
-        print("type of target is:",type(t))
-        print(t)
+        print("type of target is:",type(target))
+        print(target)
         print("new lable is:",self.model.predict(x0 + np.array(lbd*theta))[0])
         while self.model.predict(x0 + np.array(lbd*theta))[0] != t:
             lbd *= 1.05
@@ -185,7 +185,7 @@ class blackbox:
         lbd_hi_index = 0
         for i, lbd in enumerate(lambdas):
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd*theta))[0] == t:
+            if self.model.predict(x0 + np.array(lbd*theta))[0] == target:
                 lbd_hi = lbd
                 lbd_hi_index = i
                 break
@@ -195,7 +195,7 @@ class blackbox:
         while (lbd_hi - lbd_lo) > 1e-7:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta))[0] == t:
+            if self.model.predict(x0 + np.array(lbd_mid*theta))[0] == target:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -209,7 +209,7 @@ orig = load_image('cat.jpg')
 #print("type of orig:. ", type(orig))
 #print("size of orig: ", orig.shape)
 #print("length of orig: ",len(orig))
-TARGET = np.array(924) # guacamole  
+#TARGET = np.array(924) # guacamole  
 
 model = MyModel(inceptionv3,sess)
 #print(orig.shape)
@@ -221,7 +221,7 @@ image = np.copy(orig)
 true_label = model.predict(image)
 print("true label of the original image is: ", true_label[0])
 attack = blackbox(model)
-adv = attack.attack_targeted(image,true_label[0],TARGET)
+adv = attack.attack_targeted(image,true_label[0],924)
 
 
 adv_label = model.predict(adv)
