@@ -81,7 +81,7 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            print("the current label: ", self.model.predict([x0+np.array(g_theta*best_theta)]))
+            print("the current label: ", self.model.predict([x0+np.array(g2*theta)]))
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
