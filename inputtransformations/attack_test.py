@@ -211,12 +211,12 @@ model = MyModel(inceptionv3,sess)
 #image = tf.convert_to_tensor(orig)
 #image_extend = tf.expand_dims(image, axis=0)
 #print("shape of image_extend: ", image_extend.shape)
-image = orig
+image = np.copy(orig)
 #print(len(image),type(image))
 true_label = model.predict(image)
 print("true label of the original image is: ", true_label)
 attack = blackbox(model)
-adv = attack.attack_untargeted(image,true_label,TARGET)
+adv = attack.attack_targeted(image,true_label,TARGET)
 
 
 adv_label = model.predict(adv)
