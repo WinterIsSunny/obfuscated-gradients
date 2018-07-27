@@ -215,9 +215,9 @@ model = MyModel(inceptionv3,sess)
 image = np.copy(orig)
 #print(len(image),type(image))
 true_label = model.predict(image)
-print("true label of the original image is: ", true_label)
+print("true label of the original image is: ", true_label[0][0])
 attack = blackbox(model)
-adv = attack.attack_targeted(image,true_label,TARGET)
+adv = attack.attack_targeted(image,true_label[0][0],TARGET)
 
 
 adv_label = model.predict(adv)
