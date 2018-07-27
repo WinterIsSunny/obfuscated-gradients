@@ -166,7 +166,8 @@ class blackbox:
     def fine_grained_binary_search_targeted(self, x0, y0, t, theta, initial_lbd = 1.0):
         nquery = 0
         lbd = initial_lbd
-    
+        
+        print("type of target is:",type(t))
         while self.model.predict(x0 + np.array(lbd*theta)) != t:
             lbd *= 1.05
             nquery += 1
