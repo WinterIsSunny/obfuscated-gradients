@@ -97,7 +97,8 @@ def _init_inception():
     print("dim of expended squeezed pool3:  axis = 0 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
     print("dim of expended squeezed pool3:  axis = 1 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
 
-    logits = tf.reduce_sum(tf.multiply(tf.expand_dims(tf.squeeze(pool3),-1),w),axis = 0)
+    logits = tf.matmul(tf.squeeze(pool3),w)
+    #logits = tf.reduce_sum(tf.multiply(tf.expand_dims(tf.squeeze(pool3),-1),w),axis = 0)
     #logits2 = tf.matmul(tf.expand_dims(tf.squeeze(pool3),axis = 1),w)
 
     print("dim of logits: ", tf.shape(logits))
