@@ -12,8 +12,9 @@ class Model:
     
     def predict(self,images):
         labels = self.model.predict(images)
-        print("dim of lables: ", labels.shape)
-        return labels[0][0]
+        label = np.argmax(labels[0])
+        print("the current label: ", label)
+        return label
     
         
         
