@@ -46,7 +46,7 @@ class blackbox:
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            lbd, count = self.fine_grained_binary_search(model, x0, y0, theta, initial_lbd, g_theta)
+            lbd, count = self.fine_grained_binary_search_targeted(model, x0, y0, theta, initial_lbd, g_theta)
             query_count += count
             if lbd < g_theta:
                 best_theta, g_theta = theta,lbd
