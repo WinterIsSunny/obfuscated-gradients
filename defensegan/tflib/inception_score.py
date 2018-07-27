@@ -92,7 +92,7 @@ def _init_inception():
     w = sess.graph.get_operation_by_name("softmax/logits/MatMul").inputs[1]
     print("dim of w : ", tf.shape(w))
     print("dim of pool3 : ", tf.shape(pool3))
-    print("dim of sequeezed pool3: ",tf.shape(tf.sequeeze(pool3)))
+    print("dim of sequeezed pool3: ",tf.shape(tf.squeeze(pool3)))
     logits = tf.matmul(tf.squeeze(pool3), w)
     softmax = tf.nn.softmax(logits)
 
