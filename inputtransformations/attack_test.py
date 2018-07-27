@@ -31,7 +31,7 @@ class blackbox:
         """
 
     
-        if (self.model.predict(x0) != y0):
+        if (self.model.predict(x0)[0] != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
     
@@ -136,12 +136,13 @@ class blackbox:
     def fine_grained_binary_search_local_targeted(self, x0, y0, t, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-       
-        if self.model.predict(x0+np.array(lbd*theta)) != t:
+        
+        t = np.array(t)
+        if self.model.predict(x0+np.array(lbd*theta))[0] != t:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            while self.model.predict(x0+np.array(lbd_hi*theta)) != t:
+            while self.model.predict(x0+np.array(lbd_hi*theta))[0] != t:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 100: 
@@ -150,14 +151,14 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            while self.model.predict(x0+tf.np.array(lbd_lo*theta)) == t:
+            while self.model.predict(x0+tf.np.array(lbd_lo*theta))[0] == t:
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta)) == t:
+            if self.model.predict(x0 + np.array(lbd_mid*theta))[0] == t:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -168,7 +169,8 @@ class blackbox:
         lbd = initial_lbd
         
         print("type of target is:",type(t))
-        while self.model.predict(x0 + np.array(lbd*theta)) != t:
+        t = np.array(t)
+        while self.model.predict(x0 + np.array(lbd*theta))[0] != t:
             lbd *= 1.05
             nquery += 1
             if lbd > 100: 
@@ -181,7 +183,7 @@ class blackbox:
         lbd_hi_index = 0
         for i, lbd in enumerate(lambdas):
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd*theta)) == t:
+            if self.model.predict(x0 + np.array(lbd*theta))[0] == t:
                 lbd_hi = lbd
                 lbd_hi_index = i
                 break
@@ -191,7 +193,7 @@ class blackbox:
         while (lbd_hi - lbd_lo) > 1e-7:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta)) == t:
+            if self.model.predict(x0 + np.array(lbd_mid*theta))[0] == t:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
