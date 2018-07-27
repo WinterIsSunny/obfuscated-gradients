@@ -29,7 +29,7 @@ class blackbox:
             (x0, y0): original image
             t: target
         """
-        target = np.array(target)
+        print("type of target at the very beginning:",type(target))
 
     
         if (self.model.predict(x0)[0] != y0):
@@ -47,7 +47,7 @@ class blackbox:
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            lbd, count = self.fine_grained_binary_search_targeted(x0, y0, theta, initial_lbd, g_theta)
+            lbd, count = self.fine_grained_binary_search_targeted(x0, y0, target,theta, initial_lbd, g_theta)
             query_count += count
             if lbd < g_theta:
                 best_theta, g_theta = theta,lbd
