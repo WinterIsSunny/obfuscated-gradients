@@ -167,7 +167,7 @@ class blackbox:
         nquery = 0
         lbd = initial_lbd
     
-        while self.model.predict(x0 + tf.np.array(lbd*theta)) != t:
+        while self.model.predict(x0 + np.array(lbd*theta)) != t:
             lbd *= 1.05
             nquery += 1
             if lbd > 100: 
