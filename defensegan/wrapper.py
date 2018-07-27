@@ -5,6 +5,7 @@ Created on Fri Jul 27 14:08:20 2018
 
 @author: yusu
 """
+import numpy as np
 
 class Model:
     def __init__(self,model):
