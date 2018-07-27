@@ -19,6 +19,8 @@ from torch.autograd import Variable
 import torch
 import numpy as np
 
+from wrapper import Model
+
 class blackbox:
     def __init__(self,model):
         self.model = model
@@ -234,7 +236,7 @@ mygan = Generator(30, xin)
 
 keras.backend.set_learning_phase(False)
 model = keras.models.load_model("data/mnist")
-
+model = Model(model)
 
 attack1 = blackbox(model)
 
