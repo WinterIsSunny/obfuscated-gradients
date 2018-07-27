@@ -9,7 +9,7 @@ Created on Fri Jul 27 11:52:34 2018
 from keras.datasets import mnist
 #import matplotlib
 #%matplotlib inline
-import matplotlib.pyplot as plt
+import maatplotlib.pyplot as plt
 #import l2_attack
 import keras
 from defense import *
@@ -253,7 +253,7 @@ print("Preds",model.predict(x_test)[0])
 
 res = []
 for i in range(30):
-    pre_adv = attack1.attack_untargeted(x_test[0],y_test[0],iterations = 100)
+    pre_adv = attack1.attack_untargeted(np.array([x_test[0]]),y_test[0],iterations = 100)
     dist = pre_adv - x_test[0]
     res.append(dist)
     

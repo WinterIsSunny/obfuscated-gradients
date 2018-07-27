@@ -90,14 +90,15 @@ def _init_inception():
                     new_shape.append(s)
             o.set_shape = tf.TensorShape(new_shape)
     w = sess.graph.get_operation_by_name("softmax/logits/MatMul").inputs[1]
+   
+#    print("dim of w : ", tf.shape(w))
+#    print("dim of pool3 : ", tf.shape(pool3))
+#    print("dim of sequeezed pool3: ",tf.shape(tf.squeeze(pool3)))
+#    print("dim of expended squeezed pool3:  axis = 0 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
+#    print("dim of expended squeezed pool3:  axis = 1 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
+#
+#    logits = tf.matmul(tf.squeeze(pool3),w)
     
-    print("dim of w : ", tf.shape(w))
-    print("dim of pool3 : ", tf.shape(pool3))
-    print("dim of sequeezed pool3: ",tf.shape(tf.squeeze(pool3)))
-    print("dim of expended squeezed pool3:  axis = 0 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
-    print("dim of expended squeezed pool3:  axis = 1 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
-
-    #xlogits = tf.matmul(tf.squeeze(pool3),w)
     logits = tf.squeeze(tf.matmul(tf.expand_dims(tf.squeeze(pool3),axis = 0),w),axis = 0)
 
     softmax = tf.nn.softmax(logits)
