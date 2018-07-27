@@ -93,6 +93,10 @@ def _init_inception():
     print("dim of w : ", tf.shape(w))
     print("dim of pool3 : ", tf.shape(pool3))
     print("dim of sequeezed pool3: ",tf.shape(tf.squeeze(pool3)))
+    print("dim of expended squeezed pool3:  axis = 0 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
+    print("dim of expended squeezed pool3:  axis = 1 ", tf.shape(tf.expand_dims(tf.squeeze(pool3),axis = 0)))
+
+    logits = tf.matmul(tf.expand_dims(tf.squeeze(pool3),axis = 0),w)
     logits = tf.matmul(tf.squeeze(pool3), w)
     softmax = tf.nn.softmax(logits)
 
