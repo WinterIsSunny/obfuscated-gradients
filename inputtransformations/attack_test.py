@@ -29,6 +29,7 @@ class blackbox:
             (x0, y0): original image
             t: target
         """
+        target = np.array(target)
 
     
         if (self.model.predict(x0)[0] != y0):
@@ -137,7 +138,7 @@ class blackbox:
         nquery = 0
         lbd = initial_lbd
         
-        t = np.array(t)
+        
         if self.model.predict(x0+np.array(lbd*theta))[0] != t:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
@@ -169,7 +170,8 @@ class blackbox:
         lbd = initial_lbd
         
         print("type of target is:",type(t))
-        t = np.array(t)
+        print(t)
+        print("new lable is:",self.model.predict(x0 + np.array(lbd*theta))[0])
         while self.model.predict(x0 + np.array(lbd*theta))[0] != t:
             lbd *= 1.05
             nquery += 1
