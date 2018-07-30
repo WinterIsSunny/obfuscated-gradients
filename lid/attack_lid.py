@@ -244,7 +244,7 @@ print ("the original label:",label[1:2])
 print('Clean Model Prediction', model.predict(image[1:2]))
 
 attack = blackbox(model)
-adv = attack.attack_untargeted(image[1:2,label[1]])
+adv = attack.attack_untargeted(image[1:2],label[1])
 
 
 print("new label for adversarial sample: ", model.predict(adv))
