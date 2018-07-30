@@ -28,15 +28,16 @@ class MyModel:
         _, out = pixelcnn.model(self.sess, x)
         
         pixeldefend = make_pixeldefend(self.sess, x, out)
-        logits = self.model.pre_softmax
-        probs = tf.nn.softmax(logits)
-        classify = make_classify(self.sess, self.model.x_input, probs)
+        
+        #logits = self.model.pre_softmax
+        #probs = tf.nn.softmax(logits)
+        #classify = make_classify(self.sess, self.model.x_input, probs)
         #classify(orig)
         
         #grad, = tf.gradients(self.model.xent, self.model.x_input)
         adv_def = pixeldefend(image)
         p = sess.run([self.model.predictions],
-                           {model.x_input: [adv_def], model.y_input: [self.TRUE_CLASS]})
+                           {self.model.x_input: [adv_def], self.model.y_input: [self.TRUE_CLASS]})
         #print(" prediction of adversarial: ",)
         return p
         
