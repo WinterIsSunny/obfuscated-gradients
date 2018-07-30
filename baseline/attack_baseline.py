@@ -119,7 +119,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.25
+                    alpha = alpha * 0.85
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -261,7 +261,7 @@ print("predicted label on clean data is: ", model.predict_label(image))
 
 image = torch.from_numpy(image)
 label = torch.from_numpy(label)
-adv = attack.attack_untargeted(image,label,alpha = 4, beta = 0.01, iterations = 1000)
+adv = attack.attack_untargeted(image,label,alpha = 0.2, beta = 0.01, iterations = 1000)
 
 new_logits = model.predict(adv)
 new_label = model.predict_label(adv)
