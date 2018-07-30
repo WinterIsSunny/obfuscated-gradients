@@ -70,6 +70,7 @@ class blackbox:
         
         
         #timestart = time.time()
+        print("the best initialization: ",g_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
@@ -94,6 +95,7 @@ class blackbox:
             gradient = 1.0/q * gradient
     
             if (i+1)%50 == 0:
+                
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
                     break
@@ -135,6 +137,8 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
             #print(alpha)
+            print("this is the %3d iteration" % i)
+            print("current alpha:",alpha)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
