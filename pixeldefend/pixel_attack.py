@@ -15,8 +15,8 @@ from defense import *
 from wrapper import MyModel
 import torch 
 
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+#import os
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 class blackbox:
