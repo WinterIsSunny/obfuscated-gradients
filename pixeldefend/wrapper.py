@@ -34,10 +34,10 @@ class MyModel:
 #        classify = make_classify(self.sess, self.model.x_input, probs)
 #        classify(orig)
         
-        grad, = tf.gradients(self.model.xent, self.model.x_input)
+        #grad, = tf.gradients(self.model.xent, self.model.x_input)
         adv_def = pixeldefend(image)
         #adv = np.clip(adv, lower, upper)
-        g, l, p = sess.run([grad, self.model.xent, self.model.predictions],
+        l, p = self.sess.run([self.model.xent, self.model.predictions],
                        {self.model.x_input: [adv_def], self.model.y_input: [self.TRUE_CLASS]})
         #print(" prediction of adversarial: ",)
         return p
