@@ -38,7 +38,7 @@ class MyModel:
         adv_def = pixeldefend(image)
         #adv = np.clip(adv, lower, upper)
         g, l, p = sess.run([grad, self.model.xent, self.model.predictions],
-                           {self.model.x_input: [adv_def], self.model.y_input: [self.TRUE_CLASS]})
+                       {self.model.x_input: [adv_def], self.model.y_input: [self.TRUE_CLASS]})
         #print(" prediction of adversarial: ",)
         return p
         
