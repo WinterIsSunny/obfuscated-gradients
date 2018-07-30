@@ -18,6 +18,6 @@ class Model:
         x_input = tf.placeholder(tf.float32, (None, 32, 32, 3))
         logits = self.model_logit(x_input)
         self.sess.run(logits, {x_input:images})
-        self.logits = logits[0]
+        self.logits = logits
         return np.argmax(logits)
     
