@@ -236,3 +236,7 @@ model = Model(mode='eval')
 
 model = MyModel(model,sess,TRUE_CLASS)
 
+attack = blackbox(model)
+
+adv = attack.attack_untargeted(orig,TRUE_CLASS)
+
