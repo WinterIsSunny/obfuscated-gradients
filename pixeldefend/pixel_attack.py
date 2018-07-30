@@ -238,5 +238,8 @@ model = MyModel(model,sess,TRUE_CLASS)
 
 attack = blackbox(model)
 
-adv = attack.attack_untargeted(orig,TRUE_CLASS)
+image = np.copy(orig)
+adv = attack.attack_untargeted(image,TRUE_CLASS)
+
+
 

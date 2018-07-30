@@ -21,8 +21,8 @@ class MyModel:
         self.TRUE_CLASS = TRUE_CLASS
     
     def predict(self,image):
-        saver = tf.train.Saver()
-        saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
+        #saver = tf.train.Saver()
+        #saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
         
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
         _, out = pixelcnn.model(self.sess, x)
