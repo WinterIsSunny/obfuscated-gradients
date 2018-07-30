@@ -27,6 +27,7 @@ class MyModel:
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
         _, out = pixelcnn.model(self.sess, x)
         
+        pixeldefend = make_pixeldefend(self.sess, x, out)
         logits = self.model.pre_softmax
         probs = tf.nn.softmax(logits)
         classify = make_classify(self.sess, self.model.x_input, probs)
