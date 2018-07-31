@@ -47,5 +47,5 @@ class MyModel:
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
         #print(" prediction of adversarial: ",)
-        return p
+        return p[0]
         

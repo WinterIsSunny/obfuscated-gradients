@@ -36,27 +36,28 @@ def label_to_name(label):
 
 def make_classify(sess, input_, probs):
     def classify(img, correct_class=None, target_class=None):
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 8))
-        fig.sca(ax1)
+#        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 8))
+#        fig.sca(ax1)
         p = sess.run(probs, feed_dict={input_: [img]})[0]
-        ax1.imshow(np.clip(img/255.0, 0, 1))
-        fig.sca(ax1)
+#        ax1.imshow(np.clip(img/255.0, 0, 1))
+#        fig.sca(ax1)
 
         topk = list(p.argsort()[-10:][::-1])
         topprobs = p[topk]
-        barlist = ax2.bar(range(10), topprobs)
-        if target_class in topk:
-            barlist[topk.index(target_class)].set_color('r')
-        if correct_class in topk:
-            barlist[topk.index(correct_class)].set_color('g')
-        plt.sca(ax2)
-        plt.ylim([0, 1.1])
-        plt.xticks(range(10),
-                   [label_to_name(i)[:15] for i in topk],
-                   rotation='vertical')
-        fig.subplots_adjust(bottom=0.2)
-        plt.show()
-    return classify
+#        barlist = ax2.bar(range(10), topprobs)
+#        if target_class in topk:
+#            barlist[topk.index(target_class)].set_color('r')
+#        if correct_class in topk:
+#            barlist[topk.index(correct_class)].set_color('g')
+#        plt.sca(ax2)
+#        plt.ylim([0, 1.1])
+#        plt.xticks(range(10),
+#                   [label_to_name(i)[:15] for i in topk],
+#                   rotation='vertical')
+#        fig.subplots_adjust(bottom=0.2)
+#        plt.show()
+        label = p[topk[0]]
+    return label
 
 def int_shape(tensor):
     return list(map(int, tensor.get_shape()))
