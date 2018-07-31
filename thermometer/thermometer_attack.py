@@ -247,7 +247,7 @@ levels = 16
 sess = tf.Session()
 cifar = cifar10_input.CIFAR10Data()
 model = Model('../models/thermometer_advtrain/',
-              sess, tiny=False, mode='eval',
+              sess, mode='eval',
               thermometer=True, levels=levels)
 model = Model(model,sess)
 
@@ -258,6 +258,7 @@ attack = blackbox(model)
 print("original label:", label)
 print("predicted label of clean imgage:", model.predict(image[0]))
 adv = attack.attack_untargeted(image[0],label[0])
+distortion = np.linalg.norm((adv-image[0])**2)
 print("label of adversarial sample :", model.predict(adv))
 
 
