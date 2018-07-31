@@ -53,7 +53,7 @@ class blackbox:
         
         #timestart = time.time()
         for i in range(num_directions):
-            theta = torch.randn(x0.size()).type(torch.FloatTensor)
+            theta = torch.randn(x0.shape).type(torch.FloatTensor)
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
@@ -152,16 +152,16 @@ class blackbox:
         
         #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        return x0 + (g_theta*best_theta).byte()
+        return x0 + np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
          
-        if self.model.predict_label(x0+(lbd*theta).byte()) == y0:
+        if self.model.predict_label(x0+np.array(lbd*theta)) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            while self.model.predict_label(x0+(lbd_hi*theta).byte()) == y0:
+            while self.model.predict_label(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -170,14 +170,14 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            while self.model.predict_label(x0+(lbd_lo*theta).byte()) != y0 :
+            while self.model.predict_label(x0+np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict_label(x0 + (lbd_mid*theta).byte()) != y0:
+            if self.model.predict_label(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -186,7 +186,7 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            if self.model.predict_label(x0+ (current_best*theta).byte()) == y0:
+            if self.model.predict_label(x0+ np.array(current_best*theta)) == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
@@ -240,28 +240,11 @@ image = cifar.eval_data.xs[:1]  # np.array
 label = cifar.eval_data.ys[:1]
 
 attack = blackbox(model)
-"""
-train_loader, test_loader, train_dataset, test_dataset = load_mnist_data()
-real_labels = []
-adv_labels = []
-count = 0
-for i, (xi,yi) in enumerate(test_loader):
-    xi_v=Variable(xi)
-    adv = attack(xi,yi,False)
-    adv_logits = model.predict(adv)
-    new_label = np.argmax(adv_logits)
-    real_labels.append(yi)
-    if yi != new_label:
-        count+=1
-print("attack %f %:" % (count/len(test_loader)))
-""" 
-print("type of image and label are :",type(image),"and ",type(label))
-print("original label is:",label)
-print("predicted label on clean data is: ", model.predict_label(image))
 
-image = torch.from_numpy(image)
-label = torch.from_numpy(label)
-adv = attack.attack_untargeted(image,label,alpha = 2, beta = 0.01, iterations = 1000)
+print("original label is:",label)
+print("predicted label on clean data is: ", model.predict_label(image[0]))
+
+adv = attack.attack_untargeted(image[0],label[0],alpha = 2, beta = 0.01, iterations = 1000)
 
 new_logits = model.predict(adv)
 new_label = model.predict_label(adv)
@@ -269,4 +252,7 @@ new_label = model.predict_label(adv)
 #new_logits = new_logits.eval()
 #new_label = np.argmax(new_logits)
 print("new label is :", new_label)
+
+print("max distortion:", np.max(np.abs(adv-image[0])))
+print("square distortion:", np.linalg.norm(adv-image[0]))
 
