@@ -80,7 +80,7 @@ class blackbox:
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient +=  (g1-g2)/beta * u
-                #print("norm of gradient:", np.linalg.norm(gradient))
+                print("norm of gradient:", np.linalg.norm(gradient))
                 if g1 < min_g1:
                     min_g1 = g1
                     min_ttt = ttt
