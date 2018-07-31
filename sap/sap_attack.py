@@ -238,10 +238,10 @@ image = cifar.eval_data.xs[:1]
 label = cifar.eval_data.ys[:1]
 
 print("original label is :", label)
-print(len(image))
-print(image.shape)
-print("label of clean image:", model.predict(image))
-adv = attack.attack_untargeted(image,label)
+#print(len(image))
+#print(image.shape)
+print("label of clean image:", model.predict(image[0]))
+adv = attack.attack_untargeted(image[0],label[0])
 
 print("label of adv sample: ", model.predict(adv))
 
