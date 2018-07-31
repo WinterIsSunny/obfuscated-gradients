@@ -21,11 +21,17 @@ class MyModel:
         self.TRUE_CLASS = TRUE_CLASS
     
     def predict(self,image):
+        print("at the beginning of prediction")
         saver = tf.train.Saver()
         saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
         
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
         _, out = pixelcnn.model(self.sess, x)
+        
+        logits = self.model.pre_softmax
+        probs = tf.nn.softmax(logits)
+        classify = make_classify(self.sess, self.model.x_input, probs)
+        label = classify(image)
         
         pixeldefend = make_pixeldefend(self.sess, x, out)
         
@@ -33,11 +39,13 @@ class MyModel:
 #        probs = tf.nn.softmax(logits)
 #        classify = make_classify(self.sess, self.model.x_input, probs)
 #        classify(orig)
-        
+
         grad, = tf.gradients(self.model.xent, self.model.x_input)
         adv_def = pixeldefend(image)
-        g, l, p = self.sess.run([grad, self.model.xent, self.model.predictions],
-                       {self.model.x_input: [adv_def], self.model.y_input: [self.TRUE_CLASS]})
+        print("the type of adv_def: ",type(adv_def))
+        
+        p = self.sess.run(self.model.predictions,
+                       {self.model.x_input: [adv_def]})
         #print(" prediction of adversarial: ",)
         return p
         
