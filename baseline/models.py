@@ -19,14 +19,14 @@ class PytorchModel(object):
     
     def predict_label(self, image):
         if self.bounds[1] == 255.0:
-            image *= 256.0
-            image = np.clip(image,0.0,255.0)
+            new_img = image * 255.0
+            new_img = np.clip(new_img,0.0,255.0)
         else:
-            image = np.clip(image,0.0,1.0)
+            new_img = np.clip(image,0.0,1.0)
 
-        image = [image]
+        new_img = [new_img]
 
-        return self.sess.run(self.model.predictions, {self.model.x_input: image})
+        return self.sess.run(self.model.predictions, {self.model.x_input: new_img})
         
     #def get_gradient(self,loss):
      #   loss.backward()
