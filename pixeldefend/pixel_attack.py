@@ -235,8 +235,8 @@ lower = np.clip(orig - EPSILON, 0, 255)
 upper = np.clip(orig + EPSILON, 0, 255)
 
 model = Model(mode='eval')
-
-model = MyModel(model,sess,TRUE_CLASS)
+saver = tf.train.Saver()
+model = MyModel(model,sess,TRUE_CLASS,saver)
 
 attack = blackbox(model)
 

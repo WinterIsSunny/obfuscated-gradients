@@ -15,15 +15,17 @@ import models.pixelcnn_cifar as pixelcnn
 
 class MyModel:
     
-    def __init__(self,model,sess,TRUE_CLASS):
+    def __init__(self,model,sess,TRUE_CLASS,saver):
         self.model = model
         self.sess = sess
         self.TRUE_CLASS = TRUE_CLASS
+        self.saver = saver
     
     def predict(self,image):
         print("at the beginning of prediction")
+        
         #saver = tf.train.Saver()
-        #saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
+        self.saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
         
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
         _, out = pixelcnn.model(self.sess, x)
