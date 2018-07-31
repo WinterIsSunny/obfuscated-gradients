@@ -228,7 +228,7 @@ sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess)
 
-image = cifar.eval_data.xs[:1]/255.0 -0.5  # np.array
+image = cifar.eval_data.xs[:1] # np.array
 #image = np.clip(image,0,1)
 #image /= 255
 label = cifar.eval_data.ys[:1]
