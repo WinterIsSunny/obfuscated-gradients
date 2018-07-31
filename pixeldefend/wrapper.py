@@ -33,8 +33,9 @@ class MyModel:
         classify = make_classify(self.sess, self.model.x_input, probs)
         label = classify(image)
         
+        print("the label of the image is :", label)
         pixeldefend = make_pixeldefend(self.sess, x, out)
-        
+        print("is this wrong?")
 #        logits = self.model.pre_softmax
 #        probs = tf.nn.softmax(logits)
 #        classify = make_classify(self.sess, self.model.x_input, probs)

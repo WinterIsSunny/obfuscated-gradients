@@ -57,7 +57,8 @@ def make_classify(sess, input_, probs):
 #        fig.subplots_adjust(bottom=0.2)
 #        plt.show()
         label = p[topk[0]]
-    return label
+        return label
+    return classify
 
 def int_shape(tensor):
     return list(map(int, tensor.get_shape()))
