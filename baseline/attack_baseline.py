@@ -228,7 +228,7 @@ sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess)
 
-image = cifar.eval_data.xs[:1]/255.0  # np.array
+image = cifar.eval_data.xs[:1]/255.0 -0.5  # np.array
 #image = np.clip(image,0,1)
 #image /= 255
 label = cifar.eval_data.ys[:1]
@@ -248,5 +248,5 @@ new_label = model.predict_label(adv)
 print("new label is :", new_label)
 
 print("max distortion:", np.max(np.abs(adv-image[0])))
-print("square distortion:", np.linalg.norm(adv-image[0]))
+print("squared distortion:", np.linalg.norm(adv-image[0]))
 

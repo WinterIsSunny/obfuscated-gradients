@@ -11,6 +11,7 @@ class PytorchModel(object):
         
     
     def predict(self,image):
+        image = np.clip(image,0,255)
         image = [image]
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
 #        # how to use gpu ?
@@ -28,8 +29,8 @@ class PytorchModel(object):
         return self.sess.run(self.model.pre_softmax, {self.model.x_input: image})
     
     def predict_label(self, image):
+        image = np.clip(image,0,255)
         image = [image]
-        
 #        image = torch.clamp(image,self.bounds[0],self.bounds[1]).cuda()
 #        if len(image.size())!=4:
 #            image = image.unsqueeze(0)

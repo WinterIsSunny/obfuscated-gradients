@@ -243,6 +243,9 @@ attack = blackbox(model)
 
 image = np.copy(orig)
 adv = attack.attack_untargeted(image,TRUE_CLASS)
-
+adv = np.clip(adv, lower, upper)
+print("the original label:", TRUE_CLASS)
+print("predicted lable of clean image:",model.predict(image))
+print("lable of adv sample:", model.predict(adv))
 
 
