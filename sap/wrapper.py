@@ -14,13 +14,13 @@ class Model:
         self.sess = sess
         
     def predict(self,image):
-        #image = [image]
+        image = [image]
         #xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
         label = self.sess.run(self.model.predictions, {self.model.x_input: image})
         return label[0]
     
     def predict_logit(self,image):
-        #image = [image]
+        image = [image]
         logits = self.sess.run(self.model.pre_softmax, {self.model.x_input: image})
         return logits[0]
         

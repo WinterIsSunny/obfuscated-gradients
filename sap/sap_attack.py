@@ -33,6 +33,8 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
+        print("the shape of image is :", x0.shape)
+        
         #print(x0.type())
         #print(y0.type())
         #print(model.predict(x0).type())
@@ -52,6 +54,8 @@ class blackbox:
         query_count = 0
         
         #timestart = time.time()
+        
+        
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             #print(theta.size())
@@ -105,11 +109,9 @@ class blackbox:
             min_theta = theta
             min_g2 = g2
             
-            print("before enter the next for loop")
+
             for _ in range(15):
-                print("can it enter this for loop ?")
                 new_theta = theta - alpha * gradient
-                print("apple")
                 new_theta = new_theta/torch.norm(new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
@@ -248,9 +250,9 @@ label = cifar.eval_data.ys[:1]
 
 print("original label is :", label)
 #print(len(image))
-#print(image.shape)
-print("label of clean image:", model.predict(image))
-adv = attack.attack_untargeted(image,label[0])
+print(image[0].shape)
+print("label of clean image:", model.predict(image[0]))
+adv = attack.attack_untargeted(image[0],label[0])
 
 print("label of adv sample: ", model.predict(adv))
 
