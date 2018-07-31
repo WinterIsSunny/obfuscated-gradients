@@ -96,6 +96,7 @@ class blackbox:
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
+                    print("g1 :",g1)
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
