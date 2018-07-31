@@ -50,6 +50,7 @@ class blackbox:
             theta = theta/torch.norm(theta)
             #theta *= 255
             lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+    
             query_count += count
             if lbd < g_theta:
                 best_theta, g_theta = theta,lbd
@@ -243,7 +244,7 @@ label = cifar.eval_data.ys[:1]
 attack = blackbox(model)
 
 print("original label is:",label)
-print("predicted label on clean data is: ", model.predict_label(new_img[0]))
+print("predicted label on clean data is: ", model.predict_label(new_img))
 
 adv = attack.attack_untargeted(image[0],label[0],alpha = 2, beta = 0.01, iterations = 1000)
 
