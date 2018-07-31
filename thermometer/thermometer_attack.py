@@ -22,7 +22,7 @@ from cifar_model import Model
 import cifar10_input
 
 import torch
-from wrapper import Model
+from wrapper import MyModel
 
 class blackbox:
     def __init__(self,model):
@@ -247,7 +247,7 @@ levels = 16
 sess = tf.Session()
 cifar = cifar10_input.CIFAR10Data()
 model = Model('../models/thermometer_advtrain/',
-              sess, mode='eval',
+              sess, tiny=False, mode='eval',
               thermometer=True, levels=levels)
 model = Model(model,sess)
 

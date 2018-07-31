@@ -9,7 +9,7 @@ import tensorflow as tf
 from discretization_utils import discretize_uniform
 
 
-class Model:
+class MyModel:
     def __init__(self,model,sess):
         self.model = model
         self.sess = sess
