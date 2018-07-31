@@ -37,9 +37,6 @@ class blackbox:
     
         # STEP I: find initial direction (theta, g_theta)
         
-        
-
-        num_samples = 100
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -48,6 +45,7 @@ class blackbox:
             theta = x_t - x0
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
+            theta *= 255
             lbd, count = self.fine_grained_binary_search_targeted(model, x0, y0, target, theta, initial_lbd)
             query_count += count
             if lbd < g_theta:

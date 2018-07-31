@@ -7,7 +7,7 @@ Created on Tue Jul 31 13:48:18 2018
 """
 import tensorflow as tf
 from discretization_utils import discretize_uniform
-
+import numpy as np
 
 class MyModel:
     def __init__(self,model,sess):
@@ -15,6 +15,7 @@ class MyModel:
         self.sess = sess
         
     def predict(self,image):
+        image = np.clip(image,0,255)
         image = [image]
         levels = 16
         xs = tf.placeholder(tf.float32, (1, 32, 32, 3))

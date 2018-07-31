@@ -47,6 +47,7 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
+            theta *= 255
             lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
             query_count += count
             if lbd < g_theta:
