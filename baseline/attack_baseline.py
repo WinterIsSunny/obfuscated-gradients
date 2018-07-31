@@ -148,7 +148,9 @@ class blackbox:
         
         #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        return x0 + 255*np.array(g_theta*best_theta)
+        
+        print("best distortion:", g_theta)
+        return x0 + np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -230,7 +232,10 @@ sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess,[0.0,255.0])
 
-image = cifar.eval_data.xs[:1] /255.0# np.array
+
+image = cifar.eval_data.xs[:1]# np.array
+new_img = image / 255.0
+
 #image = np.clip(image,0,1)
 #image /= 255
 label = cifar.eval_data.ys[:1]
@@ -249,6 +254,4 @@ new_label = model.predict_label(adv)
 #new_label = np.argmax(new_logits)
 print("new label is :", new_label)
 
-print("max distortion:", np.max(np.abs(adv-image[0])))
-print("squared distortion:", np.linalg.norm(adv-image[0]))
 
