@@ -1,25 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 30 16:48:18 2018
+Created on Tue Jul 31 11:19:13 2018
 
 @author: yusu
 """
-### SAP
 
 import tensorflow as tf
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 #%matplotlib inline
 
 import cifar10_input
-from sap_model import SAPModel
 
+from discretization_utils import one_hot_to_thermometer
+from discretization_utils import discretize_uniform
+from discretization_attacks import adv_lspga
+
+from cifar_model import Model
+import cifar10_input
 
 import torch
-
 from wrapper import Model
-
 
 class blackbox:
     def __init__(self,model):
@@ -239,32 +242,22 @@ class blackbox:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
     
-
-cifar = cifar10_input.CIFAR10Data("../cifar10_data")
+levels = 16
 
 sess = tf.Session()
-model = SAPModel("../models/standard/", tiny=False, mode='eval', sess=sess)
+cifar = cifar10_input.CIFAR10Data()
+model = Model('../models/thermometer_advtrain/',
+              sess, tiny=False, mode='eval',
+              thermometer=True, levels=levels)
 model = Model(model,sess)
 
-attack = blackbox(model)
-
-xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
-image = cifar.eval_data.xs[:1]
+image = np.array(cifar.eval_data.xs[:1],dtype=np.float32)
 label = cifar.eval_data.ys[:1]
 
-print("original label is :", label)
-#print(len(image))
-print(image[0].shape)
-print("label of clean image:", model.predict(image[0]))
+attack = blackbox(model)
+print("original label:", label)
+print("predicted label of clean imgage:", model.predict(image[0]))
 adv = attack.attack_untargeted(image[0],label[0])
-
-print("label of adv sample: ", model.predict(adv))
-
-
-
-
-
-
-
+print("label of adversarial sample :", model.predict(adv))
 
 
