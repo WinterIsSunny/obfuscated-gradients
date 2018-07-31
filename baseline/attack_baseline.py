@@ -233,7 +233,7 @@ model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess,[0.0,255.0])
 
 
-image = cifar.eval_data.xs[:1]# np.array
+image = cifar.eval_data.xs[0]# np.array
 new_img = image / 255.0
 
 #image = np.clip(image,0,1)
@@ -243,7 +243,7 @@ label = cifar.eval_data.ys[:1]
 attack = blackbox(model)
 
 print("original label is:",label)
-print("predicted label on clean data is: ", model.predict_label(image[0]))
+print("predicted label on clean data is: ", model.predict_label(new_img[0]))
 
 adv = attack.attack_untargeted(image[0],label[0],alpha = 2, beta = 0.01, iterations = 1000)
 

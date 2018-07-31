@@ -258,7 +258,7 @@ attack = blackbox(model)
 print("original label:", label)
 print("predicted label of clean imgage:", model.predict(image[0]))
 adv = attack.attack_untargeted(image[0],label[0])
-distortion = np.linalg.norm((adv-image[0])**2)
+distortion = np.linalg.norm((adv-image[0]))
 print("label of adversarial sample :", model.predict(adv))
 
 
