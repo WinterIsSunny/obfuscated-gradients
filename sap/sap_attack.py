@@ -25,7 +25,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 0.2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -78,6 +78,7 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
+            print("interation:",i)
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -221,8 +222,8 @@ class blackbox:
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            print("size of image:",x0.shape)
-            print("size of modifier,",np.array(lbd_mid*theta).shape )
+            #print("size of image:",x0.shape)
+            #print("size of modifier,",np.array(lbd_mid*theta).shape )
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
