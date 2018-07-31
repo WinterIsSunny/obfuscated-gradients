@@ -22,8 +22,8 @@ class MyModel:
     
     def predict(self,image):
         print("at the beginning of prediction")
-        saver = tf.train.Saver()
-        saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
+        #saver = tf.train.Saver()
+        #saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
         
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
         _, out = pixelcnn.model(self.sess, x)
@@ -47,6 +47,7 @@ class MyModel:
         
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
+        print(p[0])
         #print(" prediction of adversarial: ",)
         return p[0]
         

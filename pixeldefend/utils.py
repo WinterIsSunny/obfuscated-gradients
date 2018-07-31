@@ -41,9 +41,10 @@ def make_classify(sess, input_, probs):
         p = sess.run(probs, feed_dict={input_: [img]})[0]
 #        ax1.imshow(np.clip(img/255.0, 0, 1))
 #        fig.sca(ax1)
+        label = np.argmax(p)
 
-        topk = list(p.argsort()[-10:][::-1])
-        topprobs = p[topk]
+        #topk = list(p.argsort()[-10:][::-1])
+        #topprobs = p[topk]
 #        barlist = ax2.bar(range(10), topprobs)
 #        if target_class in topk:
 #            barlist[topk.index(target_class)].set_color('r')
@@ -56,7 +57,7 @@ def make_classify(sess, input_, probs):
 #                   rotation='vertical')
 #        fig.subplots_adjust(bottom=0.2)
 #        plt.show()
-        label = p[topk[0]]
+#        label = p[topk[0]]
         return label
     return classify
 
