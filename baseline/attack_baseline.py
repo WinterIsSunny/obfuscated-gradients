@@ -79,8 +79,8 @@ class blackbox:
                 ttt = ttt/torch.norm(ttt)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
-                gradient += (g1-g2)/beta * u
-                print("norm of gradient:", np.linalg.norm(gradient))
+                gradient +=  (g1-g2)/beta * u
+                #print("norm of gradient:", np.linalg.norm(gradient))
                 if g1 < min_g1:
                     min_g1 = g1
                     min_ttt = ttt
@@ -97,13 +97,13 @@ class blackbox:
             min_g2 = g2
         
             for _ in range(15):
-                print("enter first for loop")
+                #print("enter first for loop")
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
                 alpha = alpha * 2
-                print("alpha in the first for loop is: ",alpha)
+                #print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
@@ -112,13 +112,13 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    print("enter second for loop")
+                    #print("enter second for loop")
                     alpha = alpha * 0.95
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                     opt_count += count
-                    print("alpha in the second for loop is: ",alpha)
+                    #print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
@@ -137,7 +137,7 @@ class blackbox:
             print("current alpha:",alpha)
             if alpha < 1e-4:
                 alpha = 1.0
-                print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
+                #print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
                     break
@@ -228,7 +228,7 @@ sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess)
 
-image = cifar.eval_data.xs[:1]  # np.array
+image = cifar.eval_data.xs[:1]/255.0  # np.array
 #image = np.clip(image,0,1)
 #image /= 255
 label = cifar.eval_data.ys[:1]
