@@ -104,9 +104,12 @@ class blackbox:
     
             min_theta = theta
             min_g2 = g2
-        
+            
+            print("before enter the next for loop")
             for _ in range(15):
+                print("can it enter this for loop ?")
                 new_theta = theta - alpha * gradient
+                print("apple")
                 new_theta = new_theta/torch.norm(new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
