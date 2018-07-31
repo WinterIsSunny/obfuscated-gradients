@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 30 12:45:30 2018
+Created on Mon Jul 30 16:48:18 2018
 
 @author: yusu
 """
+### SAP
 
 import tensorflow as tf
 import numpy as np
-from model import Model
-import models.pixelcnn_cifar as pixelcnn
-from utils import *
-from defense import *
-from wrapper import MyModel
-import torch 
+import matplotlib.pyplot as plt
+#%matplotlib inline
 
-#import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import cifar10_input
+from sap_model import SAPModel
+
+
+import torch
+
+from wrapper import Model
 
 
 class blackbox:
@@ -76,7 +78,6 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            print("iteration :", i)
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -224,25 +225,29 @@ class blackbox:
             else:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
+    
 
-
+cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
-
-orig = np.load('ship.npy')
-TRUE_CLASS = 8
-EPSILON = 8.0
-lower = np.clip(orig - EPSILON, 0, 255)
-upper = np.clip(orig + EPSILON, 0, 255)
-
-model = Model(mode='eval')
-saver = tf.train.Saver()
-model = MyModel(model,sess,TRUE_CLASS,saver)
+model = SAPModel("../models/standard/", tiny=False, mode='eval', sess=sess)
+model = Model(model,sess)
 
 attack = blackbox(model)
+image = cifar.eval_data.xs[:1]
+label = cifar.eval_data.ys[:1]
 
-image = np.copy(orig)
-adv = attack.attack_untargeted(image,TRUE_CLASS)
+print("original label is :", label)
+print("label of clean image:", model.predict(image))
+adv = attack.attack_untargeted(image,label)
+
+print("label of adv sample: ", model.predict(adv))
+
+
+
+
+
+
 
 
 
