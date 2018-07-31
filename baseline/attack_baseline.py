@@ -61,7 +61,7 @@ class blackbox:
         
         
         #timestart = time.time()
-        print("the best initialization: ",g_theta)
+        print("the best initialization: ",best_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
