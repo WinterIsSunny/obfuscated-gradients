@@ -12,17 +12,17 @@ class PytorchModel(object):
         
     
     def predict(self,image):
-        image = np.clip(image,0,255)
+        image = np.clip(image,0.0,255.0)
         image = [image]
 
         return self.sess.run(self.model.pre_softmax, {self.model.x_input: image})
     
     def predict_label(self, image):
-        if self.bounds[1] == 255:
-            image *= 255
-            image = np.clip(image,0,255)
+        if self.bounds[1] == 255.0:
+            image *= 256.0
+            image = np.clip(image,0.0,255.0)
         else:
-            image = np.clip(image,0,1)
+            image = np.clip(image,0.0,1.0)
 
         image = [image]
 
