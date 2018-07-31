@@ -221,6 +221,8 @@ class blackbox:
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
+            print("size of image:",x0.shape)
+            print("size of modifier,",np.expand_dims(np.array(lbd_mid*theta),0).shape )
             if self.model.predict(x0 + np.expand_dims(np.array(lbd_mid*theta),0)) != y0:
                 lbd_hi = lbd_mid
             else:
