@@ -33,16 +33,6 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
-        #print(x0.type())
-        #print(y0.type())
-        #print(model.predict(x0).type())
-        #y0 = y0.cuda()
-        y0 = np.array(y0)
-        #print("the type of y0 is : ",type(y0))
-        #print("the value of y0 is: ", y0)
-        #print("pure label is: ",self.model.predict_label(x0))
-        #print("the type of x0 is: ",type(x0))
-        
         if (self.model.predict_label(x0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
@@ -78,6 +68,7 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
+            print("iteration:", i )
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -89,6 +80,7 @@ class blackbox:
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
+                print("norm of gradient:", np.linalg.norm(gradient))
                 if g1 < min_g1:
                     min_g1 = g1
                     min_ttt = ttt
@@ -105,6 +97,7 @@ class blackbox:
             min_g2 = g2
         
             for _ in range(15):
+                print("enter first for loop")
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -119,6 +112,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
+                    print("enter second for loop")
                     alpha = alpha * 0.95
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
