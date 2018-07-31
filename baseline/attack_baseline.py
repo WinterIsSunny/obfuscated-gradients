@@ -33,6 +33,7 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
+        
         if (self.model.predict_label(x0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
@@ -47,7 +48,7 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            theta *= 255
+            #theta *= 255
             lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
             query_count += count
             if lbd < g_theta:
@@ -147,7 +148,7 @@ class blackbox:
         
         #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        return x0 + np.array(g_theta*best_theta)
+        return x0 + 255*np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -227,9 +228,9 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-model = PytorchModel(model,sess)
+model = PytorchModel(model,sess,[0,255])
 
-image = cifar.eval_data.xs[:1] # np.array
+image = cifar.eval_data.xs[:1] /255.0# np.array
 #image = np.clip(image,0,1)
 #image /= 255
 label = cifar.eval_data.ys[:1]
