@@ -99,6 +99,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
+            
     
             if (i+1)%50 == 0:
                 
@@ -110,11 +111,12 @@ class blackbox:
             min_theta = theta
             min_g2 = g2
             
-
+            print("gradient:", gradient)
+            print("theta:",theta)
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
-                print("new_theta is:",new_theta)
+                
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
                 alpha = alpha * 2
