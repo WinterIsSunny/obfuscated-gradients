@@ -162,7 +162,7 @@ class blackbox:
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-        print("size of  image: ",image.shape)
+        print("size of  image: ",x0.shape)
         print("size of modifier: ",np.array(lbd*theta).shape)
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
             lbd_lo = lbd
