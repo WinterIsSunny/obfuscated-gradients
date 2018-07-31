@@ -86,11 +86,12 @@ class blackbox:
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
-            for _ in range(q):
+            for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
+                print("inner loop iteration: ", j)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
