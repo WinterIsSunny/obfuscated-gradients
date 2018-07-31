@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 26 15:20:02 2018
+Creaated on Thu Jul 26 15:20:02 2018
 
 @author: yusu
 """
@@ -22,7 +22,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_targeted(self, x0, y0, target, alpha = 0.1, beta = 0.001, iterations = 1000):
+    def attack_targeted(self, x0, y0, x_t,target, alpha = 0.1, beta = 0.001, iterations = 1000):
         """ Attack the original image and return adversarial example of target t
             model: (pytorch model)
             train_dataset: set of training data
@@ -42,29 +42,26 @@ class blackbox:
         num_samples = 100
         best_theta, g_theta = None, float('inf')
         query_count = 0
+        
+        
+        if model.predict(x_t) == target:
+            theta = x_t - x0
+            initial_lbd = torch.norm(theta)
+            theta = theta/torch.norm(theta)
+            lbd, count = self.fine_grained_binary_search_targeted(model, x0, y0, target, theta, initial_lbd)
+            query_count += count
+            if lbd < g_theta:
+                best_theta, g_theta = theta, lbd
+                print("--------> Found distortion %.4f" % g_theta)
+    
     
         #print("Searching for the initial direction on %d samples: " % (num_samples))
         #timestart = time.time()
-        samples = set(random.sample(range(len(train_dataset)), num_samples))
+        
+#        samples = set(random.sample(range(len(train_dataset)), num_samples))
         
         ## use targeted picture to attain the initial direction !! 
-        
-        
-        for i, (xi, yi) in enumerate(train_dataset):
-            if i not in samples:
-                continue
-            query_count += 1
-            if model.predict(xi) == target:
-                theta = xi - x0
-                initial_lbd = torch.norm(theta)
-                theta = theta/torch.norm(theta)
-                lbd, count = fine_grained_binary_search_targeted(model, x0, y0, target, theta, initial_lbd)
-                query_count += count
-                if lbd < g_theta:
-                    best_theta, g_theta = theta, lbd
-                    print("--------> Found distortion %.4f" % g_theta)
     
-        #timeend = time.time()
        
         #timeend = time.time()
         #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
@@ -220,7 +217,7 @@ orig = load_image('cat.jpg')
 #print("type of orig:. ", type(orig))
 #print("size of orig: ", orig.shape)
 #print("length of orig: ",len(orig))
-#TARGET = np.array(924) # guacamole  
+TARGET = 924 # guacamole  
 
 model = MyModel(inceptionv3,sess)
 #print(orig.shape)

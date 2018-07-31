@@ -166,6 +166,8 @@ class blackbox:
 #        print("size of modifier: ",np.array(lbd*theta).shape)
         print("size of image + modifier :", (x0+np.array(lbd*theta)).shape)
         print("type of image + modifier :", type(x0+np.array(lbd*theta)))
+        label = self.model.predict(x0+np.array(lbd*theta))
+        print("new lable is:",label)
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
