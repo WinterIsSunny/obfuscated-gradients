@@ -228,7 +228,7 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-model = PytorchModel(model,sess,[0,255])
+model = PytorchModel(model,sess,[0.0,255.0])
 
 image = cifar.eval_data.xs[:1] /255.0# np.array
 #image = np.clip(image,0,1)
