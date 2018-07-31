@@ -18,7 +18,7 @@ class Model:
         label = self.sess.run(self.model.predictions, {self.model.x_input: image})
         return label
     
-    def predict_logit(image):
+    def predict_logit(self,image):
         logits = self.sess.run(self.model.pre_softmax, {self.model.x_input: image})
         
         
