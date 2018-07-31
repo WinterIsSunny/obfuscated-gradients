@@ -91,7 +91,7 @@ class blackbox:
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
-                print("inner loop iteration: ", j)
+                #print("inner loop iteration: ", j)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -112,9 +112,12 @@ class blackbox:
             
 
             for _ in range(15):
+                print("can it enter the first for loop?")
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
+                print("size of new_theta:", new_theta.size())
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                print("test")
                 opt_count += count
                 alpha = alpha * 2
                 print("alpha in the first for loop is: ",alpha)
@@ -165,10 +168,10 @@ class blackbox:
         lbd = initial_lbd
 #        print("size of  image: ",x0.shape)
 #        print("size of modifier: ",np.array(lbd*theta).shape)
-        print("size of image + modifier :", (x0+np.array(lbd*theta)).shape)
-        print("type of image + modifier :", type(x0+np.array(lbd*theta)))
-        label = self.model.predict(x0+np.array(lbd*theta))
-        print("new lable is:",label)
+        #print("size of image + modifier :", (x0+np.array(lbd*theta)).shape)
+        #print("type of image + modifier :", type(x0+np.array(lbd*theta)))
+        #label = self.model.predict(x0+np.array(lbd*theta))
+        #print("new lable is:",label)
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
