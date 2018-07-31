@@ -25,7 +25,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 0.2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -112,12 +112,10 @@ class blackbox:
             
 
             for _ in range(15):
-                print("can it enter the first for loop?")
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
-                print("size of new_theta:", new_theta.size())
+                print("new_theta is:",new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
-                print("test")
                 opt_count += count
                 alpha = alpha * 2
                 print("alpha in the first for loop is: ",alpha)
@@ -166,12 +164,7 @@ class blackbox:
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-#        print("size of  image: ",x0.shape)
-#        print("size of modifier: ",np.array(lbd*theta).shape)
-        #print("size of image + modifier :", (x0+np.array(lbd*theta)).shape)
-        #print("type of image + modifier :", type(x0+np.array(lbd*theta)))
-        #label = self.model.predict(x0+np.array(lbd*theta))
-        #print("new lable is:",label)
+        
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
