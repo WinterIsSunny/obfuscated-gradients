@@ -158,11 +158,11 @@ class blackbox:
         lbd = initial_lbd
         print("size of  image: ",image.shape)
         print("size of modifier: ",np.array(lbd*theta).shape)
-        if self.model.predict(x0+np.array(lbd*theta),0) == y0:
+        if self.model.predict(x0+np.array(lbd*theta)) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            while self.model.predict(x0+np.array(lbd_hi*theta),0) == y0:
+            while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -171,14 +171,14 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            while self.model.predict(x0+ np.array(lbd_lo*theta),0) != y0 :
+            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta),0) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -187,7 +187,7 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            if self.model.predict(x0+ np.array(current_best*theta),0) == y0:
+            if self.model.predict(x0+ np.array(current_best*theta)) == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
@@ -223,7 +223,7 @@ class blackbox:
             nquery += 1
             print("size of image:",x0.shape)
             print("size of modifier,",np.array(lbd_mid*theta).shape )
-            if self.model.predict(x0 + np.array(lbd_mid*theta),0) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
