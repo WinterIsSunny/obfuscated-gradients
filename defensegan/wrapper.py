@@ -22,7 +22,7 @@ class Model:
             
         new_img= np.expand_dims(new_img,0)
         
-        print("shape of new_img ",new_img.shape)
+        #print("shape of new_img ",new_img.shape)
         labels = self.model.predict(new_img)
         print(labels)
         label = np.argmax(labels[0])

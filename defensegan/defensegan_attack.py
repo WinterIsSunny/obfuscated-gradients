@@ -264,13 +264,13 @@ print("Preds",model.predict(image[0]))
 res = []
 for i in range(30):
     pre_adv = attack1.attack_untargeted(image[0],y_test[0],iterations = 100)
-    dist = pre_adv - x_test[0]
+    dist = pre_adv - image[0]
     res.append(dist)
     
 start = res[np.argmax(res)]
 it = session.run(mygan, {xin: res})
 
-distortion = np.sum((it-[x_test[0]]*30)**2,(1,2,3))**.5
+distortion = np.sum((it-[image[0]]*30)**2,(1,2,3))**.5
 #print("Distortions", distortion)
 start = np.array([start[np.argmin(distortion)]])
 
@@ -280,8 +280,3 @@ adversarial = attack2.attack_untargeted(image[0],
                     start,iterations = 1000)
 
 print("new label is: ",model.predict(adversarial))
-
-
-print("type of x : ", type(x_test[0]))
-print("type if y : ", type(y_test[0]))
-
