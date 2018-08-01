@@ -13,15 +13,16 @@ class Model:
         self.bounds = bounds
     
     def predict(self,image):
+        
         if self.bounds[1] == 255.0:
             new_img = image*255.0
             new_img = np.clip(new_img,0.0,255.0)
         else:
             new_img = np.clip(image,0.0,255.0)
             
-        new_img= [new_img]
+        new_img= np.expand_dims(new_img,0)
         
-        #print("shape of new_img ",new_img[0].shape)
+        print("shape of new_img ",new_img.shape)
         labels = self.model.predict(new_img)
         print(labels)
         label = np.argmax(labels[0])
