@@ -7,9 +7,11 @@ Created on Tue Jul 31 10:21:41 2018
 """
 
 import tensorflow as tf
+import numpy as np
 
 class Model:
-    def __init__(self,model,sess):
+    def __init__(self,model,sess,bounds):
+        self.bounds = bounds
         self.model = model
         self.sess = sess
         
@@ -20,8 +22,15 @@ class Model:
         return label[0]
     
     def predict_logit(self,image):
-        image = [image]
-        logits = self.sess.run(self.model.pre_softmax, {self.model.x_input: image})
+        if self.bounds[1] == 255.0:
+            new_img = image * 255.0
+            new_img = np.clip(new_img,0.0,255.0)
+        else:
+            new_img = np.clip(image,0.0,1.0)
+
+        new_img = [new_img]
+
+        logits = self.sess.run(self.model.pre_softmax, {self.model.x_input: new_img})
         return logits[0]
         
         

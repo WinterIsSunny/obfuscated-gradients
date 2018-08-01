@@ -33,16 +33,7 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
-        #print(x0.type())
-        #print(y0.type())
-        #print(model.predict(x0).type())
-        #y0 = y0.cuda()
-        y0 = np.array(y0)
-        #print("the type of y0 is : ",type(y0))
-        #print("the value of y0 is: ", y0)
-        #print("pure label is: ",self.model.predict_label(x0))
-        #print("the type of x0 is: ",type(x0))
-        
+
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
@@ -78,6 +69,8 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
+            if g_theta < 1:
+                break
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -152,6 +145,9 @@ class blackbox:
         
         #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
+        print("defensegan")
+        print("best distortion :", g_theta)
+        print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
