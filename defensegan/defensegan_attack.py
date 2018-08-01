@@ -274,7 +274,7 @@ distortion = np.sum((it-[x_test[0]]*30)**2,(1,2,3))**.5
 #print("Distortions", distortion)
 start = np.array([start[np.argmin(distortion)]])
 
-attack2 = blackbox(model,[0.0,1.0])
+attack2 = blackbox(model)
 adversarial = attack2.attack_untargeted(image[0],
                     [np.eye(10)[q] for q in y_test[:1]],
                     start,iterations = 1000)
