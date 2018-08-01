@@ -12,19 +12,26 @@ import tensorflow as tf
 from defense import *
 from utils import *
 import models.pixelcnn_cifar as pixelcnn
+import numpy as np
 
 class MyModel:
     
-    def __init__(self,model,sess,TRUE_CLASS,saver):
+    def __init__(self,model,sess,TRUE_CLASS,saver,bounds):
+        self.bounds = bounds
         self.model = model
         self.sess = sess
         self.TRUE_CLASS = TRUE_CLASS
         self.saver = saver
     
     def predict(self,image):
-        #print("at the beginning of prediction")
-        
-        #saver = tf.train.Saver()
+        if self.bounds[1] == 255.0:
+            new_img = image * 255.0
+            new_img = np.clip(new_img,0.0,255.0)
+        else:
+            new_img = np.clip(image,0.0,1.0)
+
+#        new_img = [new_img]
+
         self.saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
         
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
@@ -33,21 +40,18 @@ class MyModel:
         logits = self.model.pre_softmax
         probs = tf.nn.softmax(logits)
         classify = make_classify(self.sess, self.model.x_input, probs)
-        label = classify(image)
+        label = classify(new_img)
         
         print("the label of the image is :", label)
         pixeldefend = make_pixeldefend(self.sess, x, out)
-#        logits = self.model.pre_softmax
-#        probs = tf.nn.softmax(logits)
-#        classify = make_classify(self.sess, self.model.x_input, probs)
-#        classify(orig)
+
 
         grad, = tf.gradients(self.model.xent, self.model.x_input)
-        adv_def = pixeldefend(image)
+        adv_def = pixeldefend(new_img)
         
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
         print(p[0])
-        #print(" prediction of adversarial: ",)
+
         return p[0]
         

@@ -237,7 +237,7 @@ mygan = Generator(30, xin)
 
 keras.backend.set_learning_phase(False)
 model = keras.models.load_model("data/mnist")
-model = Model(model)
+model = Model(model,[0.0,1.0])
 
 attack1 = blackbox(model)
 
@@ -249,14 +249,14 @@ saver.restore(session, 'data/mnist-gan')
 x_test = np.array(x_test, dtype=np.float32)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test /= 255.0
-
+image = x_test[:1]
 
 print("True label", y_test[0])
-print("Preds",model.predict(x_test[:1]))
+print("Preds",model.predict(image[0]))
 
 res = []
 for i in range(30):
-    pre_adv = attack1.attack_untargeted(x_test[:1],y_test[0],iterations = 100)
+    pre_adv = attack1.attack_untargeted(image[0],y_test[0],iterations = 100)
     dist = pre_adv - x_test[0]
     res.append(dist)
     
@@ -267,8 +267,8 @@ distortion = np.sum((it-[x_test[0]]*30)**2,(1,2,3))**.5
 #print("Distortions", distortion)
 start = np.array([start[np.argmin(distortion)]])
 
-attack2 = blackbox(model)
-adversarial = attack2.attack_untargeted(x_test[:1],
+attack2 = blackbox(model,[0.0,1.0])
+adversarial = attack2.attack_untargeted(image[0],
                     [np.eye(10)[q] for q in y_test[:1]],
                     start,iterations = 1000)
 

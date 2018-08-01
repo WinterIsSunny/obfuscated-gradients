@@ -234,17 +234,19 @@ model_logits = get_model("cifar", softmax=False)
 model_logits.load_weights("data/lid_model_cifar.h5")
 
 sess = K.get_session()
-model = Model(model,model_logits,sess)
+model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 image = cifar.eval_data.xs[:1000]/255.0-.5
 label = cifar.eval_data.ys[:1000]
+image = image[1:2]
+label = label[1:2]
 
-print ("the original label:",label[1:2])
-print('Clean Model Prediction', model.predict(image[1:2]))
+print ("the original label:",label[0])
+print('Clean Model Prediction', model.predict(image[0]))
 
 attack = blackbox(model)
-adv = attack.attack_untargeted(image[1:2],label[1])
+adv = attack.attack_untargeted(image[0],label[0])
 
 
 print("new label for adversarial sample: ", model.predict(adv))
