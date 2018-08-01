@@ -63,7 +63,7 @@ class blackbox:
         
         
         #timestart = time.time()
-        print("the best initialization: ",best_theta)
+        #print("the best initialization: ",best_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
@@ -73,7 +73,7 @@ class blackbox:
         for i in range(iterations):
             if g_theta < 1:
                 break
-            print("n_query:",query_count)
+            print("n_query:",opt_count)
             print("best distortion:", g_theta)
             #print("iteration:", i )
             gradient = torch.zeros(theta.size())
