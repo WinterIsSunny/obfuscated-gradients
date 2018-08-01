@@ -24,7 +24,7 @@ class Model:
         
         #print("shape of new_img ",new_img.shape)
         labels = self.model.predict(new_img)
-        print(labels)
+        #print(labels)
         label = np.argmax(labels[0])
         #print("the current label: ", label)
         return label
