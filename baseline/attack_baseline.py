@@ -73,8 +73,8 @@ class blackbox:
         for i in range(iterations):
             if g_theta < 1:
                 break
-            print("n_query:",opt_count)
-            print("best distortion:", g_theta)
+            #print("n_query:",opt_count)
+            #print("best distortion:", g_theta)
             #print("iteration:", i )
             gradient = torch.zeros(theta.size())
             q = 10
@@ -155,7 +155,7 @@ class blackbox:
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("baseline")
         print("best distortion :", g_theta)
-        print("number of queries :", query_count)
+        print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
