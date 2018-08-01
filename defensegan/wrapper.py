@@ -20,7 +20,7 @@ class Model:
             new_img = np.clip(image,0.0,255.0)
             
         new_img= [new_img]
-        print("shape of new_img ",new_img.shape)
+        #print("shape of new_img ",new_img.shape)
         labels = self.model.predict(new_img)
         print(labels)
         label = np.argmax(labels[0])
