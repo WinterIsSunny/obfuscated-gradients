@@ -82,7 +82,9 @@ class blackbox:
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
+                print("before 1st binary search")
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                print("after 1st binary search")
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
@@ -103,7 +105,9 @@ class blackbox:
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
+                print("before 2nd binary search")
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                print("after 2nd binary search")
                 opt_count += count
                 alpha = alpha * 2
                 print("alpha in the first for loop is: ",alpha)
@@ -118,7 +122,9 @@ class blackbox:
                     alpha = alpha * 0.95
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
+                    print("before 3rd binary search")
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                    print("after 3rd binary search")
                     opt_count += count
                     print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
