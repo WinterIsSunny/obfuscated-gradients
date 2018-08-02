@@ -172,7 +172,9 @@ class blackbox:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
+                    print("something goes wrong here")
                     return float('inf'), nquery
+                
             timeend1 = time.time()
             print("time consuming in 1st while:", timeend1-timestart1)
             
