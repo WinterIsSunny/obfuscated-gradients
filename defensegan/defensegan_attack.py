@@ -33,15 +33,7 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
-        #print(x0.type())
-        #print(y0.type())
-        #print(model.predict(x0).type())
-        #y0 = y0.cuda()
-        y0 = np.array(y0)
-        #print("the type of y0 is : ",type(y0))
-        #print("the value of y0 is: ", y0)
-        #print("pure label is: ",self.model.predict_label(x0))
-        #print("the type of x0 is: ",type(x0))
+
         
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
@@ -82,6 +74,7 @@ class blackbox:
         prev_obj = 100000
         for i in range(iterations):
             if g_theta < 1:
+                print("break here 1?")
                 break
             #print("n_query:",opt_count)
             #print("distortion:", g_theta)
@@ -121,6 +114,7 @@ class blackbox:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
+                    print("break here 2 ?")
                     break
     
             if min_g2 >= g2:
@@ -133,6 +127,7 @@ class blackbox:
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
+                        print("break here 3?")
                         break
     
             if min_g2 <= min_g1:
@@ -149,6 +144,7 @@ class blackbox:
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
+                    print("break here 4?")
                     break
     
         #target = model.predict(x0 + g_theta*best_theta)
@@ -237,10 +233,10 @@ class blackbox:
 
 
 
-xin = tf.placeholder(tf.float32, [30, 128])
+xin = tf.placeholder(tf.float32, [3, 128])
 
 session = keras.backend.get_session()
-mygan = Generator(30, xin)
+mygan = Generator(3, xin)
 
 keras.backend.set_learning_phase(False)
 model = keras.models.load_model("data/mnist")
@@ -262,17 +258,22 @@ print("True label", y_test[0])
 print("Preds",model.predict(image[0]))
 
 res = []
-for i in range(30):
+#dists =[]
+for i in range(3):
     pre_adv = attack1.attack_untargeted(image[0],y_test[0],iterations = 100)
     dist = pre_adv - image[0]
+    #dist_norm = np.linalg.norm(dist)
     res.append(dist)
-    
-start = res[np.argmax(res)]
+    #dists.append(dist_norm)
+
+#start = res[np.argmax(dists)]
+
+
 it = session.run(mygan, {xin: res})
 
-distortion = np.sum((it-[image[0]]*30)**2,(1,2,3))**.5
+distortion = np.sum((it-[image[0]]*3)**2,(1,2,3))**.5
 #print("Distortions", distortion)
-start = np.array([start[np.argmin(distortion)]])
+start = np.array([res[np.argmin(distortion)]])
 
 attack2 = blackbox(model)
 adversarial = attack2.attack_untargeted(image[0],
@@ -280,3 +281,6 @@ adversarial = attack2.attack_untargeted(image[0],
                     start,iterations = 1000)
 
 print("new label is: ",model.predict(adversarial))
+
+
+
