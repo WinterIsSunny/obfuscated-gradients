@@ -21,6 +21,8 @@ import torch
 import cifar10_input
 from cifar_model import Model
 
+import time
+
 class blackbox:
     def __init__(self,model):
         self.model = model
@@ -249,8 +251,10 @@ label = cifar.eval_data.ys[:1]
 attack = blackbox(model)
 
 print("original label is:",label)
+timestart = time.time()
 print("predicted label on clean data is: ", model.predict_label(new_img[0]))
-
+timeend = time.time()
+print("time consuming: ", timestart-timeend)
 adv = attack.attack_untargeted(new_img[0],label[0],alpha = 2, beta = 0.01, iterations = 1000)
 
 new_logits = model.predict(adv)
