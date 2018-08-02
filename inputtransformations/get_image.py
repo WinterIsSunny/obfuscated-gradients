@@ -9,7 +9,7 @@ Created on Thu Aug  2 11:19:23 2018
 from __future__ import print_function
 
 import os
-#import glob
+import glob
 import csv
 import tensorflow as tf
 import numpy as np
@@ -26,13 +26,17 @@ def read_raw_images(path):
     is_directory:
     Returns:
     """
-    
-    reader = tf.WholeFileReader()
     images = []
-    reader = tf.WholeFileReader()
-    for dir in path:
-        for image in dir:
-            images.append(image)
+    for dirs in os.walk(path):
+        for filename in dirs:
+            images.append(filename)
+#    files_path = glob.glob(os.path.join(path, '*.[jJ][pP][eE][gG]'))
+#    reader = tf.WholeFileReader()
+#    images = []
+#    reader = tf.WholeFileReader()
+#    for dir in path:
+#        for image in dir:
+#            images.append(image)
         
 
       # Decode if there is a PNG file:
