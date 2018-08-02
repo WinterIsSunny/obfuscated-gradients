@@ -37,12 +37,12 @@ class MyModel:
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
         _, out = pixelcnn.model(self.sess, x)
         
-        logits = self.model.pre_softmax
-        probs = tf.nn.softmax(logits)
-        classify = make_classify(self.sess, self.model.x_input, probs)
-        label = classify(new_img)
+        #logits = self.model.pre_softmax
+        #probs = tf.nn.softmax(logits)
+        #classify = make_classify(self.sess, self.model.x_input, probs)
+        #label = classify(new_img)
         
-        print("the label of the image is :", label)
+        #print("the label of the image is :", label)
         pixeldefend = make_pixeldefend(self.sess, x, out)
 
 
