@@ -48,7 +48,19 @@ def read_raw_images(path):
     
     return jpeg_file_queue
 
-def read_and_decode(path, imshape, normalize=False, flatten=True):
+def get_images(path,img_shape):
+    images_queue = read_raw_images(path)
+    images= []
+    labels = []
+    for item in images_queue:
+        image,label = read_and_decode(item,img_shape)
+        images.append(image)
+        labels.append(label)
+        
+    return images,labels
+        
+
+def read_and_decode(filename_queue, imshape, normalize=False, flatten=True):
     
     """Reads
     Args:
@@ -58,7 +70,6 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
     flatten:
     Returns:
     """
-    filename_queue = read_raw_images(path)
     reader = tf.TFRecordReader()
     _, serialized_example = reader.read(filename_queue)
     features = tf.parse_single_example(
@@ -98,7 +109,7 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
         
 #image_queue, length= read_raw_images("/data3/ILSVRC2012/train/")
 #print("length of images:",length)
-images,labels= read_and_decode("/data3/ILSVRC2012/train/",(3003,299, 299, 3))
+images,labels= get_images("/data3/ILSVRC2012/train/",(299, 299, 3))
 #labels = read_labels("/data3/ILSVRC2012/")
 
 print("type of images:",type(images))
