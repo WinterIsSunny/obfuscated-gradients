@@ -13,6 +13,7 @@ from defense import *
 from utils import *
 import models.pixelcnn_cifar as pixelcnn
 import numpy as np
+import time
 
 class MyModel:
     
@@ -43,14 +44,15 @@ class MyModel:
         #label = classify(new_img)
         
         #print("the label of the image is :", label)
+        timestart = time.time()
         pixeldefend = make_pixeldefend(self.sess, x, out)
-
-
-        grad, = tf.gradients(self.model.xent, self.model.x_input)
+        #grad, = tf.gradients(self.model.xent, self.model.x_input)
         adv_def = pixeldefend(new_img)
         
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
+        timeend = time.time()
+        print("time consuming for one query :", timeend -timestart)
         print(p[0])
 
         return p[0]
