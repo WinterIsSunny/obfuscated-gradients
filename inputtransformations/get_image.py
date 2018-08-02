@@ -47,14 +47,13 @@ def read_raw_images(path):
 
 def read_labels(path, num_classes, one_hot=False):
     
-    labels = []
-    dirname = paht+"train.txt"
+    dirname = path+"train.txt"
     with open(dirname) as d:
-        lable = d.readlines()
-        lables = [data for data in label]
+        label = d.readlines()
+        labels = [data for data in label]
     
     return labels
         
     
 images = read_raw_images("/data3/ILSVRC2012/train/")
-lables = read_lables("/data3/ILSVRC2012/")
+lables = read_labels("/data3/ILSVRC2012/")
