@@ -23,7 +23,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 500):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -37,12 +37,13 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 1000
+        num_directions = 100
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
         #timestart = time.time()
         for i in range(num_directions):
+            print("find initilization")
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             #print(theta.size())
             initial_lbd = torch.norm(theta)
