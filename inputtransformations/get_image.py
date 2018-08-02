@@ -9,12 +9,12 @@ Created on Thu Aug  2 11:19:23 2018
 from __future__ import print_function
 
 import os
-import glob
+#import glob
 import csv
 import tensorflow as tf
 import numpy as np
-from PIL import Image
-from .utils import dense_to_one_hot
+#from PIL import Image
+#from .utils import dense_to_one_hot
 
 
 def read_raw_images(path):
