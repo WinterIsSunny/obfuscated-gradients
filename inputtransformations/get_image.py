@@ -45,6 +45,7 @@ def read_raw_images(path):
     return jpeg_file_queue
 
 def read_and_decode(path, imshape, normalize=False, flatten=True):
+    
     """Reads
     Args:
     filename_queue:
@@ -56,12 +57,12 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
     filename_queue = read_raw_images(path)
     reader = tf.TFRecordReader()
     _, serialized_example = reader.read(filename_queue)
-      features = tf.parse_single_example(
-    serialized_example,
-    features={
-      'image_raw': tf.FixedLenFeature([], tf.string),
-      'label': tf.FixedLenFeature([], tf.int64)
-    })
+    features = tf.parse_single_example(
+            serialized_example,
+            features={
+                    'image_raw': tf.FixedLenFeature([], tf.string),
+                    'label': tf.FixedLenFeature([], tf.int64)
+                    })
     
       # Convert from a scalar string tensor (whose single string has
       # length mnist.IMAGE_PIXELS) to a uint8 tensor with shape
@@ -69,19 +70,19 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
     image = tf.decode_raw(features['image_raw'], tf.uint8)
     
     if flatten:
-    num_elements = 1
-    for i in imshape: num_elements = num_elements * i
-    print(num_elements)
-    image = tf.reshape(image, [num_elements])
-    image.set_shape(num_elements)
-      else:
-    image = tf.reshape(image, imshape)
-    image.set_shape(imshape)
+        num_elements = 1
+        for i in imshape: num_elements = num_elements * i
+        print(num_elements)
+        image = tf.reshape(image, [num_elements])
+        image.set_shape(num_elements)
+    else:
+        image = tf.reshape(image, imshape)
+        image.set_shape(imshape)
     
-      if normalize:
-    # Convert from [0, 255] -> [-0.5, 0.5] floats.
-    image = tf.cast(image, tf.float32)
-    image = tf.cast(image, tf.float32) * (1. / 255) - 0.5
+    if normalize:
+        # Convert from [0, 255] -> [-0.5, 0.5] floats.
+        image = tf.cast(image, tf.float32)
+        image = tf.cast(image, tf.float32) * (1. / 255) - 0.5
     
       # Convert label from a scalar uint8 tensor to an int32 scalar.
     label = tf.cast(features['label'], tf.int32)
