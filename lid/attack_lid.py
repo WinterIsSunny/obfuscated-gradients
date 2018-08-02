@@ -141,8 +141,8 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
             #print(alpha)
-            print("%3d th iteration" % i)
-            print("current alpha:",alpha)
+#            print("%3d th iteration" % i)
+#            print("current alpha:",alpha)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -167,6 +167,7 @@ class blackbox:
             lbd_hi = lbd*1.01
             nquery += 1
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
+                
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -179,6 +180,7 @@ class blackbox:
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
+
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -186,6 +188,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+                
         return lbd_hi, nquery
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
