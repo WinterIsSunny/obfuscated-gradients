@@ -41,18 +41,18 @@ def read_raw_images(path):
 
       # Decode if there is a PNG file:
     
-    if len(images) > 0:
-        jpeg_file_queue = tf.train.string_input_producer(images)
+#    if len(images) > 0:
+#        jpeg_file_queue = tf.train.string_input_producer(images)
         #jkey, jvalue = reader.read(jpeg_file_queue)
         #j_img = tf.image.decode_jpeg(jvalue)
     
-    return jpeg_file_queue
+    return images
 
 def get_images(path,img_shape):
-    images_queue = read_raw_images(path)
+    image_list = read_raw_images(path)
     images= []
     labels = []
-    for item in images_queue:
+    for item in image_list:
         image,label = read_and_decode(item,img_shape)
         images.append(image)
         labels.append(label)
@@ -60,7 +60,7 @@ def get_images(path,img_shape):
     return images,labels
         
 
-def read_and_decode(filename_queue, imshape, normalize=False, flatten=True):
+def read_and_decode(filename, imshape, normalize=False, flatten=True):
     
     """Reads
     Args:
@@ -70,6 +70,7 @@ def read_and_decode(filename_queue, imshape, normalize=False, flatten=True):
     flatten:
     Returns:
     """
+    filename_queue = tf.train.string_input_producer(filename)
     reader = tf.TFRecordReader()
     _, serialized_example = reader.read(filename_queue)
     features = tf.parse_single_example(
