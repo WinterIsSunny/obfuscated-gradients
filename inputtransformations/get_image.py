@@ -98,7 +98,7 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
         
 #image_queue, length= read_raw_images("/data3/ILSVRC2012/train/")
 #print("length of images:",length)
-images,labels= read_and_decode("/data3/ILSVRC2012/train/")
+images,labels= read_and_decode("/data3/ILSVRC2012/train/",(3003,299, 299, 3))
 #labels = read_labels("/data3/ILSVRC2012/")
 
 print("type of images:",type(images))
