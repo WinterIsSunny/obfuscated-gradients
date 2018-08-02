@@ -166,21 +166,28 @@ class blackbox:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
+            timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
+            timeend1 = time.time()
+            print("time consuming in 1st while:", timeend1-timestart1)
+            
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
+            timestart2 = time.time()
             while self.model.predict(x0+np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
+            timeend2 = time.time()
+            print("time consuming in the 2nd while:", timeend2 - timestart2)
     
-
+        timestart3 = time.time()
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -188,6 +195,8 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+        timeend3 = time.time()
+        print("time consuming in the 3rd while: ", timeend3 - timestart3)
                 
         return lbd_hi, nquery
     

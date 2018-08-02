@@ -31,22 +31,19 @@ def read_raw_images(path):
         for filename in dirs:
             images.append(filename)
 #    files_path = glob.glob(os.path.join(path, '*.[jJ][pP][eE][gG]'))
-#    reader = tf.WholeFileReader()
+    reader = tf.WholeFileReader()
 #    images = []
-#    reader = tf.WholeFileReader()
 #    for dir in path:
 #        for image in dir:
 #            images.append(image)
         
-
-      # Decode if there is a PNG file:
     
-#    if len(images) > 0:
-#        jpeg_file_queue = tf.train.string_input_producer(images)
-        #jkey, jvalue = reader.read(jpeg_file_queue)
-        #j_img = tf.image.decode_jpeg(jvalue)
+    if len(images) > 0:
+        jpeg_file_queue = tf.train.string_input_producer(images)
+        jkey, jvalue = reader.read(jpeg_file_queue)
+        j_img = tf.image.decode_jpeg(jvalue)
     
-    return images
+    return j_img
 
 def get_images(path,img_shape):
     image_list = read_raw_images(path)
