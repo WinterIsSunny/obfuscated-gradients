@@ -60,5 +60,5 @@ labels = read_labels("/data3/ILSVRC2012/")
 
 print("the type of images:",type(images))
 print("the length of labels:",len(labels))
-print("length of image:", len(images))
+print("shape of image:", tf.shape(images[0]))
 print("shape of image", np.array(images[0]).shape)

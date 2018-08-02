@@ -16,7 +16,7 @@ import torch
 import inceptionv3
 from utils import *
 from defense import *
-
+from get_image import *
 
 class blackbox:
     def __init__(self,model):
@@ -223,6 +223,7 @@ model = MyModel(inceptionv3,sess)
 #image_extend = tf.expand_dims(image, axis=0)
 #print("shape of image_extend: ", image_extend.shape)
 image = np.copy(orig)
+x_t
 #print(len(image),type(image))
 true_label = model.predict(image)
 print("true label of the original image is: ", true_label[0])
