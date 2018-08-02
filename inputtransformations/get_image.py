@@ -45,7 +45,7 @@ def read_raw_images(path):
     return j_img
 
 
-def read_labels(path, num_classes, one_hot=False):
+def read_labels(path):
     
     dirname = path+"train.txt"
     with open(dirname) as d:
