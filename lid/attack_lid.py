@@ -18,7 +18,7 @@ import collections
 from detect_adv_samples import detect
 from wrapper import Model
 import torch
-
+import time
 import cifar10_input
 
 class blackbox:
@@ -251,8 +251,10 @@ image = image[1:2]
 label = label[1:2]
 
 print ("the original label:",label[0])
+timestart = time.time()
 print('Clean Model Prediction', model.predict(image[0]))
-
+timeend = time.time()
+print("time consuming:", timeend - timestart)
 attack = blackbox(model)
 adv = attack.attack_untargeted(image[0],label[0])
 
