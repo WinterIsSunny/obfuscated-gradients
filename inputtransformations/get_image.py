@@ -46,7 +46,7 @@ def read_raw_images(path):
         #jkey, jvalue = reader.read(jpeg_file_queue)
         #j_img = tf.image.decode_jpeg(jvalue)
     
-    return jpeg_file_queue,len(images)
+    return jpeg_file_queue
 
 def read_and_decode(path, imshape, normalize=False, flatten=True):
     
@@ -96,18 +96,18 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
   
 
         
-image_queue, length= read_raw_images("/data3/ILSVRC2012/train/")
-print("length of images:",length)
-#images,labels= read_and_decode("/data3/ILSVRC2012/train/")
+#image_queue, length= read_raw_images("/data3/ILSVRC2012/train/")
+#print("length of images:",length)
+images,labels= read_and_decode("/data3/ILSVRC2012/train/")
 #labels = read_labels("/data3/ILSVRC2012/")
-#
-#print("type of images:",type(images))
-#print("type of labels: ",type(labels))
-#print("shape of images", tf.shape(images))
-#print("shape of image:", tf.shape(images[0]))
-#
-#print("length of images:",len(images))
-#print("length of labels: ", len(labels))
+
+print("type of images:",type(images))
+print("type of labels: ",type(labels))
+print("shape of images", tf.shape(images))
+print("shape of image:", tf.shape(images[0]))
+
+print("length of images:",len(images))
+print("length of labels: ", len(labels))
 
 
 
