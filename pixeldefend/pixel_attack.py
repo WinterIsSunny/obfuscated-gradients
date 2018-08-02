@@ -14,6 +14,7 @@ from utils import *
 from defense import *
 from wrapper import MyModel
 import torch 
+import time
 
 #import os
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -243,7 +244,10 @@ attack = blackbox(model)
 image = np.copy(orig)
 new_img = image / 255.0
 print("the original label:", TRUE_CLASS)
+timestart = time.time()
 print("predicted lable of clean image:",model.predict(new_img))
+timeend = time.time()
+print("time consuming of 1 query:", timeend-timestart)
 adv = attack.attack_untargeted(new_img,TRUE_CLASS)
 adv = np.clip(adv, lower, upper)
 
