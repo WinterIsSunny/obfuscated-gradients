@@ -44,6 +44,7 @@ class blackbox:
         
         #timestart = time.time()
         for i in range(num_directions):
+            print("Finding best direction, iteration :",i)
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             #print(theta.size())
             initial_lbd = torch.norm(theta)

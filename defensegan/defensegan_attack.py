@@ -74,7 +74,7 @@ class blackbox:
         prev_obj = 100000
         for i in range(iterations):
             if g_theta < 1:
-                print("break here 1?")
+                #print("break here 1?")
                 break
             #print("n_query:",opt_count)
             #print("distortion:", g_theta)
@@ -114,7 +114,7 @@ class blackbox:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
-                    print("break here 2 ?")
+                    #print("break here 2 ?")
                     break
     
             if min_g2 >= g2:
@@ -127,7 +127,7 @@ class blackbox:
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
-                        print("break here 3?")
+                        #print("break here 3?")
                         break
     
             if min_g2 <= min_g1:
@@ -144,7 +144,7 @@ class blackbox:
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
-                    print("break here 4?")
+                    #print("break here 4?")
                     break
     
         #target = model.predict(x0 + g_theta*best_theta)
