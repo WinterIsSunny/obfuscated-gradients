@@ -75,8 +75,9 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            print("iteration:",i)
-            if g_theta < 1:
+            
+           # print("iteration:",i)
+            if g_theta < 3:
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -149,16 +150,17 @@ class blackbox:
             print("%3d th iteration" % i)
             print("current alpha:",alpha)
             print("g_theta")
+            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
                     break
+            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
-        #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("thermometer")
         print("best distortion :", g_theta)
@@ -172,26 +174,26 @@ class blackbox:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            timestart1 = time.time()
+            #timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
-            timeend1 = time.time()
-            print("1st while time:", timeend1 - timestart1)
+            #timeend1 = time.time()
+            #print("1st while time:", timeend1 - timestart1)
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            timestart2 = time.time()
+            #timestart2 = time.time()
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-            timeend2 = time.time()
-            print("2nd while time:", timeend2 - timestart2)
+            #timeend2 = time.time()
+            #print("2nd while time:", timeend2 - timestart2)
             
-        timestart3 = time.time()
+        #timestart3 = time.time()
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -199,8 +201,8 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        timeend3 = time.time()
-        print("3rd while time:",timeend3 - timestart3)
+        #timeend3 = time.time()
+        #print("3rd while time:",timeend3 - timestart3)
         print("lbd_low:",lbd_lo)
         print("lbd_high:", lbd_hi)
         print("-----------------------------")
