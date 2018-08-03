@@ -256,7 +256,7 @@ model.load_weights("data/lid_model_cifar.h5")
 model_logits = get_model("cifar", softmax=False)
 model_logits.load_weights("data/lid_model_cifar.h5")
 
-sess = K.get_session()
+sess = K.get_session(config=tf.ConfigProto(log_device_placement=True))
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
