@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #%matplotlib inline
 from keras.models import load_model
-#import keras.backend as K
+import keras.backend as K
 from util import get_model
 from extract_artifacts import get_lid
 import collections
@@ -256,7 +256,7 @@ model.load_weights("data/lid_model_cifar.h5")
 model_logits = get_model("cifar", softmax=False)
 model_logits.load_weights("data/lid_model_cifar.h5")
 
-sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")

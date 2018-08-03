@@ -258,7 +258,7 @@ class blackbox:
     
 levels = 16
 
-sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=False))
 cifar = cifar10_input.CIFAR10Data()
 model = Model('../models/thermometer_advtrain/',
               sess, tiny=False, mode='eval',
