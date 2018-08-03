@@ -1,24 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul 30 12:45:30 2018
+Created on Thu Aug  2 17:13:04 2018
 
 @author: yusu
 """
 
 import tensorflow as tf
 import numpy as np
-from model import Model
-import models.pixelcnn_cifar as pixelcnn
+import inceptionv3
 from utils import *
 from defense import *
 from wrapper import MyModel
-import torch 
+import torch
 import time
-
-#import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 
 class blackbox:
     def __init__(self,model):
@@ -157,7 +152,7 @@ class blackbox:
         #target = model.predict(x0 + g_theta*best_theta)
         
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("pixeldefend")
+        print("randomization")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
@@ -169,26 +164,26 @@ class blackbox:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            #timestart1 = time.time()
+            timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
-            #timeend1 = time.time()
-            #print("1st while time:", timeend1 - timestart1)
+            timeend1 = time.time()
+            print("1st while time:", timeend1 - timestart1)
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            #timestart2 = time.time()
+            timestart2 = time.time()
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-            #timeend2 = time.time()
-            #print("2nd while time:", timeend2 - timestart2)
+            timeend2 = time.time()
+            print("2nd while time:", timeend2 - timestart2)
             
-        #timestart3 = time.time()
+        timestart3 = time.time()
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -196,14 +191,14 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        #timeend3 = time.time()
-        #print("3rd while time:",timeend3 - timestart3)
+        timeend3 = time.time()
+        print("3rd while time:",timeend3 - timestart3)
         print("lbd_low:",lbd_lo)
         print("lbd_high:", lbd_hi)
         print("-----------------------------")
         return lbd_hi, nquery
-
-   
+    
+    
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
@@ -241,39 +236,23 @@ class blackbox:
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
+            #print("size of image:",x0.shape)
+            #print("size of modifier,",np.array(lbd_mid*theta).shape )
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
+    
 
-
-
+###########test #############################################
 sess = tf.Session()
-x = tf.placeholder(tf.float32, (1, 32, 32, 3))
-orig = np.load('ship.npy')
-TRUE_CLASS = 8
-EPSILON = 8.0
-lower = np.clip(orig - EPSILON, 0, 255)
-upper = np.clip(orig + EPSILON, 0, 255)
-
-model = Model(mode='eval')
-saver = tf.train.Saver()
-_, out = pixelcnn.model(sess, x)
-model = MyModel(model,sess,TRUE_CLASS,saver,out,x,[0.0,255.0])
-
+orig = load_image('cat.jpg')
+image = orig.copy()/255.0
+model = MyModel(inceptionv3,sess,[0.0,255.0])
 attack = blackbox(model)
-
-image = np.copy(orig)
-new_img = image / 255.0
-print("the original label:", TRUE_CLASS)
-timestart = time.time()
-print("predicted lable of clean image:",model.predict(new_img))
-timeend = time.time()
-print("time consuming of 1 query:", timeend-timestart)
-adv = attack.attack_untargeted(new_img,TRUE_CLASS)
-adv = np.clip(adv, lower, upper)
-
-print("lable of adv sample:", model.predict(adv))
+y0 = model.predict(image)
+print("predict pure image:", y0)
+adv = attack.attack_untargeted(image,y0)
 
 

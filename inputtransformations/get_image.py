@@ -107,7 +107,7 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
         
 #image_queue, length= read_raw_images("/data3/ILSVRC2012/train/")
 #print("length of images:",length)
-images,labels= read_and_decode("/data3/ILSVRC2012/train/",(299, 299, 3))
+images,labels= read_and_decode("/data3/ILSVRC2012/train/",(3003, 99, 299, 3),normalize=False,flatten = False)
 #labels = read_labels("/data3/ILSVRC2012/")
 
 print("type of images:",type(images))
@@ -115,8 +115,8 @@ print("type of labels: ",type(labels))
 print("shape of images", tf.shape(images))
 print("shape of image:", tf.shape(images[0]))
 
-print("length of images:",len(images))
-print("length of labels: ", len(labels))
+#print("length of images:",len(images))
+#print("length of labels: ", len(labels))
 
 
 

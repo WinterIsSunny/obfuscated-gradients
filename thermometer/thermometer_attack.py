@@ -68,6 +68,7 @@ class blackbox:
         
         #timestart = time.time()
         print("the best initialization: ",g_theta)
+        print("number of queries for initialization:", query_count)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)

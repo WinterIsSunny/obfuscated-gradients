@@ -17,6 +17,7 @@ import inceptionv3
 from utils import *
 from defense import *
 from get_image import *
+import time
 
 class blackbox:
     def __init__(self,model):
@@ -35,7 +36,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 1000
+        num_directions = 100
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -68,7 +69,9 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            if g_theta < 1:
+            
+           # print("iteration:",i)
+            if g_theta < 3:
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -80,14 +83,14 @@ class blackbox:
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
-                print("g1 :",g1)
+                #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            
+            print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -99,13 +102,13 @@ class blackbox:
             min_theta = theta
             min_g2 = g2
             
-            print("gradient:", gradient)
-            print("theta:",theta)
+            #print("gradient:", gradient)
+           # print("theta:",theta)
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
                 print("alpha in the first for loop is: ",alpha)
@@ -114,20 +117,21 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
+            print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.95
+                    alpha = alpha * 0.5
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                     opt_count += count
                     print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-    
+            print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
@@ -136,21 +140,23 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-            #print(alpha)
+            
             print("%3d th iteration" % i)
             print("current alpha:",alpha)
+            print("g_theta")
+            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
                     break
+            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
-        #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("inputtransformation")
+        print("thermometer")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
@@ -162,19 +168,26 @@ class blackbox:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
+            timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
+            timeend1 = time.time()
+            print("1st while time:", timeend1 - timestart1)
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
+            timestart2 = time.time()
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-    
+            timeend2 = time.time()
+            print("2nd while time:", timeend2 - timestart2)
+            
+        timestart3 = time.time()
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -182,8 +195,13 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+        timeend3 = time.time()
+        print("3rd while time:",timeend3 - timestart3)
+        print("lbd_low:",lbd_lo)
+        print("lbd_high:", lbd_hi)
+        print("-----------------------------")
         return lbd_hi, nquery
-    
+       
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
