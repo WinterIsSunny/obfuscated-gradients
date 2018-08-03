@@ -74,6 +74,7 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
+            print("iteration:",i)
             if g_theta < 1:
                 break
             gradient = torch.zeros(theta.size())
@@ -86,7 +87,7 @@ class blackbox:
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
-                print("g1 :",g1)
+                #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
@@ -105,8 +106,8 @@ class blackbox:
             min_theta = theta
             min_g2 = g2
             
-            print("gradient:", gradient)
-            print("theta:",theta)
+            #print("gradient:", gradient)
+           # print("theta:",theta)
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
@@ -145,6 +146,7 @@ class blackbox:
             #print(alpha)
             print("%3d th iteration" % i)
             print("current alpha:",alpha)
+            print("g_theta")
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -188,6 +190,8 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+        print("lbd_low:",lbd_lo)
+        print("lbd_high:", lbd_hi)
         return lbd_hi, nquery
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):

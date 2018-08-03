@@ -440,9 +440,7 @@ adv = attack.attack_untargeted(image,true_label)
 
 #adv = attack.attack_targeted(image,true_label,924)
 
-
-adv_label = model.predict(adv)
-print("target lable is: ", TARGET)
+adv_label = model.predict(adv)#print("target lable is: ", TARGET)
 print("label after attack is: ", adv_label)
 
 
