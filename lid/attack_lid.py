@@ -119,7 +119,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.95
+                    alpha = alpha * 0.5
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     print("before 3rd binary search")

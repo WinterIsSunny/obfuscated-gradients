@@ -31,7 +31,7 @@ def read_raw_images(path):
         for filename in dirs:
             images.append(filename)
 #    files_path = glob.glob(os.path.join(path, '*.[jJ][pP][eE][gG]'))
-    reader = tf.WholeFileReader()
+#    reader = tf.WholeFileReader()
 #    images = []
 #    for dir in path:
 #        for image in dir:
@@ -40,24 +40,24 @@ def read_raw_images(path):
     
     if len(images) > 0:
         jpeg_file_queue = tf.train.string_input_producer(images)
-        jkey, jvalue = reader.read(jpeg_file_queue)
-        j_img = tf.image.decode_jpeg(jvalue)
+#        jkey, jvalue = reader.read(jpeg_file_queue)
+#        j_img = tf.image.decode_jpeg(jvalue)
     
-    return j_img
+    return jpeg_file_queue
 
-def get_images(path,img_shape):
-    image_list = read_raw_images(path)
-    images= []
-    labels = []
-    for item in image_list:
-        image,label = read_and_decode(item,img_shape)
-        images.append(image)
-        labels.append(label)
-        
-    return images,labels
+#def get_images(path,img_shape):
+#    image_list = read_raw_images(path)
+#    images= []
+#    labels = []
+#    for item in image_list:
+#        image,label = read_and_decode(item,img_shape)
+#        images.append(image)
+#        labels.append(label)
+#        
+#    return images,labels
         
 
-def read_and_decode(filename, imshape, normalize=False, flatten=True):
+def read_and_decode(path, imshape, normalize=False, flatten=True):
     
     """Reads
     Args:
@@ -67,7 +67,7 @@ def read_and_decode(filename, imshape, normalize=False, flatten=True):
     flatten:
     Returns:
     """
-    filename_queue = tf.train.string_input_producer(filename)
+    filename_queue = read_raw_images(path)
     reader = tf.TFRecordReader()
     _, serialized_example = reader.read(filename_queue)
     features = tf.parse_single_example(
@@ -107,7 +107,7 @@ def read_and_decode(filename, imshape, normalize=False, flatten=True):
         
 #image_queue, length= read_raw_images("/data3/ILSVRC2012/train/")
 #print("length of images:",length)
-images,labels= get_images("/data3/ILSVRC2012/train/",(299, 299, 3))
+images,labels= read_and_decode("/data3/ILSVRC2012/train/",(299, 299, 3))
 #labels = read_labels("/data3/ILSVRC2012/")
 
 print("type of images:",type(images))
