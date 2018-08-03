@@ -95,7 +95,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            
+            print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -122,6 +122,7 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
+            print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
@@ -135,7 +136,7 @@ class blackbox:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-    
+            print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
@@ -202,6 +203,7 @@ class blackbox:
         print("3rd while time:",timeend3 - timestart3)
         print("lbd_low:",lbd_lo)
         print("lbd_high:", lbd_hi)
+        print("-----------------------------")
         return lbd_hi, nquery
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
