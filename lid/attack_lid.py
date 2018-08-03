@@ -38,7 +38,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 10000
+        num_directions = 5000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -52,6 +52,8 @@ class blackbox:
             theta = theta/torch.norm(theta)
             lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
             query_count += count
+            if (i+1)%500 == 0:
+                print("iter:", i+1)
             if lbd < g_theta:
                 best_theta, g_theta = theta,lbd
                 print("--------> Found distortion %.4f" % g_theta)
@@ -76,7 +78,7 @@ class blackbox:
             if g_theta < 3:
                 break
             gradient = torch.zeros(theta.size())
-            q = 50
+            q = 30
             min_g1 = float('inf')
             for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)

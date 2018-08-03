@@ -80,7 +80,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 2.5:
+            if g_theta < 2:
                 break
             gradient = torch.zeros(theta.size())
             q = 30
