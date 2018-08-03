@@ -82,9 +82,9 @@ class blackbox:
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
-                print("before 1st binary search")
+                print("before 1st for loop")
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
-                print("after 1st binary search")
+                print("after 1st for loop")
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
@@ -105,9 +105,9 @@ class blackbox:
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
-                print("before 2nd binary search")
+                print("before 2nd for loop")
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
-                print("after 2nd binary search")
+                print("after 2nd for loop")
                 opt_count += count
                 alpha = alpha * 2
                 print("alpha in the first for loop is: ",alpha)
@@ -122,9 +122,9 @@ class blackbox:
                     alpha = alpha * 0.5
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    print("before 3rd binary search")
+                    print("before 3rd for loop")
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
-                    print("after 3rd binary search")
+                    print("after 3rd for loop")
                     opt_count += count
                     print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
@@ -163,6 +163,7 @@ class blackbox:
         lbd = initial_lbd
          
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
+            
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
@@ -174,7 +175,8 @@ class blackbox:
                 if lbd_hi > 20:
                     print("something goes wrong here")
                     return float('inf'), nquery
-                
+            print("lbd_low:", lbd_lo)
+            print("lbd_high",lbd_hi)
             timeend1 = time.time()
             print("time consuming in 1st while:", timeend1-timestart1)
             
@@ -187,6 +189,8 @@ class blackbox:
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
             timeend2 = time.time()
+            print("lbd_low:", lbd_lo)
+            print("lbd_high",lbd_hi)
             print("time consuming in the 2nd while:", timeend2 - timestart2)
     
         timestart3 = time.time()
@@ -198,6 +202,8 @@ class blackbox:
             else:
                 lbd_lo = lbd_mid
         timeend3 = time.time()
+        print("lbd_low:", lbd_lo)
+        print("lbd_high",lbd_hi)
         print("time consuming in the 3rd while: ", timeend3 - timestart3)
                 
         return lbd_hi, nquery
