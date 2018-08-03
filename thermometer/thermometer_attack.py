@@ -81,7 +81,7 @@ class blackbox:
             if g_theta < 2.5:
                 break
             gradient = torch.zeros(theta.size())
-            q = 10
+            q = 50
             min_g1 = float('inf')
             for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
