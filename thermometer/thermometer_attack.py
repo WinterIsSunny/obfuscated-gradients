@@ -42,7 +42,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 100
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -77,7 +77,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 3:
+            if g_theta < 2.5:
                 break
             gradient = torch.zeros(theta.size())
             q = 10
