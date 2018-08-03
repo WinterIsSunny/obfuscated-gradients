@@ -237,7 +237,8 @@ upper = np.clip(orig + EPSILON, 0, 255)
 
 model = Model(mode='eval')
 saver = tf.train.Saver()
-model = MyModel(model,sess,TRUE_CLASS,saver,[0.0,255.0])
+_, out = pixelcnn.model(self.sess, x)
+model = MyModel(model,sess,TRUE_CLASS,saver,out,[0.0,255.0])
 
 attack = blackbox(model)
 

@@ -17,12 +17,13 @@ import time
 
 class MyModel:
     
-    def __init__(self,model,sess,TRUE_CLASS,saver,bounds):
+    def __init__(self,model,sess,TRUE_CLASS,saver,out,bounds):
         self.bounds = bounds
         self.model = model
         self.sess = sess
         self.TRUE_CLASS = TRUE_CLASS
         self.saver = saver
+        self.out = out
     
     def predict(self,image):
         if self.bounds[1] == 255.0:
@@ -36,7 +37,7 @@ class MyModel:
         self.saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
         
         x = tf.placeholder(tf.float32, (1, 32, 32, 3))
-        _, out = pixelcnn.model(self.sess, x)
+        
         
         #logits = self.model.pre_softmax
         #probs = tf.nn.softmax(logits)
@@ -45,7 +46,7 @@ class MyModel:
         
         #print("the label of the image is :", label)
         timestart = time.time()
-        pixeldefend = make_pixeldefend(self.sess, x, out)
+        pixeldefend = make_pixeldefend(self.sess, x, self.out)
         #grad, = tf.gradients(self.model.xent, self.model.x_input)
         adv_def = pixeldefend(new_img)
         
