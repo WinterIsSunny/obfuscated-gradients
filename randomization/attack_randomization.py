@@ -263,7 +263,9 @@ model = MyModel(inceptionv3,sess,[0.0,255.0])
 print("after loading model")
 attack = blackbox(model)
 y0 = model.predict(image)
+y1 = model.predict(image)
 print("predict pure image:", y0)
-adv = attack.attack_untargeted(image,y0)
+print("predict pure image:", y1)
+adv = attack.attack_untargeted(image,y1)
 
 
