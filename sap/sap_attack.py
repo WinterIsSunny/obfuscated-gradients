@@ -73,7 +73,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 3:
+            if g_theta < 1:
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -265,7 +265,7 @@ new_img = image/255.0
 
 print("original label is :", label)
 #print(len(image))
-print(image[0].shape)
+
 print("label of clean image:", model.predict(new_img[0]))
 adv = attack.attack_untargeted(new_img[0],label[0])
 
