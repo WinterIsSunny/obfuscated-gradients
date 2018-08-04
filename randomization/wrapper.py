@@ -31,6 +31,6 @@ class MyModel:
         cropped_logits, cropped_preds = self.model.model(self.sess, self.cropped_x)
         logits,label = self.sess.run([cropped_logits,cropped_preds],{self.cropped_x:new_img})
         
-        return label[0]
+        return label
 
         

@@ -249,7 +249,9 @@ class blackbox:
 sess = tf.Session()
 orig = load_image('cat.jpg')
 image = orig.copy()/255.0
+print("Before loading model")
 model = MyModel(inceptionv3,sess,[0.0,255.0])
+print("after loading model")
 attack = blackbox(model)
 y0 = model.predict(image)
 print("predict pure image:", y0)
