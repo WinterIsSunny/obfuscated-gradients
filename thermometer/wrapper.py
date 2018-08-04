@@ -27,5 +27,5 @@ class MyModel:
         xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
         encode = discretize_uniform(xs/255.0, levels=levels, thermometer=True)
         thermometer_encoded = self.sess.run(encode, {xs: new_img})
-        label = self.sess.run(self.model.predictions, {self.model.x_input: thermometer_encoded})
-        return label[0]
+        
+        return self.sess.run(self.model.predictions, {self.model.x_input: thermometer_encoded})
