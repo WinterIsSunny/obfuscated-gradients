@@ -14,6 +14,8 @@ class Model:
         self.model_logit = model_logit
         self.sess = sess
         self.bounds = bounds
+        self.x_input = tf.placeholder(tf.float32, (None, 32, 32, 3))
+        self.logits = self.model_logit(x_input)
     def predict(self,image):
         if self.bounds[1] == 255.0:
             new_img = image * 255.0
@@ -22,8 +24,7 @@ class Model:
             new_img = np.clip(image,0.0,1.0)
 
         new_img = [new_img]
-        x_input = tf.placeholder(tf.float32, (None, 32, 32, 3))
-        logits = self.model_logit(x_input)
-        label = np.argmax(self.sess.run(logits, {x_input:new_img}))
+        
+        label = np.argmax(self.sess.run(self.logits, {self.x_input:new_img}))
         return label
     
