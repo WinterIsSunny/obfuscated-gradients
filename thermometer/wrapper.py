@@ -16,7 +16,7 @@ class MyModel:
         self.bounds = bounds
         self.xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
         self.levels = levels
-        self.encode = discretize_uniform(self.xs/255.0, self.levels=levels, thermometer=True)
+        self.encode = discretize_uniform(self.xs/255.0, levels=self.levels, thermometer=True)
         
     def predict(self,image):
         if self.bounds[1] == 255.0:
