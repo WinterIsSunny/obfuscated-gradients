@@ -10,11 +10,13 @@ from discretization_utils import discretize_uniform
 import numpy as np
 
 class MyModel:
-    def __init__(self,model,sess,bounds):
+    def __init__(self,model,sess,levels,bounds):
         self.model = model
         self.sess = sess
         self.bounds = bounds
         self.xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
+        self.levels = levels
+        self.encode = discretize_uniform(self.xs/255.0, self.levels=levels, thermometer=True)
         
     def predict(self,image):
         if self.bounds[1] == 255.0:
@@ -24,8 +26,6 @@ class MyModel:
             new_img = np.clip(image,0.0,1.0)
 
         new_img = [new_img]
-        levels = 16
-        encode = discretize_uniform(self.xs/255.0, levels=levels, thermometer=True)
-        thermometer_encoded = self.sess.run(encode, {self.xs: new_img})
+        thermometer_encoded = self.sess.run(self.encode, {self.xs: new_img})
         
         return self.sess.run(self.model.predictions, {self.model.x_input: thermometer_encoded})

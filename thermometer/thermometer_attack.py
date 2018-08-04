@@ -263,7 +263,7 @@ cifar = cifar10_input.CIFAR10Data()
 model = Model('../models/thermometer_advtrain/',
               sess, tiny=False, mode='eval',
               thermometer=True, levels=levels)
-model = MyModel(model,sess,[0.0,255.0])
+model = MyModel(model,sess,levels,[0.0,255.0])
 
 image = np.array(cifar.eval_data.xs[:1],dtype=np.float32)
 label = cifar.eval_data.ys[:1]
