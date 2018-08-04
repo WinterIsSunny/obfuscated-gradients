@@ -21,7 +21,7 @@ class MyModel:
         self.bounds = bounds
         self.x = tf.placeholder(tf.float32, (299, 299, 3))
         self.x_expanded = tf.expand_dims(self.x, axis=0)
-        logits, preds = self.model.model(self.sess, self.x_expanded)
+        self.logits, self.preds = self.model.model(self.sess, self.x_expanded)
     
     def predict(self,image):
         if self.bounds[1] == 255.0:
