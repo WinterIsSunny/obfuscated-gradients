@@ -27,9 +27,9 @@ class MyModel:
         else:
             new_img = np.clip(image,0.0,255.0)
             
-        new_img = [new_img]
+#        new_img = [new_img]
         
-        logits,label = self.sess.run([self.cropped_logits,self.cropped_preds],{self.x:new_img})
+        logits,label = self.sess.run([self.cropped_logits,self.cropped_preds],{self.x:[new_img]})
         
         return label
 
