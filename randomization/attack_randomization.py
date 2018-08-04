@@ -267,5 +267,6 @@ y1 = model.predict(image)
 print("predict pure image:", y0)
 print("predict pure image:", y1)
 adv = attack.attack_untargeted(image,y1)
+print("new label:", model.predict(adv))
 
 
