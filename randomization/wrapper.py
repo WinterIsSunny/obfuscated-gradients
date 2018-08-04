@@ -29,7 +29,7 @@ class MyModel:
             
 #        new_img = [new_img]
         
-        logits,label = self.sess.run([self.cropped_logits,self.cropped_preds],{self.x:[new_img]})
+        logits,label = self.sess.run([self.cropped_logits,self.cropped_preds],{self.x:new_img})
         
         return label
 
