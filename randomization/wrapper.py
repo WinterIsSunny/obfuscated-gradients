@@ -15,7 +15,7 @@ class MyModel:
         self.sess = sess
         self.model = model
         self.bounds = bounds
-        self.x = tf.placeholder(tf.float32, (331, 331, 3))
+        self.x = tf.placeholder(tf.float32, (299, 299, 3))
         self.x_expanded = tf.expand_dims(self.x, axis=0)
         self.cropped_x = defend(self.x_expanded)
         self.cropped_logits, self.cropped_preds = self.model.model(self.sess, self.cropped_x)
@@ -29,7 +29,7 @@ class MyModel:
             
         new_img = [new_img]
         
-        logits,label = self.sess.run([self.cropped_logits,self.cropped_preds],{self.cropped_x:new_img})
+        logits,label = self.sess.run([self.cropped_logits,self.cropped_preds],{self.x:new_img})
         
         return label
 
