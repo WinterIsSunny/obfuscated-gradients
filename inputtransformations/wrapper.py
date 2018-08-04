@@ -19,6 +19,9 @@ class MyModel:
         self.model = model
         self.sess = sess
         self.bounds = bounds
+        self.x = tf.placeholder(tf.float32, (299, 299, 3))
+        self.x_expanded = tf.expand_dims(self.x, axis=0)
+        logits, preds = self.model.model(self.sess, self.x_expanded)
     
     def predict(self,image):
         if self.bounds[1] == 255.0:
@@ -27,10 +30,8 @@ class MyModel:
         else:
             new_img = np.clip(image,0.0,1.0)
 
-        x = tf.placeholder(tf.float32, (299, 299, 3))
-        x_expanded = tf.expand_dims(x, axis=0)
-        logits, preds = self.model.model(self.sess, x_expanded)
-        preds = self.sess.run([preds], {x: new_img})
-        print("type of preds[0] is: ",type(preds[0]))
-        return preds[0]
+        
+        labels = self.sess.run([self.preds], {self.x: new_img})
+        #print("type of preds[0] is: ",type(preds[0]))
+        return labels[0]
         
