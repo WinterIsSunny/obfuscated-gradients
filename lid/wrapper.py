@@ -15,7 +15,7 @@ class Model:
         self.sess = sess
         self.bounds = bounds
         self.x_input = tf.placeholder(tf.float32, (None, 32, 32, 3))
-        self.logits = self.model_logit(x_input)
+        self.logits = self.model_logit(self.x_input)
     def predict(self,image):
         if self.bounds[1] == 255.0:
             new_img = image * 255.0
