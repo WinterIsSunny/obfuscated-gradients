@@ -27,6 +27,9 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
+        pred = self.model.predict(x0)
+        print("predicted label:", pred)
+        print("true label:", y0)
 
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
