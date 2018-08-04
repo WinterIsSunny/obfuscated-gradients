@@ -14,6 +14,7 @@ class MyModel:
         self.model = model
         self.sess = sess
         self.bounds = bounds
+        self.xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
         
     def predict(self,image):
         if self.bounds[1] == 255.0:
@@ -24,8 +25,7 @@ class MyModel:
 
         new_img = [new_img]
         levels = 16
-        xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
-        encode = discretize_uniform(xs/255.0, levels=levels, thermometer=True)
-        thermometer_encoded = self.sess.run(encode, {xs: new_img})
+        encode = discretize_uniform(self.xs/255.0, levels=levels, thermometer=True)
+        thermometer_encoded = self.sess.run(encode, {self.xs: new_img})
         
         return self.sess.run(self.model.predictions, {self.model.x_input: thermometer_encoded})
