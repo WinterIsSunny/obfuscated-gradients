@@ -98,6 +98,7 @@ class blackbox:
                 
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
+                    print("2nd break")
                     break
                 prev_obj = g2
     
@@ -110,7 +111,7 @@ class blackbox:
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
                 print("alpha in the first for loop is: ",alpha)
@@ -118,6 +119,7 @@ class blackbox:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
+                    print("3rd break")
                     break
             print("=============================================")
     
@@ -132,7 +134,9 @@ class blackbox:
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
+                        print("4th break")
                         break
+                    
             print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
@@ -152,6 +156,7 @@ class blackbox:
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
+                    print("5th break")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
