@@ -25,7 +25,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 0.2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.05, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -154,7 +154,7 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.1
+                beta = beta * 0.5
                 if (beta < 0.0005):
                     print("5th break")
                     break
