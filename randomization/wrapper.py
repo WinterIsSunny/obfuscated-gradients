@@ -18,7 +18,7 @@ class MyModel:
         self.x = tf.placeholder(tf.float32, (299, 299, 3))
         self.x_expanded = tf.expand_dims(self.x, axis=0)
         self.cropped_x = defend(self.x_expanded)
-        self.cropped_logits, self.cropped_preds = self.model.model(self.sess, self.cropped_x)
+        
         
     def predict(self,image):
         if self.bounds[1] == 255.0:
@@ -28,7 +28,8 @@ class MyModel:
             new_img = np.clip(image,0.0,255.0)
             
         new_img = [new_img]
-        logits,label = self.sess.run([self.cropped_logits,self.cropped_preds],{self.cropped_x:new_img})
+        cropped_logits, cropped_preds = self.model.model(self.sess, self.cropped_x)
+        logits,label = self.sess.run([cropped_logits,cropped_preds],{self.cropped_x:new_img})
         
         return label[0]
 
