@@ -249,19 +249,19 @@ class blackbox:
             #         break
         
             # lbd_lo = lambdas[lbd_hi_index - 1]
-            lbd_hi = lbd
-            lbd_lo = 0.0
-        
-            while (lbd_hi - lbd_lo) > 1e-5:
-                lbd_mid = (lbd_lo + lbd_hi)/2.0
-                nquery += 1
-                #print("size of image:",x0.shape)
-                #print("size of modifier,",np.array(lbd_mid*theta).shape )
-                if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
-                    lbd_hi = lbd_mid
-                else:
-                    lbd_lo = lbd_mid
-            return lbd_hi, nquery
+        lbd_hi = lbd
+        lbd_lo = 0.0
+    
+        while (lbd_hi - lbd_lo) > 1e-5:
+            lbd_mid = (lbd_lo + lbd_hi)/2.0
+            nquery += 1
+            #print("size of image:",x0.shape)
+            #print("size of modifier,",np.array(lbd_mid*theta).shape )
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+                lbd_hi = lbd_mid
+            else:
+                lbd_lo = lbd_mid
+        return lbd_hi, nquery
 
 
     
