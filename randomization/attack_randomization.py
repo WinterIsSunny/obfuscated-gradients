@@ -268,7 +268,7 @@ attack = blackbox(model)
 #label = 282
 print("predict pure image:",y0 )
 #print("predict pure image:", y1)
-adv = attack.attack_untargeted(image,label)
+adv = attack.attack_untargeted(image,y0)
 print("new label:", model.predict(adv))
 
 
