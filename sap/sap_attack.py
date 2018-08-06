@@ -25,7 +25,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.05, iterations = 1000):
+def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -33,13 +33,12 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
-        print("at the very beginning, original label:", y0)
 
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 1000
+        num_directions = 2000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -48,12 +47,10 @@ class blackbox:
         
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
+            #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
-                query_count += 1 
-                #print(type(theta),type(initial_lbd),type(g_theta))
-                #print("find a new adv direction, new label:", self.model.predict(x0+np.array(initial_lbd*theta)))
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
@@ -66,12 +63,12 @@ class blackbox:
         
             #timeend = time.time()
             #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-    
+        
+        
         
         
         #timestart = time.time()
         print("the best initialization: ",g_theta)
-        print("new label for this initialization :", self.model.predict(x0+np.array(g_theta*best_theta)))
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
@@ -82,11 +79,9 @@ class blackbox:
             
            # print("iteration:",i)
             if g_theta < 1:
-                print("outer break 1")
                 break
-            
             gradient = torch.zeros(theta.size())
-            q = 10
+            q = 30
             min_g1 = float('inf')
             for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
@@ -108,7 +103,6 @@ class blackbox:
                 
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
-                    print("outer break 2")
                     break
                 prev_obj = g2
     
@@ -129,7 +123,6 @@ class blackbox:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
-                    print("innerr break 1")
                     break
             print("=============================================")
     
@@ -144,9 +137,7 @@ class blackbox:
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
-                        print("inner break 2")
                         break
-                    
             print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
@@ -164,16 +155,15 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.5
+                beta = beta * 0.1
                 if (beta < 0.0005):
-                    print("outer break 3")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("sap")
+        print("lid")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
@@ -218,7 +208,7 @@ class blackbox:
         print("lbd_high:", lbd_hi)
         print("-----------------------------")
         return lbd_hi, nquery
-      
+        
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
@@ -232,7 +222,7 @@ class blackbox:
             print("******")
         else:
             lbd = initial_lbd
-            
+        
         ## original version
         #lbd = initial_lbd
         #while model.predict(x0 + lbd*theta) == y0:
@@ -256,28 +246,23 @@ class blackbox:
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
-        
         print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         print("norm of lbd_hi*theta 2:", np.linalg.norm(x0+ np.array(lbd*theta)))
         print("******")
-        
     
-        while (lbd_hi - lbd_lo) > 1e-3:
+        while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        #print("find a better initialization")
-        #print("labelafter fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         print("after binary search: lbd_ih:", lbd_hi,"***")
         print("label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         print("norm of lbd_hi*theta 3:", np.linalg.norm(x0+ np.array(lbd_hi*theta)))
         print("******")
         return lbd_hi, nquery
-
 
     
 
