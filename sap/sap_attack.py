@@ -47,7 +47,6 @@ class blackbox:
         
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             #print(type(theta),type(initial_lbd),type(g_theta))
@@ -251,6 +250,7 @@ class blackbox:
             # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
+        print("label before fine_grained binary search:", self.model.predict(x0+ np.array(lbd*theta)))
     
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
