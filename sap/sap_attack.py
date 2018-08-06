@@ -60,13 +60,12 @@ class blackbox:
                     best_theta, g_theta = theta,lbd
                     print("new g_theta :", g_theta,"***")
                     print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
-                    print("norm of theta*lbd 4:", torch.norm(x0+np.array(g_theta*best_theta)))
+                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
                     print("--------> Found distortion %.4f" % g_theta)
         
             #timeend = time.time()
             #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-        
-        
+    
         
         
         #timestart = time.time()
@@ -228,7 +227,7 @@ class blackbox:
             lbd = current_best
             print("assign lbd = current_best, lbd = ",lbd,"***")
             print("after assigning lbd = current_best,       label :",self.model.predict(x0+ np.array(lbd*theta)))
-            print("norm of adv 1:", torch.norm(x0+ np.array(lbd*theta)))
+            print("norm of adv 1:", np.linalg.norm(x0+ np.array(lbd*theta)))
         else:
             lbd = initial_lbd
             
@@ -258,7 +257,7 @@ class blackbox:
         
         print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
-        print("norm of lbd_hi*theta 2:", torch.norm(x0+ np.array(lbd*theta)))
+        print("norm of lbd_hi*theta 2:", np.linalg.norm(x0+ np.array(lbd*theta)))
         
     
         while (lbd_hi - lbd_lo) > 1e-3:
@@ -272,7 +271,7 @@ class blackbox:
         #print("labelafter fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         print("after binary search: lbd_ih:", lbd_hi,"***")
         print("label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
-        print("norm of lbd_hi*theta 3:", torch.norm(x0+ np.array(lbd_hi*theta)))
+        print("norm of lbd_hi*theta 3:", np.linalg.norm(x0+ np.array(lbd_hi*theta)))
         return lbd_hi, nquery
 
 
