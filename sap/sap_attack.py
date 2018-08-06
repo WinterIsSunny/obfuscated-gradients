@@ -50,18 +50,19 @@ class blackbox:
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            #print(type(theta),type(initial_lbd),type(g_theta))
-            lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-            query_count += count
-            if lbd < g_theta:
-                best_theta, g_theta = theta,lbd
-                tmp_init = self.model.predict(x0+np.array(g_theta*best_theta))
-                print("label for random direction:",tmp_init)
-                print("--------> Found distortion %.4f" % g_theta)
-    
-        #timeend = time.time()
-        #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-    
+            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                #print(type(theta),type(initial_lbd),type(g_theta))
+                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+                query_count += count
+                if lbd < g_theta:
+                    best_theta, g_theta = theta,lbd
+                    tmp_init = self.model.predict(x0+np.array(g_theta*best_theta))
+                    print("label for random direction:",tmp_init)
+                    print("--------> Found distortion %.4f" % g_theta)
+        
+            #timeend = time.time()
+            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        
         
         
         
@@ -220,14 +221,10 @@ class blackbox:
         if initial_lbd > current_best: 
             if self.model.predict(x0+ np.array(current_best*theta)) == y0:
                 nquery += 1
-                print("initial_lbd > current_best & predict == y0, so return inf")
+                #print("initial_lbd > current_best & predict == y0, so return inf")
                 return float('inf'), nquery
             lbd = current_best
         else:
-            if self.model.predict(x0+ np.array(initial_lbd*theta)) == y0:
-                nquery += 1
-                print("initial_lbd < current_best & predict == y0, so return inf")
-                return float('inf'), nquery
             lbd = initial_lbd
             
         ## original version
