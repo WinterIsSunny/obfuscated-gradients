@@ -50,17 +50,20 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-            query_count += count
-            if (i+1)%500 == 0:
-                print("iter:", i+1)
-            if lbd < g_theta:
-                best_theta, g_theta = theta,lbd
-                print("--------> Found distortion %.4f" % g_theta)
-    
-        #timeend = time.time()
-        #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-    
+            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+                query_count += count
+                if lbd < g_theta:
+                    print("new g_theta :", g_theta,"***")
+                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
+                    print("******")
+                    best_theta, g_theta = theta,lbd
+                    print("--------> Found distortion %.4f" % g_theta)
+        
+            #timeend = time.time()
+            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        
         
         
         
@@ -213,6 +216,10 @@ class blackbox:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
+            print("assign lbd = current_best, lbd = ",lbd,"***")
+            print("after assigning lbd = current_best,       label :",self.model.predict(x0+ np.array(lbd*theta)))
+            print("norm of adv 1:", np.linalg.norm(x0+ np.array(lbd*theta)))
+            print("******")
         else:
             lbd = initial_lbd
         
@@ -239,6 +246,10 @@ class blackbox:
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
+        print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
+        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        print("norm of lbd_hi*theta 2:", np.linalg.norm(x0+ np.array(lbd*theta)))
+        print("******")
     
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
@@ -247,6 +258,10 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+        print("after binary search: lbd_ih:", lbd_hi,"***")
+        print("label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        print("norm of lbd_hi*theta 3:", np.linalg.norm(x0+ np.array(lbd_hi*theta)))
+        print("******")
         return lbd_hi, nquery
     
 
