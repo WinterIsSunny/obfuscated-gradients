@@ -54,11 +54,11 @@ class blackbox:
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
+                    best_theta, g_theta = theta,lbd
                     print("new g_theta :", g_theta,"***")
                     print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
                     print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
                     print("******")
-                    best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
         
             #timeend = time.time()
