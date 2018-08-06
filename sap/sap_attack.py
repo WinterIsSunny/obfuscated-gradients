@@ -38,7 +38,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 10000
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -54,6 +54,7 @@ class blackbox:
             query_count += count
             if lbd < g_theta:
                 best_theta, g_theta = theta,lbd
+                print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
                 print("--------> Found distortion %.4f" % g_theta)
     
         #timeend = time.time()
