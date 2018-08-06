@@ -441,7 +441,7 @@ orig = load_image('cat.jpg')
 #print("type of orig:. ", type(orig))
 #print("size of orig: ", orig.shape)
 #print("length of orig: ",len(orig))
-TARGET = 924 # guacamole  
+#TARGET = 924 # guacamole  
 
 model = MyModel(inceptionv3,sess,[0.0,255.0])
 #print(orig.shape)
@@ -451,7 +451,7 @@ model = MyModel(inceptionv3,sess,[0.0,255.0])
 image = np.copy(orig)/255.0
 
 #print(len(image),type(image))
-true_label = 282
+true_label = 287
 print("true label of the original image is: ", true_label)
 attack = blackbox(model)
 adv = attack.attack_untargeted(image,true_label)
