@@ -224,6 +224,7 @@ class blackbox:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
+            print("assign lbd = current_best, lbd = ",lbd)
             print("after assigning lbd = current_best,       label :",self.model.predict(x0+ np.array(current_best*theta)))
         else:
             lbd = initial_lbd
@@ -251,6 +252,7 @@ class blackbox:
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
+        print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi)
         #print("initial_lbd: ",initial_lbd)
         #print("current_best: ",current_best)
         #print("lbd: ", lbd)
