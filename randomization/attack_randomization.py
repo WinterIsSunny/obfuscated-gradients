@@ -262,13 +262,13 @@ image = orig.copy()/255.0
 #print("Before loading model")
 model = MyModel(inceptionv3,sess,[0.0,255.0])
 
-#y0 = model.predict(image)
+y0 = model.predict(image)
 #print("after loading model")
 attack = blackbox(model)
-label = 287
-print("predict pure image:",label )
+#label = 287
+print("predict pure image:",y0)
 #print("predict pure image:", y1)
-adv = attack.attack_untargeted(image,label)
+adv = attack.attack_untargeted(image,y0)
 print("new label:", model.predict(adv))
 
 
