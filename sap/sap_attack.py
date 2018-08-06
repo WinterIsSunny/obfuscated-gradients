@@ -266,6 +266,7 @@ class blackbox:
         #print("find a better initialization")
         #print("labelafter fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
 #        print("after binary search: lbd_ih:", lbd_hi,"***")
+        print("label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         return lbd_hi, nquery
 
 
