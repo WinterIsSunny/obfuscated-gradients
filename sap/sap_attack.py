@@ -255,7 +255,7 @@ class blackbox:
         #print("lbd: ", lbd)
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
-        while (lbd_hi - lbd_lo) > 1e-4:
+        while (lbd_hi - lbd_lo) > 1e-3:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
