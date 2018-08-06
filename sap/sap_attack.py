@@ -64,6 +64,7 @@ class blackbox:
         
         #timestart = time.time()
         print("the best initialization: ",g_theta)
+        print("new label for this initialization :", self.model.predict(x0+np.array(g_theta*best_theta)))
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
