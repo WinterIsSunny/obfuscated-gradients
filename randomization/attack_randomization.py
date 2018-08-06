@@ -242,7 +242,8 @@ class blackbox:
     
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
-        lbd_lo = 0.0
+        lbd_lo = 0.
+        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
@@ -251,7 +252,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        print("find a better initialization")
+        #print("find a better initialization")
         return lbd_hi, nquery
     
 
