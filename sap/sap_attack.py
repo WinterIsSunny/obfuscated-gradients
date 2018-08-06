@@ -33,6 +33,7 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
+        print("at the very beginning, original label:", y0)
 
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
@@ -261,6 +262,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+        print("label before return:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         return lbd_hi, nquery
 
 
