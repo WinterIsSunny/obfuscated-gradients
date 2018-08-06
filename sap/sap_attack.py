@@ -216,51 +216,51 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-           # tmp_label = self.model.predict(x0+ np.array(current_best*theta))
-            #print("label in binary search:",tmp_label)
             if self.model.predict(x0+ np.array(current_best*theta)) == y0:
                 nquery += 1
-                #print("cannot find a proper bound")
                 return float('inf'), nquery
             lbd = current_best
         else:
-            lbd = initial_lbd
-        
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
-        lbd_hi = lbd
-        lbd_lo = 0.0
-    
-        while (lbd_hi - lbd_lo) > 1e-5:
-            lbd_mid = (lbd_lo + lbd_hi)/2.0
-            nquery += 1
-            #print("size of image:",x0.shape)
-            #print("size of modifier,",np.array(lbd_mid*theta).shape )
-            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
-                lbd_hi = lbd_mid
+            if self.model.predict(x0+ np.array(initial_lbd*theta)) == y0:
+                nquery += 1
+                return float('inf'), nquery
             else:
-                lbd_lo = lbd_mid
-        print("label in one binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
-        return lbd_hi, nquery
+                lbd = initial_lbd
+            
+            ## original version
+            #lbd = initial_lbd
+            #while model.predict(x0 + lbd*theta) == y0:
+            #    lbd *= 2
+            #    nquery += 1
+            #    if lbd > 100:
+            #        return float('inf'), nquery
+            
+            #num_intervals = 100
+        
+            # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
+            # lbd_hi = lbd
+            # lbd_hi_index = 0
+            # for i, lbd in enumerate(lambdas):
+            #     nquery += 1
+            #     if model.predict(x0 + lbd*theta) != y0:
+            #         lbd_hi = lbd
+            #         lbd_hi_index = i
+            #         break
+        
+            # lbd_lo = lambdas[lbd_hi_index - 1]
+            lbd_hi = lbd
+            lbd_lo = 0.0
+        
+            while (lbd_hi - lbd_lo) > 1e-5:
+                lbd_mid = (lbd_lo + lbd_hi)/2.0
+                nquery += 1
+                if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+                    lbd_hi = lbd_mid
+                else:
+                    lbd_lo = lbd_mid
+            print("new lable in one binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+            return lbd_hi, nquery
+
     
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
