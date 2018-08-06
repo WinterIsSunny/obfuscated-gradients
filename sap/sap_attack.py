@@ -74,7 +74,9 @@ class blackbox:
             
            # print("iteration:",i)
             if g_theta < 1:
+                print("outer break 1")
                 break
+            
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -98,7 +100,7 @@ class blackbox:
                 
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
-                    print("2nd break")
+                    print("outer break 2")
                     break
                 prev_obj = g2
     
@@ -119,7 +121,7 @@ class blackbox:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
-                    print("3rd break")
+                    print("innerr break 1")
                     break
             print("=============================================")
     
@@ -134,7 +136,7 @@ class blackbox:
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
-                        print("4th break")
+                        print("inner break 2")
                         break
                     
             print("=============================================")
@@ -156,7 +158,7 @@ class blackbox:
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.5
                 if (beta < 0.0005):
-                    print("5th break")
+                    print("outer break 3")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
@@ -259,7 +261,7 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = SAPModel("../models/standard/", tiny=False, mode='eval', sess=sess)
-model = Model(model,sess,[0.0,255.0])
+model = Model(model,sess,[0.0,1.0])
 
 attack = blackbox(model)
 
