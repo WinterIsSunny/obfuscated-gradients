@@ -25,7 +25,7 @@ class Model:
         new_img = [new_img]
         #xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
         label = self.sess.run(self.model.predictions, {self.model.x_input: new_img})
-        return label
+        return label[0]
     
     def predict_logit(self,image):
         if self.bounds[1] == 255.0:

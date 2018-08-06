@@ -271,7 +271,7 @@ image = cifar.eval_data.xs[:1]
 label = cifar.eval_data.ys[:1]
 new_img = image/255.0
 
-print("original label is :", label)
+print("original label is :", label[0])
 #print(len(image))
 
 print("label of clean image:", model.predict(new_img[0]))
