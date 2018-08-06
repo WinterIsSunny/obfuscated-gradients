@@ -50,7 +50,7 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            print(type(theta),type(initial_lbd),type(g_theta))
+            #print(type(theta),type(initial_lbd),type(g_theta))
             lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
             query_count += count
             if lbd < g_theta:
@@ -223,45 +223,43 @@ class blackbox:
                 return float('inf'), nquery
             lbd = current_best
         else:
-            if self.model.predict(x0+ np.array(initial_lbd*theta)) == y0:
-                nquery += 1
-                return float('inf'), nquery
+            lbd = initial_lbd
+        
+        ## original version
+        #lbd = initial_lbd
+        #while model.predict(x0 + lbd*theta) == y0:
+        #    lbd *= 2
+        #    nquery += 1
+        #    if lbd > 100:
+        #        return float('inf'), nquery
+        
+        #num_intervals = 100
+    
+        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
+        # lbd_hi = lbd
+        # lbd_hi_index = 0
+        # for i, lbd in enumerate(lambdas):
+        #     nquery += 1
+        #     if model.predict(x0 + lbd*theta) != y0:
+        #         lbd_hi = lbd
+        #         lbd_hi_index = i
+        #         break
+    
+        # lbd_lo = lambdas[lbd_hi_index - 1]
+        lbd_hi = lbd
+        lbd_lo = 0.0
+    
+        while (lbd_hi - lbd_lo) > 1e-5:
+            lbd_mid = (lbd_lo + lbd_hi)/2.0
+            nquery += 1
+            #print("size of image:",x0.shape)
+            #print("size of modifier,",np.array(lbd_mid*theta).shape )
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+                lbd_hi = lbd_mid
             else:
-                lbd = initial_lbd
-            
-            ## original version
-            #lbd = initial_lbd
-            #while model.predict(x0 + lbd*theta) == y0:
-            #    lbd *= 2
-            #    nquery += 1
-            #    if lbd > 100:
-            #        return float('inf'), nquery
-            
-            #num_intervals = 100
-        
-            # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-            # lbd_hi = lbd
-            # lbd_hi_index = 0
-            # for i, lbd in enumerate(lambdas):
-            #     nquery += 1
-            #     if model.predict(x0 + lbd*theta) != y0:
-            #         lbd_hi = lbd
-            #         lbd_hi_index = i
-            #         break
-        
-            # lbd_lo = lambdas[lbd_hi_index - 1]
-            lbd_hi = lbd
-            lbd_lo = 0.0
-        
-            while (lbd_hi - lbd_lo) > 1e-5:
-                lbd_mid = (lbd_lo + lbd_hi)/2.0
-                nquery += 1
-                if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
-                    lbd_hi = lbd_mid
-                else:
-                    lbd_lo = lbd_mid
-            print("new lable in one binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
-            return lbd_hi, nquery
+                lbd_lo = lbd_mid
+        return lbd_hi, nquery
+
 
     
 
