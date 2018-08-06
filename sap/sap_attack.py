@@ -216,11 +216,11 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            tmp_label = self.model.predict(x0+ np.array(current_best*theta))
-            print("label in binary search:",tmp_label)
-            if tmp_label == y0:
+           # tmp_label = self.model.predict(x0+ np.array(current_best*theta))
+            #print("label in binary search:",tmp_label)
+            if self.model.predict(x0+ np.array(current_best*theta)) == y0:
                 nquery += 1
-                print("cannot find a proper bound")
+                #print("cannot find a proper bound")
                 return float('inf'), nquery
             lbd = current_best
         else:
@@ -259,6 +259,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+        print("label in one binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         return lbd_hi, nquery
     
 
