@@ -38,7 +38,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 1000
+        num_directions = 10000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -265,7 +265,7 @@ model = Model(model,sess,[0.0,255.0])
 
 attack = blackbox(model)
 
-xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
+#xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
 image = cifar.eval_data.xs[:1]
 label = cifar.eval_data.ys[:1]
 new_img = image/255.0
