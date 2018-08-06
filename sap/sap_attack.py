@@ -54,7 +54,8 @@ class blackbox:
             query_count += count
             if lbd < g_theta:
                 best_theta, g_theta = theta,lbd
-                print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+                tmp_init = self.model.predict(x0+np.array(g_theta*best_theta))
+                print("label for random direction:",tmp_init)
                 print("--------> Found distortion %.4f" % g_theta)
     
         #timeend = time.time()
