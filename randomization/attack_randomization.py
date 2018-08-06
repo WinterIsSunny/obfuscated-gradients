@@ -47,15 +47,21 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-            query_count += count
-            if lbd < g_theta:
-                best_theta, g_theta = theta,lbd
-                print("--------> Found distortion %.4f" % g_theta)
-    
-        #timeend = time.time()
-        #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-    
+            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                query_count += 1 
+                #print(type(theta),type(initial_lbd),type(g_theta))
+                #print("find a new adv direction, new label:", self.model.predict(x0+np.array(initial_lbd*theta)))
+                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+                query_count += count
+                if lbd < g_theta:
+                    best_theta, g_theta = theta,lbd
+#                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+                    print("--------> Found distortion %.4f" % g_theta)
+        
+            #timeend = time.time()
+            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        
+        
         
         
         
@@ -212,10 +218,6 @@ class blackbox:
                 return float('inf'), nquery
             lbd = current_best
         else:
-            if self.model.predict(x0+ np.array(initial_lbd*theta)) == y0:
-                nquery += 1
-                #print("initial_lbd < current_best & predict == y0, so return inf")
-                return float('inf'), nquery
             lbd = initial_lbd
             
         ## original version
