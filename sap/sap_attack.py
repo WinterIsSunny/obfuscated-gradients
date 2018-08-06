@@ -268,6 +268,7 @@ class blackbox:
                 lbd_lo = lbd_mid
         #print("find a better initialization")
         #print("labelafter fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        print("after binary search: lbd_ih:", lbd_hi)
         return lbd_hi, nquery
 
 
