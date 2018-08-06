@@ -253,7 +253,7 @@ class blackbox:
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
-        print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
+#        print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
         while (lbd_hi - lbd_lo) > 1e-3:
