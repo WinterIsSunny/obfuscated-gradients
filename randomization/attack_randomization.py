@@ -210,8 +210,11 @@ class blackbox:
                 return float('inf'), nquery
             lbd = current_best
         else:
+            if self.model.predict(x0+ np.array(initial_lbd*theta)) == y0:
+                nquery += 1
+                return float('inf'), nquery
             lbd = initial_lbd
-        
+            
         ## original version
         #lbd = initial_lbd
         #while model.predict(x0 + lbd*theta) == y0:
@@ -239,8 +242,6 @@ class blackbox:
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            #print("size of image:",x0.shape)
-            #print("size of modifier,",np.array(lbd_mid*theta).shape )
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
@@ -260,6 +261,8 @@ image = orig.copy()/255.0
 
 #print("Before loading model")
 model = MyModel(inceptionv3,sess,[0.0,255.0])
+
+y0 = model.predict()
 #print("after loading model")
 attack = blackbox(model)
 label = 282
