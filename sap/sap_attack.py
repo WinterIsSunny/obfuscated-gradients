@@ -58,8 +58,9 @@ class blackbox:
                 query_count += count
                 if lbd < g_theta:
                     best_theta, g_theta = theta,lbd
-#                    print("new g_theta :", g_theta,"***")
+                    print("new g_theta :", g_theta,"***")
                     print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+                    print("norm of theta 4:", torch.norm(best_theta))
                     print("--------> Found distortion %.4f" % g_theta)
         
             #timeend = time.time()
@@ -225,8 +226,9 @@ class blackbox:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
-#            print("assign lbd = current_best, lbd = ",lbd,"***")
+            print("assign lbd = current_best, lbd = ",lbd,"***")
             print("after assigning lbd = current_best,       label :",self.model.predict(x0+ np.array(lbd*theta)))
+            print("norm of theta 1:", torch.norm(theta))
         else:
             lbd = initial_lbd
             
@@ -253,8 +255,11 @@ class blackbox:
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
-#        print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
+        
+        print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        print("norm of theta 2:", torch.norm(theta))
+        
     
         while (lbd_hi - lbd_lo) > 1e-3:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
@@ -265,8 +270,9 @@ class blackbox:
                 lbd_lo = lbd_mid
         #print("find a better initialization")
         #print("labelafter fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
-#        print("after binary search: lbd_ih:", lbd_hi,"***")
+        print("after binary search: lbd_ih:", lbd_hi,"***")
         print("label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        print("norm of theta 3:", torch.norm(theta))
         return lbd_hi, nquery
 
 
