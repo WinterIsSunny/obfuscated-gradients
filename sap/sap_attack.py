@@ -261,7 +261,7 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = SAPModel("../models/standard/", tiny=False, mode='eval', sess=sess)
-model = Model(model,sess,[0.0,1.0])
+model = Model(model,sess,[0.0,255.0])
 
 attack = blackbox(model)
 

@@ -16,10 +16,16 @@ class Model:
         self.sess = sess
         
     def predict(self,image):
-        image = [image]
+        if self.bounds[1] == 255.0:
+            new_img = image * 255.0
+            new_img = np.clip(new_img,0.0,255.0)
+        else:
+            new_img = np.clip(image,0.0,1.0)
+
+        new_img = [new_img]
         #xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
-        label = self.sess.run(self.model.predictions, {self.model.x_input: image})
-        return label[0]
+        label = self.sess.run(self.model.predictions, {self.model.x_input: new_img})
+        return label
     
     def predict_logit(self,image):
         if self.bounds[1] == 255.0:
