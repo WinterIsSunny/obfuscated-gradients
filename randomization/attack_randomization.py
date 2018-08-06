@@ -208,11 +208,13 @@ class blackbox:
         if initial_lbd > current_best: 
             if self.model.predict(x0+ np.array(current_best*theta)) == y0:
                 nquery += 1
+                print("initial_lbd > current_best & predict == y0, so return inf")
                 return float('inf'), nquery
             lbd = current_best
         else:
             if self.model.predict(x0+ np.array(initial_lbd*theta)) == y0:
                 nquery += 1
+                print("initial_lbd < current_best & predict == y0, so return inf")
                 return float('inf'), nquery
             lbd = initial_lbd
             
@@ -247,6 +249,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+        print("find a better initialization")
         return lbd_hi, nquery
     
 
