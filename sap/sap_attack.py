@@ -58,7 +58,7 @@ class blackbox:
                 query_count += count
                 if lbd < g_theta:
                     best_theta, g_theta = theta,lbd
-                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+#                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
                     print("--------> Found distortion %.4f" % g_theta)
         
             #timeend = time.time()
@@ -251,6 +251,9 @@ class blackbox:
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
+        print("initial_lbd: ",initial_lbd)
+        print("current_best: ",current_best)
+        print("lbd: ", lbd)
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd*theta)))
     
         while (lbd_hi - lbd_lo) > 1e-5:
@@ -260,8 +263,8 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        print("find a better initialization")
-        print("labelafter fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        #print("find a better initialization")
+        #print("labelafter fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
         return lbd_hi, nquery
 
 
