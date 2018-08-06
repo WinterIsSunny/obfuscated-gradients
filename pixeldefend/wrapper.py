@@ -25,6 +25,12 @@ class MyModel:
         self.saver = saver
         self.out = out
         self.x = x
+        
+        self.saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
+        #timestart = time.time()
+        self.pixeldefend = make_pixeldefend(self.sess, self.x, self.out)
+        #grad, = tf.gradients(self.model.xent, self.model.x_input)
+        
     
     def predict(self,image):
         if self.bounds[1] == 255.0:
@@ -35,7 +41,7 @@ class MyModel:
 
 #        new_img = [new_img]
 
-        self.saver.restore(self.sess, tf.train.latest_checkpoint('data/models/naturally_trained'))
+        
         
        # x = tf.placeholder(tf.float32, (1, 32, 32, 3))
         
@@ -46,15 +52,12 @@ class MyModel:
         #label = classify(new_img)
         
         #print("the label of the image is :", label)
-        timestart = time.time()
-        pixeldefend = make_pixeldefend(self.sess, self.x, self.out)
-        #grad, = tf.gradients(self.model.xent, self.model.x_input)
-        adv_def = pixeldefend(new_img)
         
+        adv_def = self.pixeldefend(new_img)
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
-        timeend = time.time()
-        print("time consuming for one query :", timeend -timestart)
+        #timeend = time.time()
+        #print("time consuming for one query :", timeend -timestart)
         print(p[0])
 
         return p[0]
