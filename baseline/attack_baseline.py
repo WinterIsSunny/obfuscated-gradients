@@ -255,21 +255,21 @@ print("predicted label on clean data is: ", model.predict_label(new_img[0]))
 timeend = time.time()
 print("time consuming: ", timeend-timestart)
 
-adv = attack.attack_untargeted(new_img[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
+#adv = attack.attack_untargeted(new_img[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
 
 
-#dist = []
-#for i in range(100):
-#    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
-#    dist.append(np.linalg.norm(mod))
-#avg_distortion = np.mean(dist)
-#print("the average distortion of 100 pictures is:", avg_distortion)
+dist = []
+for i in range(100):
+    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
+    dist.append(np.linalg.norm(mod))
+avg_distortion = np.mean(dist)
+print("the average distortion of 100 pictures is:", avg_distortion)
 
 #new_logits = model.predict(adv)
-new_label = model.predict_label(adv)
+#new_label = model.predict_label(adv)
 #sess = tf.InteractiveSession()
 #new_logits = new_logits.eval()
 #new_label = np.argmax(new_logits)
-print("new label is :", new_label)
+#print("new label is :", new_label)
 
 
