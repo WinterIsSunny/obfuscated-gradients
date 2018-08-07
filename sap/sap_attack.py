@@ -282,11 +282,12 @@ new_img = image/255.0
 
 print("original label is :", label[0])
 #print(len(image))
-print("label of clean image:", model.predict(new_img[0],label[0]))
+for i in range(20):
+    print("label of clean image:", model.predict(new_img[0],label[0]))
 
-adv = attack.attack_untargeted(new_img[0],label[0])
+#adv = attack.attack_untargeted(new_img[0],label[0])
 
-print("label of adv sample: ", model.predict(adv,label[0]))
+#print("label of adv sample: ", model.predict(adv,label[0]))
 
 
 
