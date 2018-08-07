@@ -25,7 +25,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, gan,best_theta = None, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, gan, shape , best_theta = None,alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -37,7 +37,7 @@ class blackbox:
         
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return x0
+            return np.nan
         
         if best_theta == None:
             num_directions = 1000
@@ -46,7 +46,7 @@ class blackbox:
             
             #timestart = time.time()
             for i in range(num_directions):
-                theta = torch.randn(x0.shape).type(torch.FloatTensor)
+                theta = torch.randn(shape).type(torch.FloatTensor)
                 #print(theta.size())
                 initial_lbd = torch.norm(theta)
                 theta = theta/torch.norm(theta)
@@ -173,7 +173,7 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            modi = self.get_modifier(lbd_lo*theta,x0,gan)
+            modi = self.get_modifier(lbd_lo*theta,gan)
             while self.model.predict(x0+modi) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
@@ -191,7 +191,6 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, gan,theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best:
-            
             modi = self.get_modifier(current_best*theta,x0,gan)
             if self.model.predict(x0+ modi) == y0:
                 nquery += 1
@@ -235,13 +234,13 @@ class blackbox:
         return lbd_hi, nquery
     
     def get_modifier(self,modifier,x0,gan):
-        img = np.expand_dims(x0,0)
+#        img = np.expand_dims(x0,0)
         modifier = np.expand_dims(np.array(modifier),0)
-        x_new = tf.placeholder(tf.float32,modifier.shape)
-        noise = tf.reshape(x_new, [1,128])
-        new_img = gan(noise)
-        new_mod = np.sum(new_img - img, 0)
-        return new_mod
+#        x_new = tf.placeholder(tf.float32,modifier.shape)
+#        noise = tf.reshape(x_new, [1,128])
+        new_img = gan(modifier)
+        new_mod = np.sum(new_img - x0, 0)
+        return torch.tensor(new_mod)
         
         
     
