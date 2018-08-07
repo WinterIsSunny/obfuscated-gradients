@@ -102,7 +102,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            print("=============================================")
+#            print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -130,7 +130,7 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
-            print("=============================================")
+#            print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
@@ -144,7 +144,7 @@ class blackbox:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-            print("=============================================")
+#            print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
