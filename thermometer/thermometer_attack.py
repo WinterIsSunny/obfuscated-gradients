@@ -29,7 +29,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.05, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -82,7 +82,9 @@ class blackbox:
             
            # print("iteration:",i)
             if g_theta < 1:
+                print("this is what we want")
                 break
+            
             gradient = torch.zeros(theta.size())
             q = 30
             min_g1 = float('inf')
@@ -92,7 +94,7 @@ class blackbox:
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/50)
                 #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -106,6 +108,7 @@ class blackbox:
                 
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
+                    print("g2 is larger than prev_obj-stopping")
                     break
                 prev_obj = g2
     
@@ -160,6 +163,7 @@ class blackbox:
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
+                    print("beta is too small")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
