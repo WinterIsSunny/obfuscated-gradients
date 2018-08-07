@@ -134,7 +134,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.8
+                    alpha = alpha * 0.9
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -278,7 +278,7 @@ new_img = image / 255.0
 attack = blackbox(model)
 print("original label:", label)
 print("predicted label of clean imgage:", model.predict(new_img[0]))
-adv = attack.attack_untargeted(new_img[0],label[0],alpha = 2, beta = 0.5, iterations = 1000)
+adv = attack.attack_untargeted(new_img[0],label[0],alpha = 4, beta = 0.5, iterations = 1000)
 print("label of adversarial sample :", model.predict(adv))
 
 
