@@ -238,8 +238,10 @@ class blackbox:
         modifier = np.expand_dims(np.array(modifier),0)
 #        x_new = tf.placeholder(tf.float32,modifier.shape)
 #        noise = tf.reshape(x_new, [1,128])
-        new_img = gan(modifier)
-        new_mod = np.sum(new_img - x0, 0)
+        mod_tf = tf.convert_to_tensor(modifier)
+        new_img = gan(mod_tf)
+        new_img = tf.Session().run(tf.constant(new_img))
+        new_mod = np.sum(x0 - new_img, 0)
         return new_mod
         
         
