@@ -240,7 +240,7 @@ class blackbox:
 #        noise = tf.reshape(x_new, [1,128])
         mod_tf = tf.convert_to_tensor(modifier)
         new_img = gan(mod_tf)
-        new_img = tf.Session().run(tf.constant(new_img))
+        new_img = tf.Session().run(tf.constant(new_img[0]))
         new_mod = np.sum(x0 - new_img, 0)
         return new_mod
         
