@@ -40,7 +40,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
     
-        num_directions = 1000
+        num_directions = 500
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -256,7 +256,7 @@ attack = blackbox(model)
 #print("time consuming: ", timeend-timestart)
 dist = []
 for i in range(100):
-    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.01, iterations = 1000)
+    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
 avg_distortion = np.mean(dist)
 print("the average distortion of 100 pictures is:", avg_distortion)
