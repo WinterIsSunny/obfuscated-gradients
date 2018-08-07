@@ -291,7 +291,7 @@ for i in range(100):
     mod = attack.attack_untargeted(image[i],label[i])
     dist.append(np.linalg.norm(mod))
     
-avg_dist = np.mean(dist)
+avg_dist = np.nanmean(dist)
 print("average distortion of 100 images is :", avg_dist)
 
 
