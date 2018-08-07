@@ -108,7 +108,7 @@ class blackbox:
                 
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
-                    print("g2 is larger than prev_obj-stopping")
+#                    print("g2 is larger than prev_obj-stopping")
                     break
                 prev_obj = g2
     
@@ -124,7 +124,7 @@ class blackbox:
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
-                print("alpha in the first for loop is: ",alpha)
+#                print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
@@ -139,7 +139,7 @@ class blackbox:
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                     opt_count += count
-                    print("alpha in the second for loop is: ",alpha)
+#                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
@@ -154,10 +154,10 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
             #print(alpha)
-            print("%3d th iteration" % i)
-            print("current alpha:",alpha)
-            print("g_theta")
-            print("number of queries:", opt_count+query_count)
+#            print("%3d th iteration" % i)
+#            print("current alpha:",alpha)
+#            print("g_theta")
+#            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -165,7 +165,7 @@ class blackbox:
                 if (beta < 0.0005):
                     print("beta is too small")
                     break
-            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+            print("=-=-=--will enter next iteration=-=-=--=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
@@ -173,6 +173,7 @@ class blackbox:
         print("thermometer")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
+        print("=-=-=-=-=-=-=-=-=-=-=-=-=will enter next image=-=-=--=-=-=-=-=-=-=-=-=")
         return np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
@@ -211,9 +212,9 @@ class blackbox:
                 lbd_lo = lbd_mid
         #timeend3 = time.time()
         #print("3rd while time:",timeend3 - timestart3)
-        print("lbd_low:",lbd_lo)
-        print("lbd_high:", lbd_hi)
-        print("-----------------------------")
+#        print("lbd_low:",lbd_lo)
+#        print("lbd_high:", lbd_hi)
+#        print("-----------------------------")
         return lbd_hi, nquery
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
