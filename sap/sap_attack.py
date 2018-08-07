@@ -50,9 +50,8 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            tmp_lb = self.model.predict(x0+np.array(initial_lbd*theta),y0)
-            print("tmp_lb :", tmp_lb)
-            if tmp_lb != y0:
+
+            if  self.model.predict(x0+np.array(initial_lbd*theta),y0) != y0:
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
@@ -214,14 +213,13 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            tmp_lb = self.model.predict(x0+ np.array(current_best*theta),y0)
-            print("tmp_lb 1 in binary search",tmp_lb)
-            if tmp_lb  == y0:
+#            tmp_lb = self.model.predict(x0+ np.array(current_best*theta),y0)
+            if self.model.predict(x0+ np.array(current_best*theta),y0)  == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
             print("assign lbd = current_best, lbd = ",lbd,"***")
-            print("after assigning lbd = current_best,       label :",self.model.predict(x0+ np.array(lbd*theta),y0))
+            print("after assigning lbd = current_best, label :",self.model.predict(x0+ np.array(lbd*theta),y0))
             print("norm of adv 1:", np.linalg.norm(x0+ np.array(lbd*theta)))
             print("******")
         else:
@@ -263,8 +261,8 @@ class blackbox:
             else:
                 lbd_lo = lbd_mid
         print("after binary search: lbd_ih:", lbd_hi,"***")
-        tmp_lb = self.model.predict(x0+ np.array(lbd_hi*theta),y0)
-        print("label after fine binary search:", tmp_lb)
+#        tmp_lb = self.model.predict(x0+ np.array(lbd_hi*theta),y0)
+        print("label after fine binary search:",self.model.predict(x0+ np.array(lbd_hi*theta),y0))
         print("again, label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta),y0))
         print("norm of lbd_hi*theta 3:", np.linalg.norm(x0+ np.array(lbd_hi*theta)))
         print("******")
