@@ -51,17 +51,17 @@ class blackbox:
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             #theta *= 255
-            lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-    
-            query_count += count
-            if lbd < g_theta:
-                best_theta, g_theta = theta,lbd
-                print("--------> Found distortion %.4f" % g_theta)
-    
-        #timeend = time.time()
-        #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-    
+            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+                query_count += count
+                if lbd < g_theta:
+                    best_theta, g_theta = theta,lbd
+                    print("--------> Found distortion %.4f" % g_theta)
         
+            #timeend = time.time()
+            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        
+            
         
         
         #timestart = time.time()
