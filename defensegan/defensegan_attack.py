@@ -154,7 +154,7 @@ class blackbox:
         print("defensegan")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, gan, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -240,7 +240,7 @@ class blackbox:
 #        noise = tf.reshape(x_new, [1,128])
         new_img = gan(modifier)
         new_mod = np.sum(new_img - x0, 0)
-        return torch.tensor(new_mod)
+        return new_mod
         
         
     
@@ -275,11 +275,13 @@ print("Preds",model.predict(image[0]))
 
 res = []
 #dists =[]
+shape = (1,128)
 for i in range(3):
-    pre_adv = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),iterations = 100)
-    dist = pre_adv - image[0]
+    modifier = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
+                                         shape, best_theta = None,alpha = 2, beta = 0.05, iterations = 1000)
+#    dist = pre_adv - image[0]
     #dist_norm = np.linalg.norm(dist)
-    res.append(dist)
+    res.append(modifier)
     #dists.append(dist_norm)
 
 #start = res[np.argmax(dists)]
@@ -293,9 +295,8 @@ start = np.array([res[np.argmin(distortion)]])
 
 attack2 = blackbox(model)
 print("label of pure image:", model.predict(image[0]))
-adversarial = attack2.attack_untargeted(image[0],lambda x: Generator(1, x),
-                    [np.eye(10)[q] for q in y_test[:1]],
-                    best_theta=start,iterations = 100)
+adversarial = attack2.attack_untargeted(image[0],[np.eye(10)[q] for q in y_test[0]],lambda x: Generator(1, x),
+                                        shape,best_theta = None,alpha = 2, beta = 0.05, iterations = 1000)
 
 print("new label is: ",model.predict(adversarial))
 
