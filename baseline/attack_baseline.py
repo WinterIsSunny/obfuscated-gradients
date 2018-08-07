@@ -38,7 +38,7 @@ class blackbox:
         
         if (self.model.predict_label(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return x0
+            return np.nan
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -141,7 +141,7 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
             #print(alpha)
-            print("%3d th iteration" % i)
+#            print("%3d th iteration" % i)
             #print("current alpha:",alpha)
             if alpha < 1e-4:
                 alpha = 1.0
