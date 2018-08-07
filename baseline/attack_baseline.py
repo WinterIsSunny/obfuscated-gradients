@@ -255,7 +255,7 @@ print("predicted label on clean data is: ", model.predict_label(new_img[0]))
 timeend = time.time()
 print("time consuming: ", timeend-timestart)
 
-adv = attack.untargeted_attack(new_img[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
+adv = attack.attack_untargeted(new_img[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
 
 
 #dist = []
