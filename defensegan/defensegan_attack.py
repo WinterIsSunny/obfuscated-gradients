@@ -158,12 +158,12 @@ class blackbox:
     def fine_grained_binary_search_local(self, x0, y0, gan, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-         modifier = self.get_modifier(lbd*theta,x0,gan)
+        modifier = self.get_modifier(lbd*theta,x0,gan)
         if self.model.predict(x0+modifier) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            modi = self.get_modifier(lbd_hi*theta),x0,gan)
+            modi = self.get_modifier(lbd_hi*theta,x0,gan)
             while self.model.predict(x0+modi) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
@@ -293,6 +293,7 @@ distortion = np.sum((it-[image[0]]*3)**2,(1,2,3))**.5
 start = np.array([res[np.argmin(distortion)]])
 
 attack2 = blackbox(model)
+print("label of pure image:", model.predict(image[0]))
 adversarial = attack2.attack_untargeted(image[0],lambda x: Generator(1, x),
                     [np.eye(10)[q] for q in y_test[:1]],
                     best_theta=start,iterations = 100)
