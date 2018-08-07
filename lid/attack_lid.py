@@ -204,9 +204,9 @@ class blackbox:
                 lbd_lo = lbd_mid
         #timeend3 = time.time()
         #print("3rd while time:",timeend3 - timestart3)
-        print("lbd_low:",lbd_lo)
-        print("lbd_high:", lbd_hi)
-        print("-----------------------------")
+#        print("lbd_low:",lbd_lo)
+#        print("lbd_high:", lbd_hi)
+#        print("-----------------------------")
         return lbd_hi, nquery
         
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
