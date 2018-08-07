@@ -26,7 +26,7 @@ class PytorchModel(object):
 
         new_img = [new_img]
 
-        return self.sess.run(self.model.predictions, {self.model.x_input: new_img})
+        return self.sess.run(self.model.predictions, {self.model.x_input: new_img})[0]
         
     #def get_gradient(self,loss):
      #   loss.backward()

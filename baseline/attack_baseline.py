@@ -240,32 +240,36 @@ model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess,[0.0,255.0])
 
 
-image = cifar.eval_data.xs[:100]# np.array
+image = cifar.eval_data.xs[:1]# np.array
 new_img = image / 255.0
 
 #image = np.clip(image,0,1)
 #image /= 255
-label = cifar.eval_data.ys[:100]
+label = cifar.eval_data.ys[:1]
 
 attack = blackbox(model)
 
-#print("original label is:",label)
-#timestart = time.time()
-#print("predicted label on clean data is: ", model.predict_label(new_img[0]))
-#timeend = time.time()
-#print("time consuming: ", timeend-timestart)
-dist = []
-for i in range(100):
-    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
-    dist.append(np.linalg.norm(mod))
-avg_distortion = np.mean(dist)
-print("the average distortion of 100 pictures is:", avg_distortion)
+print("original label is:",label)
+timestart = time.time()
+print("predicted label on clean data is: ", model.predict_label(new_img[0]))
+timeend = time.time()
+print("time consuming: ", timeend-timestart)
+
+adv = attack.untargeted_attack(new_img[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
+
+
+#dist = []
+#for i in range(100):
+#    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
+#    dist.append(np.linalg.norm(mod))
+#avg_distortion = np.mean(dist)
+#print("the average distortion of 100 pictures is:", avg_distortion)
 
 #new_logits = model.predict(adv)
-#new_label = model.predict_label(adv)
+new_label = model.predict_label(adv)
 #sess = tf.InteractiveSession()
 #new_logits = new_logits.eval()
 #new_label = np.argmax(new_logits)
-#print("new label is :", new_label)
+print("new label is :", new_label)
 
 
