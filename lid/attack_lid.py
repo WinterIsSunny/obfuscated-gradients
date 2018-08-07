@@ -166,7 +166,7 @@ class blackbox:
         print("lid")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -275,21 +275,27 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-image = cifar.eval_data.xs[:1000]/255.0-.5
-label = cifar.eval_data.ys[:1000]
-image = image[1:2]
-label = label[1:2]
+image = cifar.eval_data.xs[:100]/255.0-.5
+label = cifar.eval_data.ys[:100]
+#image = image[1:2]
+#label = label[1:2]
 
-print ("the original label:",label[0])
-timestart = time.time()
-print('Clean Model Prediction', model.predict(image[0]))
-timeend = time.time()
-print("time consuming:", timeend - timestart)
+#print ("the original label:",label[0])
+#timestart = time.time()
+#print('Clean Model Prediction', model.predict(image[0]))
+#timeend = time.time()
+#print("time consuming:", timeend - timestart)
 attack = blackbox(model)
-adv = attack.attack_untargeted(image[0],label[0])
+dist = []
+for i in range(100):
+    mod = attack.attack_untargeted(image[i],label[i])
+    dist.append(np.linalg.norm(mod))
+    
+avg_dist = np.mean(dist)
+print("average distortion of 100 images is :", avg_dist)
 
 
-print("new label for adversarial sample: ", model.predict(adv))
+#print("new label for adversarial sample: ", model.predict(adv))
 
 
 
