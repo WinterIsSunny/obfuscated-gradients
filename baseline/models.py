@@ -28,6 +28,4 @@ class PytorchModel(object):
 
         return self.sess.run(self.model.predictions, {self.model.x_input: new_img})[0]
         
-    #def get_gradient(self,loss):
-     #   loss.backward()
-        
+

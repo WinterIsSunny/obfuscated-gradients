@@ -40,7 +40,7 @@ class blackbox:
 
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return x0
+            return np.nan
     
         num_directions = 2000
         best_theta, g_theta = None, float('inf')
@@ -173,7 +173,7 @@ class blackbox:
         print("thermometer")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return np.array(g_theta*best_theta)
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -270,15 +270,23 @@ model = Model('../models/thermometer_advtrain/',
               thermometer=True, levels=levels)
 model = MyModel(model,sess,levels,[0.0,255.0])
 
-image = np.array(cifar.eval_data.xs[:1],dtype=np.float32)
-label = cifar.eval_data.ys[:1]
+image = np.array(cifar.eval_data.xs[:100],dtype=np.float32)
+label = cifar.eval_data.ys[:100]
 
 new_img = image / 255.0
 
 attack = blackbox(model)
-print("original label:", label)
-print("predicted label of clean imgage:", model.predict(new_img[0]))
-adv = attack.attack_untargeted(new_img[0],label[0],alpha = 4, beta = 0.5, iterations = 1000)
-print("label of adversarial sample :", model.predict(adv))
+dist = []
+for i in range(100):
+    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.5, iterations = 1000)
+    dist.append(np.linalg.norm(mod))
+    
+avg_dist = np.nanmean(dist)
+print("average distortion of 100 images is :", avg_dist)
+
+#print("original label:", label)
+#print("predicted label of clean imgage:", model.predict(new_img[0]))
+#adv = attack.attack_untargeted(new_img[0],label[0],alpha = 4, beta = 0.5, iterations = 1000)
+#print("label of adversarial sample :", model.predict(adv))
 
 
