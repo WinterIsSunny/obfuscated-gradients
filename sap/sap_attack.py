@@ -25,7 +25,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
+def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.05, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -34,7 +34,7 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0) != y0):
+        if (self.model.predict(x0,y0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
     
@@ -50,13 +50,13 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+            if self.model.predict(x0+np.array(initial_lbd*theta),y0) != y0:
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
                     best_theta, g_theta = theta,lbd
                     print("new g_theta :", g_theta,"***")
-                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta),y0))
                     print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
                     print("******")
                     print("--------> Found distortion %.4f" % g_theta)
@@ -89,7 +89,7 @@ class blackbox:
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/50)
                 #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -171,12 +171,12 @@ class blackbox:
         nquery = 0
         lbd = initial_lbd
         
-        if self.model.predict(x0+np.array(lbd*theta)) == y0:
+        if self.model.predict(x0+np.array(lbd*theta),y0) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
             #timestart1 = time.time()
-            while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
+            while self.model.predict(x0+np.array(lbd_hi*theta),y0) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -188,7 +188,7 @@ class blackbox:
             lbd_lo = lbd*0.99
             nquery += 1
             #timestart2 = time.time()
-            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
+            while self.model.predict(x0+ np.array(lbd_lo*theta),y0) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
             #timeend2 = time.time()
@@ -198,7 +198,7 @@ class blackbox:
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta),y0) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -212,12 +212,12 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            if self.model.predict(x0+ np.array(current_best*theta)) == y0:
+            if self.model.predict(x0+ np.array(current_best*theta),y0) == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
             print("assign lbd = current_best, lbd = ",lbd,"***")
-            print("after assigning lbd = current_best,       label :",self.model.predict(x0+ np.array(lbd*theta)))
+            print("after assigning lbd = current_best,       label :",self.model.predict(x0+ np.array(lbd*theta),y0))
             print("norm of adv 1:", np.linalg.norm(x0+ np.array(lbd*theta)))
             print("******")
         else:
@@ -247,22 +247,23 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
         print("assign lbd_hi = lbd,  lbd_hi = ",lbd_hi,"***")
-        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta),y0))
         print("norm of lbd_hi*theta 2:", np.linalg.norm(x0+ np.array(lbd*theta)))
         print("******")
     
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta),y0) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
         print("after binary search: lbd_ih:", lbd_hi,"***")
-        print("label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+        print("label after fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta),y0))
         print("norm of lbd_hi*theta 3:", np.linalg.norm(x0+ np.array(lbd_hi*theta)))
         print("******")
         return lbd_hi, nquery
+    
 
     
 
@@ -281,11 +282,11 @@ new_img = image/255.0
 
 print("original label is :", label[0])
 #print(len(image))
-print("label of clean image:", model.predict(new_img[0]))
+print("label of clean image:", model.predict(new_img[0],label[0]))
 
 adv = attack.attack_untargeted(new_img[0],label[0])
 
-print("label of adv sample: ", model.predict(adv))
+print("label of adv sample: ", model.predict(adv,label[0]))
 
 
 
