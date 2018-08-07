@@ -118,7 +118,7 @@ class blackbox:
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
-                print("alpha in the first for loop is: ",alpha)
+                #print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
@@ -133,7 +133,7 @@ class blackbox:
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                     opt_count += count
-                    print("alpha in the second for loop is: ",alpha)
+                    #print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
@@ -158,15 +158,18 @@ class blackbox:
                 beta = beta * 0.1
                 if (beta < 0.0005):
                     break
-            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+            print("=-=-=-=-=-=-=will enter next iteration=-=-=-=-=-=-=-=")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
+        
         print("lid")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
+        print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next image=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
         return np.array(g_theta*best_theta)
+    
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
