@@ -102,7 +102,7 @@ print('Clean Model Logits', sess.run(logits, {x_input: image[1:2]}))
 
 
 adversarial = attack.perturb(image, label, sess)
-
+print("adversarial:",adversarial[0])
 #plt.imshow(adversarial[1]+.5)
 #plt.show()
 
