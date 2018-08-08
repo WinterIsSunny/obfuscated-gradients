@@ -31,7 +31,7 @@ class Attack:
         self.step_size = step_size
         self.rand = random_start
 
-        self.xs = tf.Variable(np.zeros((1000, 32, 32, 3), dtype=np.float32),
+        self.xs = tf.Variable(np.zeros((10, 32, 32, 3), dtype=np.float32),
                                     name='modifier')
         self.orig_xs = tf.placeholder(tf.float32, [None, 32, 32, 3])
 
