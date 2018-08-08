@@ -295,12 +295,13 @@ attack = blackbox(model)
 dist = []
 mods = []
 for i in range(100):
-    print("===========attacking image ",i+1,"================")
+    print("===========attacking image ",i+1,"=====================")
     mod = attack.attack_untargeted(image[i],label[i])
     mods.append(mod)
     dist.append(np.linalg.norm(mod))
     
 index = np.nonzero(dist)
+index = list(index)[0].tolist()
 mods_valid = mods[index]
 dist_valid = dist[index]  
 avg_dist = np.mean(dist)
