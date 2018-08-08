@@ -111,7 +111,7 @@ print("Max distortion", np.max(np.abs(adversarial-image)))
 print('Adversarial Model Prediction', np.argmax(sess.run(logits, {x_input: adversarial[1:2]})))
 print('Adversarial Model Logits', sess.run(logits, {x_input: adversarial[1:2]}))
 
-artifacts, labels = get_lid(model, image, image, adversarial, 2, 10, 'cifar')
+artifacts, labels = get_lid(model, image, image, adversarial, 10, 1000, 'cifar')
 
 
 T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
