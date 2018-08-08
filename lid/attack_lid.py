@@ -316,9 +316,9 @@ advs = image_valid + mods_valid
 
 print("average distortion of 100 images is :", avg_dist)
 
+#artifacts, labels = get_lid(model, image, image, adversarial, 20, 100, 'cifar')
 
 artifacts, labels = get_lid(model.model, image_valid, image_valid, advs, 2, n_samples, 'cifar')
-
 
 
 T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
