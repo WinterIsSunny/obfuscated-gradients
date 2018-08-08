@@ -309,8 +309,7 @@ for i in range(10):
 avg_dist = np.mean(dist)
 #image_valid = np.array(image)[index]
 n_samples = 10
-print("shape of image :", image.shape)
-print("shape of modi:", advs.shape)
+
 print("length of valid samples:", n_samples)
 print("length of advs:",len(advs))
 print("type of advs:",type(advs))
