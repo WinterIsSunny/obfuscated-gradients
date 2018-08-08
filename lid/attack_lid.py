@@ -279,8 +279,8 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-image = cifar.eval_data.xs[:10]/255.0-.5
-label = cifar.eval_data.ys[:10]
+image = cifar.eval_data.xs[:100]/255.0-.5
+label = cifar.eval_data.ys[:100]
 
 #timestart = time.time()
 #print('Clean Model Prediction', model.predict(image[0]))
@@ -294,7 +294,7 @@ attack = blackbox(model)
 
 dist = []
 advs = []
-for i in range(10):
+for i in range(100):
     print("===========attacking image ",i+1,"=====================")
     adv = attack.attack_untargeted(image[i],label[i])
     advs.append(adv)
@@ -308,7 +308,7 @@ for i in range(10):
 #dist_valid = np.array(dist)[index]  
 avg_dist = np.mean(dist)
 #image_valid = np.array(image)[index]
-n_samples = 10
+n_samples = 100
 
 print("length of valid samples:", n_samples)
 print("length of advs:",len(advs))
