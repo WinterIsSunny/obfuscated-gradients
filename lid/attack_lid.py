@@ -21,6 +21,7 @@ import torch
 import time
 import cifar10_input
 
+
 class blackbox:
     def __init__(self,model):
         self.model = model
@@ -36,7 +37,7 @@ class blackbox:
 
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return np.nan
+            return 0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -97,7 +98,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            print("=============================================")
+#            print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -124,7 +125,7 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
-            print("=============================================")
+#            print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
@@ -138,7 +139,7 @@ class blackbox:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-            print("=============================================")
+#            print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
@@ -158,7 +159,7 @@ class blackbox:
                 beta = beta * 0.1
                 if (beta < 0.0005):
                     break
-            print("=-=-=-=-=-=-=will enter next iteration=-=-=-=-=-=-=-=")
+#            print("=-=-=-=-=-=-=will enter next iteration=-=-=-=-=-=-=-=")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
@@ -280,25 +281,44 @@ model = Model(model,model_logits,sess,[0.0,1.0])
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 image = cifar.eval_data.xs[:100]/255.0-.5
 label = cifar.eval_data.ys[:100]
-#image = image[1:2]
-#label = label[1:2]
 
-#print ("the original label:",label[0])
 #timestart = time.time()
 #print('Clean Model Prediction', model.predict(image[0]))
 #timeend = time.time()
 #print("time consuming:", timeend - timestart)
 attack = blackbox(model)
-dist = []
-for i in range(100):
-    mod = attack.attack_untargeted(image[i],label[i])
-    dist.append(np.linalg.norm(mod))
-    
-avg_dist = np.nanmean(dist)
-print("average distortion of 100 images is :", avg_dist)
-
-
+#mod = attack.attack_untargeted(image[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
+#adv = image[0] + mod
 #print("new label for adversarial sample: ", model.predict(adv))
 
 
+dist = []
+mods = []
+for i in range(100):
+    mod = attack.attack_untargeted(image[i],label[i])
+    mods.append(mod)
+    dist.append(np.linalg.norm(mod))
+    
+index = np.nonzero(dist)
+mods_valid = mods[index]
+dist_valid = dist[index]  
+avg_dist = np.mean(dist)
+image_valid = image[index]
+n_samples = len(index)
+advs = image_valid + mods_valid
+
+print("average distortion of 100 images is :", avg_dist)
+
+
+artifacts, labels = get_lid(model, image_valid, image_valid, advs, 10, n_samples, 'cifar')
+
+
+
+T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
+lr, _, scaler = detect(T('cifar', 'cw-l2', 'lid', 'cw-l2'))
+
+t_artifacts = scaler.transform(artifacts)
+
+print('Detection rate clean', np.mean(lr.predict(t_artifacts[:n_samples])))
+print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-n_samples:])))
 
