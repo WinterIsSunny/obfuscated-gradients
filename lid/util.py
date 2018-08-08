@@ -520,7 +520,7 @@ def get_lids_random_batch(model, X, X_noisy, X_adv, dataset, k=10, batch_size=10
 
 #    print("in util, after computation, lids =", lids)
 #    print("in util, after computation, lids_noisy =", lids_noisy)
-    print("in util, after computation, lids_adv =", lids_adv)
+#    print("in util, after computation, lids_adv =", lids_adv)
     return lids, lids_noisy, lids_adv
 
 def get_lids_in_class(model, X, X_adv, k=10, batch_size=100, dataset='mnist'):
