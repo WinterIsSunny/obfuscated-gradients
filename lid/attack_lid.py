@@ -35,9 +35,9 @@ class blackbox:
             (x0, y0): original image
         """
 
-#        if (self.model.predict(x0) != y0):
-#            print("Fail to classify the image. No need to attack.")
-#            return np.zeros(x0.shape)
+        if (self.model.predict(x0) != y0):
+            print("Fail to classify the image. No need to attack.")
+            return x0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -302,25 +302,25 @@ for i in range(100):
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
-#index = np.nonzero(dist)
-#index = list(index)[0].tolist()
-#mods_valid = np.array(mods)[index]
-#dist_valid = np.array(dist)[index]  
+index = np.nonzero(dist)
+index = list(index)[0].tolist()
+dist_valid = np.array(dist)[index]  
 avg_dist = np.mean(dist)
-#image_valid = np.array(image)[index]
-n_samples = 100
+image_valid = np.array(image)[index]
+advs_valid = np.array(advs)[index]
+n_samples = len(index)
 
 print("length of valid samples:", n_samples)
 print("length of advs:",len(advs))
 print("type of advs:",type(advs))
 print("type of elements in advs:",type(advs[0]))
 print("average distortion of 100 images is :", avg_dist)
-print(" advs:",advs)
+print(" advs:",advs[0:3])
 
 
 #artifacts, labels = get_lid(model, image, image, adversarial, 20, 100, 'cifar')
 
-artifacts, labels = get_lid(model.model, image, image, advs, 2, n_samples, 'cifar')
+artifacts, labels = get_lid(model.model, image_valid, image_valid, advs_valid, 10, n_samples, 'cifar')
 
 #print("artifacts:", artifacts)
 T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
