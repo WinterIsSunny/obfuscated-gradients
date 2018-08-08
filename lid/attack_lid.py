@@ -35,9 +35,9 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0) != y0):
-            print("Fail to classify the image. No need to attack.")
-            return np.zeros(x0.shape)
+#        if (self.model.predict(x0) != y0):
+#            print("Fail to classify the image. No need to attack.")
+#            return np.zeros(x0.shape)
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -169,7 +169,7 @@ class blackbox:
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
 #        print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next image=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-        return np.array(g_theta*best_theta)
+        return x0+np.array(g_theta*best_theta)
     
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
@@ -293,36 +293,35 @@ attack = blackbox(model)
 
 
 dist = []
-mods = []
+advs = []
 for i in range(10):
     print("===========attacking image ",i+1,"=====================")
-    mod = attack.attack_untargeted(image[i],label[i])
-    mods.append(mod)
-    dist.append(np.linalg.norm(mod))
-np.save("dist.npy",np.array(dist))
-np.save("mods.npy",np.array(mods))
+    adv = attack.attack_untargeted(image[i],label[i])
+    advs.append(adv)
+    dist.append(np.linalg.norm(adv-image[i]))
+#np.save("dist.npy",np.array(dist))
+#np.save("mods.npy",np.array(mods))
 
-index = np.nonzero(dist)
-index = list(index)[0].tolist()
-mods_valid = np.array(mods)[index]
-dist_valid = np.array(dist)[index]  
+#index = np.nonzero(dist)
+#index = list(index)[0].tolist()
+#mods_valid = np.array(mods)[index]
+#dist_valid = np.array(dist)[index]  
 avg_dist = np.mean(dist)
-image_valid = np.array(image)[index]
-n_samples = len(index)
-print("shape of image :", image_valid.shape)
-print("shape of modi:", mods_valid.shape)
+#image_valid = np.array(image)[index]
+n_samples = 10
+print("shape of image :", image.shape)
+print("shape of modi:", advs.shape)
 print("length of valid samples:", n_samples)
-advs = image_valid + mods_valid
 print("length of advs:",len(advs))
 print("type of advs:",type(advs))
 print("type of elements in advs:",type(advs[0]))
 print("average distortion of 100 images is :", avg_dist)
 print(" advs:",advs)
-print(" image:", image_valid)
+
 
 #artifacts, labels = get_lid(model, image, image, adversarial, 20, 100, 'cifar')
 
-artifacts, labels = get_lid(model.model, image_valid, image_valid, advs, 1, n_samples, 'cifar')
+artifacts, labels = get_lid(model.model, image, image, advs, 2, n_samples, 'cifar')
 
 #print("artifacts:", artifacts)
 T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
