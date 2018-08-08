@@ -480,7 +480,7 @@ def get_lids_random_batch(model, X, X_noisy, X_adv, dataset, k=10, batch_size=10
         lid_batch_noisy = np.zeros(shape=(n_feed, lid_dim))
         for i, func in enumerate(funcs):
             print(i)
-            X_act = func([X[start:end], 0])[0]
+            X_act = func([X[start:end]])[0]
             X_act = np.asarray(X_act, dtype=np.float32).reshape((n_feed, -1))
             # print("X_act: ", X_act.shape)
 
