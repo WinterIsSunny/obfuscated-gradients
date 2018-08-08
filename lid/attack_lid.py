@@ -279,8 +279,8 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-image = cifar.eval_data.xs[:100]/255.0-.5
-label = cifar.eval_data.ys[:100]
+image = cifar.eval_data.xs[:10]/255.0-.5
+label = cifar.eval_data.ys[:10]
 
 #timestart = time.time()
 #print('Clean Model Prediction', model.predict(image[0]))
@@ -294,25 +294,27 @@ attack = blackbox(model)
 
 dist = []
 mods = []
-for i in range(100):
+for i in range(10):
     print("===========attacking image ",i+1,"=====================")
     mod = attack.attack_untargeted(image[i],label[i])
     mods.append(mod)
     dist.append(np.linalg.norm(mod))
-    
+np.save("dist.npy",np.array(dist))
+np.save("mods.npy",np.array(mods))
+
 index = np.nonzero(dist)
 index = list(index)[0].tolist()
-mods_valid = mods[index]
-dist_valid = dist[index]  
+mods_valid = np.array(mods)[index]
+dist_valid = np.array(dist)[index]  
 avg_dist = np.mean(dist)
-image_valid = image[index]
+image_valid = np.array(image)[index]
 n_samples = len(index)
 advs = image_valid + mods_valid
 
 print("average distortion of 100 images is :", avg_dist)
 
 
-artifacts, labels = get_lid(model, image_valid, image_valid, advs, 10, n_samples, 'cifar')
+artifacts, labels = get_lid(model, image_valid, image_valid, advs, 3, n_samples, 'cifar')
 
 
 
