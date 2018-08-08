@@ -14,3 +14,13 @@ print("shape of this file:", data.shape)
 print("shape of one item:",data[0].shape)
 print("what is saved in this file:", data[0:5])
 print("at the end of the file, negative?:",data[-5:-1])
+
+
+
+
+
+
+
+
+
+

@@ -518,9 +518,9 @@ def get_lids_random_batch(model, X, X_noisy, X_adv, dataset, k=10, batch_size=10
     lids_noisy = np.asarray(lids_noisy, dtype=np.float32)
     lids_adv = np.asarray(lids_adv, dtype=np.float32)
 
-#    print("in util, after computation, lids =", lids)
-#    print("in util, after computation, lids_noisy =", lids_noisy)
-#    print("in util, after computation, lids_adv =", lids_adv)
+    print("in util, after computation, lids =", lids.shape)
+    print("in util, after computation, lids_noisy =", lids_noisy.shape)
+    print("in util, after computation, lids_adv =", lids_adv.shape)
     return lids, lids_noisy, lids_adv
 
 def get_lids_in_class(model, X, X_adv, k=10, batch_size=100, dataset='mnist'):
