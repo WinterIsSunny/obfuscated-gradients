@@ -21,7 +21,7 @@ class Model:
             new_img = image * 255.0
             new_img = np.clip(new_img,0.0,255.0)
         else:
-            new_img = np.clip(image,0.0,1.0)
+            new_img = np.clip(image,-0.5,0.5)
 
         new_img = [new_img]
         
