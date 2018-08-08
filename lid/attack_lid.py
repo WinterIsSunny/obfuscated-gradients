@@ -324,7 +324,7 @@ print(" image:", image_valid)
 
 artifacts, labels = get_lid(model.model, image_valid, image_valid, advs, 1, n_samples, 'cifar')
 
-print("artifacts:", artifacts)
+#print("artifacts:", artifacts)
 T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
 lr, _, scaler = detect(T('cifar', 'cw-l2', 'lid', 'cw-l2'))
 
