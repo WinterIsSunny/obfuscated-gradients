@@ -240,12 +240,12 @@ model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess,[0.0,255.0])
 
 
-image = cifar.eval_data.xs[:20]# np.array
+image = cifar.eval_data.xs[:5]# np.array
 new_img = image / 255.0
 
 #image = np.clip(image,0,1)
 #image /= 255
-label = cifar.eval_data.ys[:20]
+label = cifar.eval_data.ys[:5]
 
 attack = blackbox(model)
 
@@ -259,7 +259,7 @@ print("time consuming: ", timeend-timestart)
 
 
 dist = []
-for i in range(20):
+for i in range(5):
     print("================attacking image ",i+1,"=======================")
     mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
@@ -268,7 +268,7 @@ index = np.nonzero(dist)
 index = list(index)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index])
-print("the average distortion of 20 pictures is:", avg_distortion)
+print("the average distortion of 10 pictures is:", avg_distortion)
 
 #new_logits = model.predict(adv)
 #new_label = model.predict_label(adv)
