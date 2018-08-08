@@ -279,8 +279,8 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-image = cifar.eval_data.xs[:100]/255.0-.5
-label = cifar.eval_data.ys[:100]
+image = cifar.eval_data.xs[:10]/255.0-.5
+label = cifar.eval_data.ys[:10]
 
 #timestart = time.time()
 #print('Clean Model Prediction', model.predict(image[0]))
@@ -320,7 +320,7 @@ print(" advs:",advs[0:3])
 
 #artifacts, labels = get_lid(model, image, image, adversarial, 20, 100, 'cifar')
 
-artifacts, labels = get_lid(model.model, image_valid, image_valid, advs_valid, 10, n_samples, 'cifar')
+artifacts, labels = get_lid(model.model, image_valid, image_valid, advs_valid, 2, n_samples, 'cifar')
 
 #print("artifacts:", artifacts)
 T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
