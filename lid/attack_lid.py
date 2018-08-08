@@ -317,8 +317,8 @@ print("length of advs:",len(advs))
 print("type of advs:",type(advs))
 print("type of elements in advs:",type(advs[0]))
 print("average distortion of 100 images is :", avg_dist)
-print("the norm of advs:",[np.linalg.norm(x) for x in advs])
-print("the norm of image:",[np.linalg.norm(x) for x in image_valid])
+print(" advs:",advs)
+print(" image:", image_valid)
 
 #artifacts, labels = get_lid(model, image, image, adversarial, 20, 100, 'cifar')
 
