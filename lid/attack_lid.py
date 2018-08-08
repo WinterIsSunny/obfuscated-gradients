@@ -313,7 +313,9 @@ print("shape of image :", image_valid.shape)
 print("shape of modi:", mods_valid.shape)
 print("length of valid samples:", n_samples)
 advs = image_valid + mods_valid
-
+print("length of advs:",len(advs))
+print("type of advs:",type(advs))
+print("type of elements in advs:",type(adv[0]))
 print("average distortion of 100 images is :", avg_dist)
 
 #artifacts, labels = get_lid(model, image, image, adversarial, 20, 100, 'cifar')
