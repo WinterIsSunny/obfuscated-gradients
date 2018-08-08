@@ -11,6 +11,8 @@ Created on Thu Jul 26 13:32:50 2018
 import torch
 import numpy as np
 import tensorflow as tf
+from utils import *
+from defense import *
 
 
 class MyModel:
@@ -30,8 +32,8 @@ class MyModel:
         else:
             new_img = np.clip(image,0.0,1.0)
 
-        
-        labels = self.sess.run([self.preds], {self.x: new_img})
+        adv_def = defend_jpeg(new_img)
+        labels = self.sess.run([self.preds], {self.x: adv_def})
         #print("type of preds[0] is: ",type(preds[0]))
         return labels[0]
         
