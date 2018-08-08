@@ -37,7 +37,7 @@ class blackbox:
 
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return 0
+            return np.zeros(x0.shape)
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
