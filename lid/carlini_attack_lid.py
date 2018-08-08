@@ -31,7 +31,7 @@ class Attack:
         self.step_size = step_size
         self.rand = random_start
 
-        self.xs = tf.Variable(np.zeros((10, 32, 32, 3), dtype=np.float32),
+        self.xs = tf.Variable(np.zeros((100, 32, 32, 3), dtype=np.float32),
                                     name='modifier')
         self.orig_xs = tf.placeholder(tf.float32, [None, 32, 32, 3])
 
@@ -87,8 +87,8 @@ attack = Attack(model_logits,
 
 xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
 
-image = cifar.eval_data.xs[:10]/255.0-.5
-label = cifar.eval_data.ys[:10]
+image = cifar.eval_data.xs[:100]/255.0-.5
+label = cifar.eval_data.ys[:100]
 
 #plt.imshow(image[1]+.5)
 #plt.show() 
@@ -119,6 +119,6 @@ lr, _, scaler = detect(T('cifar', 'cw-l2', 'lid', 'cw-l2'))
 
 t_artifacts = scaler.transform(artifacts)
 
-print('Detection rate clean', np.mean(lr.predict(t_artifacts[:10])))
-print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-10:])))
+print('Detection rate clean', np.mean(lr.predict(t_artifacts[:100])))
+print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-100:])))
 
