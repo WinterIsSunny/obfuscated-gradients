@@ -243,7 +243,7 @@ class blackbox:
 #        print(type(new_img))
         new_img = new_img[0]
         print(new_img.get_shape())
-        print(len(new_img))
+#        print(len(new_img))
         new_img = tf.Session().run(tf.constant(new_img))
         new_mod = np.sum(x0 - new_img, 0)
         return new_mod

@@ -90,7 +90,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            print("=============================================")
+#            print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -111,27 +111,27 @@ class blackbox:
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
-                print("alpha in the first for loop is: ",alpha)
+#                print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
                     break
-            print("=============================================")
+#            print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.9
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                     opt_count += count
-                    print("alpha in the second for loop is: ",alpha)
+#                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-            print("=============================================")
+#            print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
@@ -140,11 +140,11 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-            
-            print("%3d th iteration" % i)
-            print("current alpha:",alpha)
-            print("g_theta")
-            print("number of queries:", opt_count+query_count)
+#            
+#            print("%3d th iteration" % i)
+#            print("current alpha:",alpha)
+#            print("g_theta")
+#            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -168,26 +168,26 @@ class blackbox:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            timestart1 = time.time()
+#            timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
-            timeend1 = time.time()
-            print("1st while time:", timeend1 - timestart1)
+#            timeend1 = time.time()
+#            print("1st while time:", timeend1 - timestart1)
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            timestart2 = time.time()
+#            timestart2 = time.time()
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-            timeend2 = time.time()
-            print("2nd while time:", timeend2 - timestart2)
+#            timeend2 = time.time()
+#            print("2nd while time:", timeend2 - timestart2)
             
-        timestart3 = time.time()
+#        timestart3 = time.time()
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -195,11 +195,11 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        timeend3 = time.time()
-        print("3rd while time:",timeend3 - timestart3)
-        print("lbd_low:",lbd_lo)
-        print("lbd_high:", lbd_hi)
-        print("-----------------------------")
+#        timeend3 = time.time()
+#        print("3rd while time:",timeend3 - timestart3)
+#        print("lbd_low:",lbd_lo)
+#        print("lbd_high:", lbd_hi)
+#        print("-----------------------------")
         return lbd_hi, nquery
        
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
@@ -457,7 +457,7 @@ image = np.copy(orig)/255.0
 true_label = model.predict(image)
 print("true label of the original image is: ", true_label)
 attack = blackbox(model)
-adv = attack.attack_untargeted(image,true_label)
+adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
 
 #adv = attack.attack_targeted(image,true_label,924)
 
