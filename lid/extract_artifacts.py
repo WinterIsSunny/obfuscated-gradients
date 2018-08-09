@@ -29,7 +29,7 @@ PATH_DATA = "../data/"
 # PATH_DATA = "../data_v1/"
 PATH_IMAGES = "../images_v1/"
 
-def merge_and_generate_labels(X_pos, X_neg):
+def merge_and_generate_labels(X_pos, X_neg,save = False):
     """
     merge positve and nagative artifact and generate labels
     :param X_pos: positive samples
@@ -48,7 +48,14 @@ def merge_and_generate_labels(X_pos, X_neg):
     X = np.concatenate((X_pos, X_neg))
     y = np.concatenate((np.ones(X_pos.shape[0]), np.zeros(X_neg.shape[0])))
     y = y.reshape((X.shape[0], 1))
-
+    print("shape of X, with label :", X.shape)
+    print("shape of y, label")
+    
+    if save:
+        file_name = file_name = os.path.join("data/lid_cifar_blackbox.npy")
+        dataset = np.concatenate((X,y),1)
+        np.save(file_name,dataset)
+    
     return X, y
 
 
@@ -174,7 +181,7 @@ def get_bu(model, X_test, X_test_noisy, X_test_adv):
 
     return artifacts, labels
 
-def get_lid(model, X_test, X_test_noisy, X_test_adv, k=10, batch_size=100, dataset='mnist'):
+def get_lid(model, X_test, X_test_noisy, X_test_adv, k=10, batch_size=100, dataset='mnist',save = False):
     """
     Get local intrinsic dimensionality
     :param model: 
@@ -203,7 +210,7 @@ def get_lid(model, X_test, X_test_noisy, X_test_adv, k=10, batch_size=100, datas
 
     lids_pos = lids_adv
     lids_neg = np.concatenate((lids_normal, lids_noisy))
-    artifacts, labels = merge_and_generate_labels(lids_pos, lids_neg)
+    artifacts, labels = merge_and_generate_labels(lids_pos, lids_neg,save)
 
     return artifacts, labels
 
