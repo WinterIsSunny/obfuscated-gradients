@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score
 from util import (random_split, block_split, train_lr, compute_roc)
 
 DATASETS = ['mnist', 'cifar', 'svhn']
-ATTACKS = ['fgsm', 'bim-a', 'bim-b', 'jsma', 'cw-l0', 'cw-l2']
+ATTACKS = ['fgsm', 'bim-a', 'bim-b', 'jsma', 'cw-l0', 'cw-l2','blackbox']
 ARTIFACTS = ['kd', 'bu', 'lid']
 PATH_DATA = "../data/"
 # PATH_DATA = "../data_v1/"
@@ -29,7 +29,7 @@ def load_artifacts(dataset, attack, artifacts):
     for artifact in artifacts:
         print("  -- %s" % artifact)
         #file_name = os.path.join(PATH_DATA, "%s_%s_%s.npy" % (artifact, dataset, attack))
-        file_name = os.path.join("data/lid_cifar_cw-l2_20.npy")
+        file_name = os.path.join("data/lid_cifar_blackbox.npy")
         data = np.load(file_name)
         if X is None:
             X = data[:, :-1]
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         '-a', '--attack',
-        help="Attack to use train the discriminator; either 'fgsm', 'bim-a', 'bim-b', 'jsma' 'cw' "
+        help="Attack to use train the discriminator; either 'fgsm', 'bim-a', 'bim-b', 'jsma' ,'cw','blackbox' "
              "or 'all'",
         required=True, type=str
     )
@@ -147,5 +147,5 @@ if __name__ == "__main__":
     # args = parser.parse_args()
     # PATH_DATA = '../data_v1/'
     #args = parser.parse_args(['-d', 'mnist', '-a', 'fgsm', '-t', 'fgsm', '-r', 'kd,bu'])
-    args = parser.parse_args(['-d', 'mnist', '-a', 'cw-l2', '-t', 'fgsm', '-r', 'lid'])
+    args = parser.parse_args(['-d', 'mnist', '-a', 'blackbox', '-t', 'fgsm', '-r', 'lid'])
     detect(args)
