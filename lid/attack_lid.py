@@ -279,8 +279,10 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-image = cifar.eval_data.xs[:5]/255.0-.5
-label = cifar.eval_data.ys[:5]
+train_img = cifar.eval_data.xs[:500]/255.0-.5
+train_lb = cifar.eval_data.ys[:500]
+test_img = cifar.eval_data.xs[500:600]/255.0-.5
+test_lb = cifar.eval_data.ys[500:600]
 
 #timestart = time.time()
 #print('Clean Model Prediction', model.predict(image[0]))
@@ -294,11 +296,11 @@ attack = blackbox(model)
 
 dist = []
 advs = []
-for i in range(5):
-    print("===========attacking image ",i+1,"=====================")
-    adv = attack.attack_untargeted(image[i],label[i])
+for i in range(500):
+    print("============== attacking image ",i+1,"=====================")
+    adv = attack.attack_untargeted(train_img[i],train_lb[i])
     advs.append(adv)
-    dist.append(np.linalg.norm(adv-image[i]))
+    dist.append(np.linalg.norm(adv-train_img[i]))
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
@@ -306,25 +308,44 @@ index = np.nonzero(dist)
 index = list(index)[0].tolist()
 dist_valid = np.array(dist)[index]  
 avg_dist = np.mean(dist)
-image_valid = np.array(image)[index]
+train_img_valid = np.array(train_img)[index]
 advs_valid = np.array(advs)[index]
 n_samples = len(index)
 
 print("length of valid samples:", n_samples)
 print("length of advs:",len(advs))
-print("type of advs:",type(advs))
-print("type of elements in advs:",type(advs[0]))
+print("average distortion of 500 images is :", avg_dist)
+
+artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
+
+# =========================================== test =======================================
+dist = []
+advs = []
+for i in range(100):
+    print("============== attacking image ",i+1,"=====================")
+    adv = attack.attack_untargeted(test_img[i],test_lb[i])
+    advs.append(adv)
+    dist.append(np.linalg.norm(adv-test_img[i]))
+#np.save("dist.npy",np.array(dist))
+#np.save("mods.npy",np.array(mods))
+
+index = np.nonzero(dist)
+index = list(index)[0].tolist()
+dist_valid = np.array(dist)[index]  
+avg_dist = np.mean(dist)
+test_img_valid = np.array(test_img)[index]
+advs_valid = np.array(advs)[index]
+n_samples = len(index)
+
+print("length of valid samples:", n_samples)
+print("length of advs:",len(advs_valid))
 print("average distortion of 100 images is :", avg_dist)
-print(" advs:",advs[0:3])
+
+artifacts, labels = get_lid(model.model, test_img_valid, test_img_valid, advs_valid, 10, n_samples, 'cifar',save = False)
 
 
-#artifacts, labels = get_lid(model, image, image, adversarial, 20, 100, 'cifar')
-
-artifacts, labels = get_lid(model.model, image_valid, image_valid, advs_valid, 2, n_samples, 'cifar',save = True)
-
-#print("artifacts:", artifacts)
 T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
-lr, _, scaler = detect(T('cifar', 'cw-l2', 'lid', 'cw-l2'))
+lr, _, scaler = detect(T('cifar', 'blackbox', 'lid', 'blackbox'))
 
 t_artifacts = scaler.transform(artifacts)
 
