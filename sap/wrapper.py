@@ -33,10 +33,10 @@ class Model:
             label = self.sub_predict(new_img)
             labels.append(label)
         if y0 in labels:
-#            print(labels)
+            print(labels)
             return y0
         else:
-#            print(labels)
+            print(labels)
             return labels[0]
             
             
