@@ -129,7 +129,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.9
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -156,7 +156,7 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.1
+                beta = beta * 0.2
                 if (beta < 0.0005):
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -280,17 +280,17 @@ model = Model(model,sess,[0.0,255.0])
 attack = blackbox(model)
 
 #xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
-image = cifar.eval_data.xs[:1]
-label = cifar.eval_data.ys[:1]
+image = cifar.eval_data.xs[:3]
+label = cifar.eval_data.ys[:3]
 new_img = image/255.0
 
-print("original label is :", label[0])
+print("original label is :", label[1])
 #print(len(image))
-print("label of clean image:", model.predict(new_img[0],label[0]))
+print("label of clean image:", model.predict(new_img[1],label[1]))
 
-adv = attack.attack_untargeted(new_img[0],label[0])
+adv = attack.attack_untargeted(new_img[1],label[1],alpha = 4, beta = 0.05, iterations = 1000)
 for i in range(10):
-    print("label of adv sample: ", model.predict(adv,label[0]))
+    print("label of adv sample: ", model.predict(adv,label[1]))
 
 
 
