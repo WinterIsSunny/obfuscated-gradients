@@ -15,7 +15,7 @@ class Model:
         self.model = model
         self.sess = sess
         
-    def sub_predict(self,new_img):
+    def single_predict(self,new_img):
         new_img = [new_img]
         #xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
         label = self.sess.run(self.model.predictions, {self.model.x_input: new_img})
@@ -30,7 +30,7 @@ class Model:
             
         labels = []
         for i in range(10):
-            label = self.sub_predict(new_img)
+            label = self.single_predict(new_img)
             labels.append(label)
         if y0 in labels:
             print(labels)
@@ -38,7 +38,6 @@ class Model:
         else:
             print(labels)
             return labels[0]
-            
             
     
     def predict_logit(self,image):

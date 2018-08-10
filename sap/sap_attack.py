@@ -34,11 +34,11 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0,y0) != y0):
+        if (self.model.single_predict(x0,y0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
     
-        num_directions = 100
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -291,7 +291,7 @@ print("label of clean image:", model.predict(new_img[1],label[1]))
 
 adv = attack.attack_untargeted(new_img[1],label[1],alpha = 4, beta = 0.05, iterations = 1000)
 for i in range(10):
-    print("label of adv sample: ", model.predict(adv,label[1]))
+    print("label of adv sample: ", model.single_predict(adv,label[1]))
 
 
 
