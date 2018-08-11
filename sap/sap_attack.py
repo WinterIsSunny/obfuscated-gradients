@@ -79,7 +79,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 3.5:
+            if g_theta < 4.2:
                 break
             gradient = torch.zeros(theta.size())
             q = 30
@@ -159,7 +159,7 @@ class blackbox:
                 beta = beta * 0.2
                 if (beta < 0.0005):
                     break
-            print("new label in this iteration:", self.model.predict(x0 + np.array(g_theta*best_theta),y0))
+            print("new label in this iteration:", self.model.single_predict(x0 + np.array(g_theta*best_theta)))
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
