@@ -6,7 +6,7 @@ Created on Mon Aug 13 14:11:27 2018
 @author: yusu
 """
 
-from wrapper import MyModel
+from wrapper_bitdepth import MyModel
 import tensorflow as tf
 import numpy as np
 
