@@ -21,6 +21,7 @@ class MyModel:
         self.bounds = bounds
         self.x = tf.placeholder(tf.float32, (299, 299, 3))
         self.cropped_xs = defend_crop(self.x)
+        self.logits, self.preds = self.model.model(self.sess, self.cropped_xs)
 #        self.x_expanded = tf.expand_dims(self.x, axis=0)
 #        self.logits, self.preds = self.model.model(self.sess, self.x_expanded)
     
@@ -32,7 +33,7 @@ class MyModel:
             new_img = np.clip(image,0.0,1.0)
 
 #        adv_def = defend_crop(new_img)
-        labels = self.sess.run([self.preds], {self.cropped_xs: new_img})
+        labels = self.sess.run([self.preds], {self.x: new_img})
         #print("type of preds[0] is: ",type(preds[0]))
         return labels[0]
         
