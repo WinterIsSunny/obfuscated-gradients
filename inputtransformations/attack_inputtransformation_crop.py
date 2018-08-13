@@ -267,7 +267,7 @@ image = np.copy(orig)/255.0
 true_label = model.predict(image)
 print("true label of the original image is: ", true_label)
 attack = blackbox(model)
-adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
+adv = attack.attack_untargeted(image,true_label, alpha = 2, beta = 0.05, iterations = 1000)
 
 #adv = attack.attack_targeted(image,true_label,924)
 
