@@ -150,7 +150,7 @@ class blackbox:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0005):
+                if (beta < 0.0000005):
                     print("beta is too small")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -277,7 +277,7 @@ image = np.copy(orig)/255.0
 
 #
 attack = blackbox(model)
-adv = attack.attack_untargeted(image,[287], alpha = 4, beta = 0.05, iterations = 1000)
+adv = attack.attack_untargeted(image,[287], alpha = 0.02, beta = 0.0005, iterations = 1000)
 
 adv_label = model.predict(adv)#print("target lable is: ", TARGET)
 print("label after attack is: ", adv_label)

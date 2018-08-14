@@ -150,14 +150,14 @@ class blackbox:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0005):
+                if (beta < 0.0000005):
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("inputtransformation")
+        print("inputtransformation_jpeg")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
