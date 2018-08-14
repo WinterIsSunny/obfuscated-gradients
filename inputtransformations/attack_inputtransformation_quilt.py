@@ -32,10 +32,10 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0) != y0):
-            print("Fail to classify the image. No need to attack.")
-            return x0
-    
+#        if (self.model.predict(x0) != y0):
+#            print("Fail to classify the image. No need to attack.")
+#            return x0
+#    
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
@@ -264,15 +264,18 @@ model = MyModel(inceptionv3,sess,[0.0,255.0])
 #print("shape of image_extend: ", image_extend.shape)
 image = np.copy(orig)/255.0
 
+
 #print(len(image),type(image))
-for i in range(30):
-    
-    true_label = model.predict(image)
-    print("true label of the original image is: ", true_label)
-#attack = blackbox(model)
-#adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
-#
-#
-#adv_label = model.predict(adv)#print("target lable is: ", TARGET)
-#print("label after attack is: ", adv_label)
+#for i in range(30):
+#    
+#    true_label = model.predict(image)
+#    print("true label of the original image is: ", true_label)
+
+
+
+attack = blackbox(model)
+adv = attack.attack_untargeted(image,[287], alpha = 4, beta = 0.05, iterations = 1000)
+
+adv_label = model.predict(adv)#print("target lable is: ", TARGET)
+print("label after attack is: ", adv_label)
 
