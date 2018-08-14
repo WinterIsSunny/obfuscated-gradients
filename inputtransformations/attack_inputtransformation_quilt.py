@@ -151,13 +151,14 @@ class blackbox:
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 0.0005):
+                    print("beta is too small")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("inputtransformation -- bitdepth")
+        print("inputtransformation -- quilt")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
@@ -264,13 +265,14 @@ model = MyModel(inceptionv3,sess,[0.0,255.0])
 image = np.copy(orig)/255.0
 
 #print(len(image),type(image))
-true_label = model.predict(image)
-print("true label of the original image is: ", true_label)
-attack = blackbox(model)
-adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
-
-#adv = attack.attack_targeted(image,true_label,924)
-
-adv_label = model.predict(adv)#print("target lable is: ", TARGET)
-print("label after attack is: ", adv_label)
+for i in range(30):
+    
+    true_label = model.predict(image)
+    print("true label of the original image is: ", true_label)
+#attack = blackbox(model)
+#adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
+#
+#
+#adv_label = model.predict(adv)#print("target lable is: ", TARGET)
+#print("label after attack is: ", adv_label)
 
