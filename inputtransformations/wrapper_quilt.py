@@ -19,11 +19,10 @@ class MyModel:
         self.model = model
         self.sess = sess
         self.bounds = bounds
+        self.defend_quilt = make_defend_quilt(self.sess)
         self.x = tf.placeholder(tf.float32, (299, 299, 3))
-        self.cropped_xs = defend_crop(self.x)
-        self.logits, self.preds = self.model.model(self.sess, self.cropped_xs)
-#        self.x_expanded = tf.expand_dims(self.x, axis=0)
-#        self.logits, self.preds = self.model.model(self.sess, self.x_expanded)
+        self.x_expanded = tf.expand_dims(self.x, axis=0)
+        self.logits, self.preds = self.model.model(self.sess, self.x_expanded)
     
     def predict(self,image):
         if self.bounds[1] == 255.0:
@@ -32,9 +31,8 @@ class MyModel:
         else:
             new_img = np.clip(image,0.0,1.0)
 
-#        adv_def = defend_crop(new_img)
-        labels = self.sess.run([self.preds], {self.x: new_img})
-        print("predicted label ",labels[0])
+        adv_def = self.defend_quilt(new_img)
+        labels = self.sess.run([self.preds], {self.x: adv_def})
         #print("type of preds[0] is: ",type(preds[0]))
         return labels[0]
         
