@@ -25,7 +25,7 @@ class MyModel:
 #        self.x_expanded = tf.expand_dims(self.x, axis=0)
 #        self.logits, self.preds = self.model.model(self.sess, self.x_expanded)
     
-    def predict(self,image):
+    def predict(self,image,y0):
         if self.bounds[1] == 255.0:
             new_img = image * 255.0
             new_img = np.clip(new_img,0.0,255.0)
@@ -34,7 +34,9 @@ class MyModel:
 
 #        adv_def = defend_crop(new_img)
         labels = self.sess.run([self.preds], {self.x: new_img})
-        print("predicted label ",labels[0])
-        #print("type of preds[0] is: ",type(preds[0]))
-        return labels[0]
+        if y0 in labels:
+            return y0 
+        else:
+            return labels[0]
+
         
