@@ -32,7 +32,7 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0) != y0):
+        if (self.model.predict(x0,y0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
     
@@ -46,7 +46,7 @@ class blackbox:
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             #print(theta.size())
-            if self.model.predict(x0+np.array(theta)) != y0:
+            if self.model.predict(x0+np.array(theta),y0) != y0:
                 initial_lbd = torch.norm(theta)
                 theta = theta/torch.norm(theta)
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
@@ -166,12 +166,12 @@ class blackbox:
         nquery = 0
         lbd = initial_lbd
         
-        if self.model.predict(x0+np.array(lbd*theta)) == y0:
+        if self.model.predict(x0+np.array(lbd*theta),y0) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
 #            timestart1 = time.time()
-            while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
+            while self.model.predict(x0+np.array(lbd_hi*theta),y0) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -183,7 +183,7 @@ class blackbox:
             lbd_lo = lbd*0.99
             nquery += 1
 #            timestart2 = time.time()
-            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
+            while self.model.predict(x0+ np.array(lbd_lo*theta),y0) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
 #            timeend2 = time.time()
@@ -193,7 +193,7 @@ class blackbox:
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta),y0) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -207,7 +207,7 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            if self.model.predict(x0+ np.array(current_best*theta)) == y0:
+            if self.model.predict(x0+ np.array(current_best*theta),y0) == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
@@ -243,7 +243,7 @@ class blackbox:
             nquery += 1
             #print("size of image:",x0.shape)
             #print("size of modifier,",np.array(lbd_mid*theta).shape )
-            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta),y0) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -265,7 +265,7 @@ model = MyModel(inceptionv3,sess,[0.0,255.0])
 image = np.copy(orig)/255.0
 
 #print(len(image),type(image))
-true_label = model.predict(image)
+true_label = model.predict(image,y0)
 print("true label of the original image is: ", true_label)
 attack = blackbox(model)
 adv = attack.attack_untargeted(image,true_label, alpha = 2, beta = 0.05, iterations = 1000)
