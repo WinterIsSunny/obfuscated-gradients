@@ -6,7 +6,7 @@ Created on Mon Aug 13 14:11:27 2018
 @author: yusu
 """
 
-from wrapper_bitdepth import MyModel
+from wrapper_tv import MyModel
 import tensorflow as tf
 import numpy as np
 
@@ -32,10 +32,10 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0) != y0):
-            print("Fail to classify the image. No need to attack.")
-            return x0
-    
+#        if (self.model.predict(x0) != y0):
+#            print("Fail to classify the image. No need to attack.")
+#            return x0
+#    
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
@@ -150,7 +150,7 @@ class blackbox:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0000005):
+                if (beta < 0.0005):
                     print("beta is too small")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -158,7 +158,7 @@ class blackbox:
         #target = model.predict(x0 + g_theta*best_theta)
         
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("inputtransformation -- bitdepth")
+        print("inputtransformation -- tv")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta)
@@ -264,13 +264,20 @@ model = MyModel(inceptionv3,sess,[0.0,255.0])
 #print("shape of image_extend: ", image_extend.shape)
 image = np.copy(orig)/255.0
 
-#print(len(image),type(image))
-true_label = model.predict(image)
-print("true label of the original image is: ", true_label)
-attack = blackbox(model)
-adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
 
-#adv = attack.attack_targeted(image,true_label,924)
+#print(len(image),type(image))
+
+#for i in range(30):
+#    timestart = time.time()
+#    true_label = model.predict(image)
+#    timeend = time.time()
+#    print("true label of the original image is: ", true_label)
+#    print("time consuming for one query:", timeend-timestart)
+
+
+#
+attack = blackbox(model)
+adv = attack.attack_untargeted(image,[287], alpha = 4, beta = 0.05, iterations = 1000)
 
 adv_label = model.predict(adv)#print("target lable is: ", TARGET)
 print("label after attack is: ", adv_label)
