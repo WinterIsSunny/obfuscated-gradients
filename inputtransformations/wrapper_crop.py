@@ -34,13 +34,14 @@ class MyModel:
 
 #        adv_def = defend_crop(new_img)
         labels = self.sess.run([self.preds], {self.x: new_img})
-        if y0 in labels:
-            print("single label:",labels[0])
-            print("all labels:",labels)
-            print("label size:", len(labels))
-            return y0 
-        else:
-            print(labels[0])
-            return labels[0]
+        return labels
+#        if y0 in labels:
+#            print("single label:",labels[0])
+#            print("all labels:",labels)
+#            print("label size:", len(labels))
+#            return y0 
+#        else:
+#            print(labels[0])
+#            return labels[0]
 
         
