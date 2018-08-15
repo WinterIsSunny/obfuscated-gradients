@@ -270,6 +270,8 @@ for i in range(20):
     true_label = model.predict(image,287)
     timeend = time.time()
     print("true label of the original image is: ", true_label)
+    print("type of label:", type(true_label))
+    print("shape of label:",true_label.shape)
     print("time consuming for one query:", timeend - timestart)
 #attack = blackbox(model)
 #adv = attack.attack_untargeted(image,true_label, alpha = 2, beta = 0.05, iterations = 1000)
