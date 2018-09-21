@@ -73,7 +73,9 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            if g_theta < 1:
+            mod_initial = self.get_modifier(best_theta*g_theta,x0,gan)
+            mod_norm = torch.norm(mod_initial)
+            if mod_norm < 1:
                 #print("break here 1?")
                 break
             #print("n_query:",opt_count)
@@ -283,7 +285,7 @@ res = []
 shape = 128
 for i in range(3):
     modifier = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
-                                         shape, best_theta = None,alpha = 2, beta = 0.05, iterations = 1000)
+                                         shape, best_theta = None,alpha = 2, beta = 0.05, iterations = 10)
 #    dist = pre_adv - image[0]
     #dist_norm = np.linalg.norm(dist)
     res.append(modifier)
@@ -300,10 +302,11 @@ start = np.array([res[np.argmin(distortion)]])
 
 attack2 = blackbox(model)
 print("label of pure image:", model.predict(image[0]))
-adversarial = attack2.attack_untargeted(image[0],[np.eye(10)[q] for q in y_test[0]],lambda x: Generator(1, x),
-                                        shape,best_theta = start, alpha = 2, beta = 0.05, iterations = 1000)
+adv_mod = attack2.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
+                                        shape,best_theta = start, alpha = 4, beta = 0.005, iterations = 1000)
+adv = image[0]+adv_mod
 
-print("new label is: ",model.predict(adversarial))
+print("new label is: ",model.predict(adv))
 
 
 
