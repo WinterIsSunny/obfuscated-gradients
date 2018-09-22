@@ -258,6 +258,7 @@ class blackbox:
         
     
 
+
 session = keras.backend.get_session()
 keras.backend.set_learning_phase(False)
 model = keras.models.load_model("data/mnist")
@@ -265,9 +266,9 @@ model = Model(model,[0.0,1.0])
 
 attack1 = blackbox(model)
 
-touse = [x for x in tf.trainable_variables() if 'Generator' in x.name]
-saver = tf.train.Saver(touse)
-saver.restore(session, 'data/mnist-gan')
+#touse = [x for x in tf.trainable_variables() if 'Generator' in x.name]
+#saver = tf.train.Saver(touse)
+#saver.restore(session, 'data/mnist-gan')
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_test = np.array(x_test, dtype=np.float32)
