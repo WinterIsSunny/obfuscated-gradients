@@ -230,7 +230,8 @@ class blackbox:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             modi = self.get_modifier(lbd_mid*theta,x0,gan)
-            if self.model.predict(x0 + modi) is not y0:
+            print("type of modi:", type(modi))
+            if self.model.predict(x0 + modi) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -242,11 +243,14 @@ class blackbox:
 #        x_new = tf.placeholder(tf.float32,modifier.shape)
 #        noise = tf.reshape(x_new, [1,128])
         mod_tf = tf.convert_to_tensor(modifier)
-        new_img = gan(mod_tf)
+        new_mod = gan(mod_tf)
 #        print(type(new_img))
-        new_img = new_img[0]
+        new_mod = new_mod[0]
+        with tf.Session():
+            new_mod = new_mod.eval()
 #        print(new_img.get_shape())
-        new_mod = np.sum(x0 - new_img, 0)
+        new_mod = np.sum(x0 - new_mod, 0)
+        # return np array modifier 
         return new_mod
         
         
