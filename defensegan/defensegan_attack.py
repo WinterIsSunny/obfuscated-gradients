@@ -245,6 +245,7 @@ class blackbox:
 #        x_new = tf.placeholder(tf.float32,modifier.shape)
 #        noise = tf.reshape(x_new, [1,128])
         mod_tf = tf.convert_to_tensor(modifier)
+        print("shape of modifier before GAN:", mod.tf.shape )
         new_mod = gan(mod_tf)
 #        print(type(new_img))
         new_mod = new_mod[0]
