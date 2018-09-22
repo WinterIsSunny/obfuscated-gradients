@@ -230,7 +230,7 @@ class blackbox:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             modi = self.get_modifier(lbd_mid*theta,x0,gan)
-            if self.model.predict(x0 + modi) != y0:
+            if self.model.predict(x0 + modi) is not y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
