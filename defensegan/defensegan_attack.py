@@ -156,8 +156,10 @@ class blackbox:
         print("defensegan")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        new_mod = self.get_modifier(g_theta*best_theta,x0,gan)
-        return new_mod
+#        new_mod = self.get_modifier(g_theta*best_theta,x0,gan)
+        mod = np.array(g_theta*best_theta)
+        print("return g_theta*best_theta, shape of it:", mod.shape)
+        return mod
     def fine_grained_binary_search_local(self, x0, y0, gan, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -255,16 +257,8 @@ class blackbox:
         
         
     
-    
-
-
-
-
-xin = tf.placeholder(tf.float32, [1, 128])
 
 session = keras.backend.get_session()
-mygan = Generator(1, xin)
-
 keras.backend.set_learning_phase(False)
 model = keras.models.load_model("data/mnist")
 model = Model(model,[0.0,1.0])
@@ -295,9 +289,11 @@ for i in range(3):
     res.append(modifier)
     #dists.append(dist_norm)
 
-#start = res[np.argmax(dists)]
 
+res = np.array(res)
 
+xin = tf.placeholder(tf.float32, [3, 128])
+mygan = Generator(3, xin)
 it = session.run(mygan, {xin: res})
 
 distortion = np.sum((it)**2,(1,2,3))**.5
@@ -308,8 +304,9 @@ attack2 = blackbox(model)
 print("label of pure image:", model.predict(image[0]))
 adv_mod = attack2.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
                                         shape,best_theta = start, alpha = 4, beta = 0.005, iterations = 1000)
-adv = image[0]+adv_mod
 
+print("final modifier  before GAN :", adv_mod.shape)
+adv = (image[0]+ Generator(1,adv_mod)).eval()
 print("new label is: ",model.predict(adv))
 
 
