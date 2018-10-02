@@ -33,6 +33,7 @@ class MyModel:
         
     
     def predict(self,image):
+        timestart = time.time()
         if self.bounds[1] == 255.0:
             new_img = image * 255.0
             new_img = np.clip(new_img,0.0,255.0)
@@ -56,8 +57,8 @@ class MyModel:
         adv_def = self.pixeldefend(new_img)
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
-        #timeend = time.time()
-        #print("time consuming for one query :", timeend -timestart)
+        timeend = time.time()
+        print("time consuming for one query :", timeend -timestart)
         print(p[0])
 
         return p[0]
