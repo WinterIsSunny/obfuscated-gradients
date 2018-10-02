@@ -31,9 +31,9 @@ class blackbox:
         print("predicted label:", pred)
         print("true label:", y0)
 
-        if (self.model.predict(x0) != y0):
-            print("Fail to classify the image. No need to attack.")
-            return x0
+#        if (self.model.predict(x0) != y0):
+#            print("Fail to classify the image. No need to attack.")
+#            return x0
     
         num_directions = 100
         best_theta, g_theta = None, float('inf')
