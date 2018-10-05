@@ -6,22 +6,8 @@ Paper: [Guo et al. 2018](https://arxiv.org/abs/1711.00117)
 
 Run `./setup.sh` to fetch models.
 
-## Breaks
+## evaluation
 
-* Bit-depth reduction: `bitdepth.ipynb` (broken with BPDA)
-* JPEG: `jpeg.ipynb` (broken with BPDA)
-* Cropping: `crop.ipynb` (broken with EOT)
-* Quilting: `quilt.ipynb` (broken with EOT+BPDA)
-* Total variation denoising: `tv.ipynb` (broken with EOT+BPDA)
+Run attack_(defensename).py to test the blackbox attacking.
 
-## [robustml] evaluation
 
-Run with:
-
-```bash
-python robustml_attack.py --imagenet-path <path> --defense <defense>
-````
-
-Where `<defense>` is one of `bitdepth`, `jpeg`, `crop`, `quilt`, or `tv`.
-
-[robustml]: https://github.com/robust-ml/robustml
