@@ -321,7 +321,7 @@ artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_
 # =========================================== test =======================================
 dist = []
 advs = []
-for i in range(100):
+for i in range(10):
     print("============== attacking image ",i+1,"=====================")
     adv = attack.attack_untargeted(test_img[i],test_lb[i])
     advs.append(adv)
