@@ -6,6 +6,8 @@ Paper: [Ma et al. 2018](https://arxiv.org/abs/1801.02613)
 
 Run `./setup.sh` to fetch models.
 
-## Breaks
 
-* Detection: PGD with high confidence
+
+## evaluation
+
+Run python attack_(defensename).py to test the blackbox attacking.
