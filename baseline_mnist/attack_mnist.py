@@ -293,7 +293,7 @@ print("True label", y_test[0])
 
 res = []
 count = []
-for i in range(2):
+for i in range(10):
     print("image ",i," , pred label:",model.predict(x_test[i]))
     adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
     dist = adv - x_test[i]
@@ -309,8 +309,10 @@ index2 = list(index2)[0].tolist()
 avg_distortion = np.mean(np.array(res)[index1])
 avg_count = np.mean(np.array(count)[index2])
 print("the average distortion of 10 pictures is:", avg_distortion)
-print("number of images")
+print("number of images:", [x for x in range(10)])
 print("the number of queries of 10 pictures is:", count)
+print("the average number of queries of 10 pictures is:", avg_count)
+
 
 
 #modifier = attack1.attack_untargeted(image[0],y_test[0],shape, best_theta = None,
