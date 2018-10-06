@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #%matplotlib inline
 
-from CW import CW
+#from CW import CW
 import utils
 from models import PytorchModel
 from allmodels import load_mnist_data
