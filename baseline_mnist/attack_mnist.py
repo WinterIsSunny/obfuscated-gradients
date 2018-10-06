@@ -286,7 +286,7 @@ res = []
 #shape = 128
 shape = image[0].shape
 modifier = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
-                                         shape, best_theta = None,alpha = 2, beta = 0.05, iterations = 10)
+                                         shape, best_theta = None,alpha = 4, beta = 0.005, iterations = 10)
 
 #for i in range(3):
 #    modifier = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
