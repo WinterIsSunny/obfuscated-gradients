@@ -299,12 +299,17 @@ for i in range(10):
     dist = adv - x_test[i]
     res.append(np.linalg.norm(dist))
 
-index = np.nonzero(res)
-index = list(index)[0].tolist()
+index1 = np.nonzero(res)
+index1 = list(index1)[0].tolist()
 
-avg_distortion = np.mean(np.array(res)[index])
+index2 = np.nonzero(count)
+index2 = list(index2)[0].tolist()
+
+avg_distortion = np.mean(np.array(res)[index1])
+avg_count = np.mean(np.array(count)[index2])
 print("the average distortion of 10 pictures is:", avg_distortion)
-print("the average number of queries of 10 pictures is:", np.mean(count))
+print("the number of queries of 10 pictures is:", count)
+print("the average number of queries of 10 pictures is:", avg_count)
 
 #modifier = attack1.attack_untargeted(image[0],y_test[0],shape, best_theta = None,
 #                                     alpha = 4, beta = 0.005, iterations = 10)
