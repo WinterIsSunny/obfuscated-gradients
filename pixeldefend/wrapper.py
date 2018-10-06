@@ -56,9 +56,13 @@ class MyModel:
         timestart = time.time()
         adv_def = self.pixeldefend(new_img)
         timeend = time.time()
-        print("time_cosuming for one image:", timestart-timeend)
+        print("time_cosuming for one image:", timeend-timestart)
+        timestart1 = time.time()
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
+        timeend1 = time.time()
+        print("time for prediction once:", timeend1 - timestart1)
+
 #        timeend = time.time()
 #        print("time consuming for one query :", timeend -timestart)
         print(p[0])
