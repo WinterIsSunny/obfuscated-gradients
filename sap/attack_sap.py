@@ -168,7 +168,7 @@ class blackbox:
         print("lid")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return x0 + np.array(g_theta*best_theta),opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -281,16 +281,20 @@ model = Model(model,sess,[0.0,255.0])
 attack = blackbox(model)
 
 #xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
-image = cifar.eval_data.xs[:3]
-label = cifar.eval_data.ys[:3]
+image = cifar.eval_data.xs[30:40]
+label = cifar.eval_data.ys[30:40]
 new_img = image/255.0
 
-print("original label is :", label[1])
+#print("original label is :", label[1])
 #print(len(image))
 print("label of clean image:", model.predict(new_img[1],label[1]))
 
-adv = attack.attack_untargeted(new_img[1],label[1],alpha = 4, beta = 0.05, iterations = 1000)
+#adv = attack.attack_untargeted(new_img[1],label[1],alpha = 4, beta = 0.05, iterations = 1000)
+count = []
+dist = []
 for i in range(10):
+    adv, query = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.05, iterations = 1000)
+    dist.append(np.linalg.norm(adv-new_img[i]))
     print("label of adv sample: ", model.single_predict(adv))
 
 

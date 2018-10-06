@@ -798,6 +798,7 @@ def block_split(X, Y):
     print("Isolated split 80%, 20% for training and testing")
     num_samples = X.shape[0]
     partition = int(num_samples/3)
+    print("before partition, the partition is:", partition)
     X_adv, Y_adv = X[:partition], Y[:partition]
     X_norm, Y_norm = X[partition:2*partition], Y[partition:2*partition]
     X_noisy, Y_noisy = X[2*partition:], Y[2*partition:]
@@ -806,9 +807,14 @@ def block_split(X, Y):
 
     X_train = np.concatenate((X_adv[:num_train], X_norm[:num_train], X_noisy[:num_train]))
     Y_train = np.concatenate((Y_adv[:num_train], Y_norm[:num_train], Y_noisy[:num_train]))
+    print("shape of X_train right after partition:", X_train.shape )
+    print("shape of Y_train right after partition:", Y_train.shape)
 
     X_test = np.concatenate((X_adv[num_train:], X_norm[num_train:], X_noisy[num_train:]))
     Y_test = np.concatenate((Y_adv[num_train:], Y_norm[num_train:], Y_noisy[num_train:]))
+    print("shape of X_test before return:", X_test.shape)
+    print("shape of Y_test before return:", Y_test.shape)
+    
 
     return X_train, Y_train, X_test, Y_test
 

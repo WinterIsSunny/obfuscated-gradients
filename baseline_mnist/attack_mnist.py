@@ -308,9 +308,11 @@ index2 = list(index2)[0].tolist()
 
 avg_distortion = np.mean(np.array(res)[index1])
 avg_count = np.mean(np.array(count)[index2])
-print("the average distortion of 10 pictures is:", avg_distortion)
+
 print("number of images:", [x for x in range(10)])
+print("the distortion of 10 pictures is:", res)
 print("the number of queries of 10 pictures is:", count)
+print("the average distortion of 10 pictures is:", avg_distortion)
 print("the average number of queries of 10 pictures is:", avg_count)
 
 
