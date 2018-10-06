@@ -305,7 +305,7 @@ for i in range(100):
 #np.save("mods.npy",np.array(mods))
 
 index = np.nonzero(dist)
-index = list(index)[0].tolist()
+index = liast(index)[0].tolist()
 dist_valid = np.array(dist)[index]  
 avg_dist = np.mean(dist)
 train_img_valid = np.array(train_img)[index]

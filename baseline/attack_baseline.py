@@ -157,7 +157,7 @@ class blackbox:
         print("baseline")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return np.array(g_theta*best_theta)
+        return np.array(g_theta*best_theta), opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -259,16 +259,25 @@ print("time consuming: ", timeend-timestart)
 
 
 dist = []
+count = []
 for i in range(10):
     print("================attacking image ",i+1,"=======================")
-    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
+    count.append(queries)
 
-index = np.nonzero(dist)
-index = list(index)[0].tolist()
+index1 = np.nonzero(dist)
+index1= list(index1)[0].tolist()
 
-avg_distortion = np.mean(np.array(dist)[index])
-print("the average distortion of 10 pictures is:", avg_distortion)
+index2 = np.nonzero(count)
+index2 = list(index2)[0].tolist()
+
+
+avg_distortion = np.mean(np.array(dist)[index1])
+avg_distortion = np.mean(np.array(count)[index2])
+print("the average distortion of 10 images is:", avg_distortion)
+print("the number of queries for 10 images :", count)
+print("the average queries of 10 images:", avg_distortion)
 
 #new_logits = model.predict(adv)
 #new_label = model.predict_label(adv)
