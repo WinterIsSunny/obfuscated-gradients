@@ -42,7 +42,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
     
-        num_directions = 2000
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -165,7 +165,7 @@ class blackbox:
                 if (beta < 0.0005):
                     print("beta is too small")
                     break
-            print("=-=-=--will enter next iteration=-=-=--=-=-")
+#            print("=-=-=--will enter next iteration=-=-=--=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         

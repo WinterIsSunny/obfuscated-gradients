@@ -6,7 +6,7 @@ Creaated on Thu Jul 26 15:20:02 2018
 @author: yusu
 """
 
-from wrapper import MyModel
+from wrapper_jpeg import MyModel
 import tensorflow as tf
 import numpy as np
 
