@@ -294,38 +294,13 @@ attack = blackbox(model)
 #print("new label for adversarial sample: ", model.predict(adv))
 
 
-dist = []
-advs = []
-for i in range(500):
-    print("============== attacking image ",i+1,"=====================")
-    adv = attack.attack_untargeted(train_img[i],train_lb[i])
-    advs.append(adv)
-    dist.append(np.linalg.norm(adv-train_img[i]))
-#np.save("dist.npy",np.array(dist))
-#np.save("mods.npy",np.array(mods))
-
-index = np.nonzero(dist)
-index = list(index)[0].tolist()
-dist_valid = np.array(dist)[index]  
-avg_dist = np.mean(dist)
-train_img_valid = np.array(train_img)[index]
-advs_valid = np.array(advs)[index]
-n_samples = len(index)
-
-print("length of valid samples:", n_samples)
-print("length of advs:",len(advs))
-print("average distortion of 500 images is :", avg_dist)
-
-artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
-
-# =========================================== test =======================================
 #dist = []
 #advs = []
-#for i in range(10):
+#for i in range(500):
 #    print("============== attacking image ",i+1,"=====================")
-#    adv = attack.attack_untargeted(test_img[i],test_lb[i])
+#    adv = attack.attack_untargeted(train_img[i],train_lb[i])
 #    advs.append(adv)
-#    dist.append(np.linalg.norm(adv-test_img[i]))
+#    dist.append(np.linalg.norm(adv-train_img[i]))
 ##np.save("dist.npy",np.array(dist))
 ##np.save("mods.npy",np.array(mods))
 #
@@ -333,22 +308,47 @@ artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_
 #index = list(index)[0].tolist()
 #dist_valid = np.array(dist)[index]  
 #avg_dist = np.mean(dist)
-#test_img_valid = np.array(test_img)[index]
+#train_img_valid = np.array(train_img)[index]
 #advs_valid = np.array(advs)[index]
 #n_samples = len(index)
 #
 #print("length of valid samples:", n_samples)
-#print("length of advs:",len(advs_valid))
-#print("average distortion of 100 images is :", avg_dist)
+#print("length of advs:",len(advs))
+#print("average distortion of 500 images is :", avg_dist)
 #
-#artifacts, labels = get_lid(model.model, test_img_valid, test_img_valid, advs_valid, 10, n_samples, 'cifar',save = False)
-#
-#
-#T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
-#lr, _, scaler = detect(T('cifar', 'blackbox', 'lid', 'blackbox'))
-#
-#t_artifacts = scaler.transform(artifacts)
-#
-#print('Detection rate clean', np.mean(lr.predict(t_artifacts[:n_samples])))
-#print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-n_samples:])))
+#artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
+
+# =========================================== test =======================================
+dist = []
+advs = []
+for i in range(10):
+    print("============== attacking image ",i+1,"=====================")
+    adv = attack.attack_untargeted(test_img[i],test_lb[i])
+    advs.append(adv)
+    dist.append(np.linalg.norm(adv-test_img[i]))
+#np.save("dist.npy",np.array(dist))
+#np.save("mods.npy",np.array(mods))
+
+index = np.nonzero(dist)
+index = list(index)[0].tolist()
+dist_valid = np.array(dist)[index]  
+avg_dist = np.mean(dist)
+test_img_valid = np.array(test_img)[index]
+advs_valid = np.array(advs)[index]
+n_samples = len(index)
+
+print("length of valid samples:", n_samples)
+print("length of advs:",len(advs_valid))
+print("average distortion of 100 images is :", avg_dist)
+
+artifacts, labels = get_lid(model.model, test_img_valid, test_img_valid, advs_valid, 10, n_samples, 'cifar',save = False)
+
+
+T = collections.namedtuple('args', ['dataset', 'attack', 'artifacts', 'test_attack'])
+lr, _, scaler = detect(T('cifar', 'blackbox', 'lid', 'blackbox'))
+
+t_artifacts = scaler.transform(artifacts)
+
+print('Detection rate clean', np.mean(lr.predict(t_artifacts[:n_samples])))
+print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-n_samples:])))
 
