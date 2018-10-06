@@ -76,8 +76,8 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-#            if g_theta < 0.0001:
-#                break
+            if g_theta < 0.0001:
+                break
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -181,7 +181,7 @@ class blackbox:
                 if lbd_hi > 20:
                     return float('inf'), nquery
             timeend1 = time.time()
-            print("1st while time:", timeend1 - timestart1)
+#            print("1st while time:", timeend1 - timestart1)
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
@@ -191,7 +191,7 @@ class blackbox:
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
             timeend2 = time.time()
-            print("2nd while time:", timeend2 - timestart2)
+#            print("2nd while time:", timeend2 - timestart2)
             
         timestart3 = time.time()
         while (lbd_hi - lbd_lo) > tol:
@@ -202,9 +202,9 @@ class blackbox:
             else:
                 lbd_lo = lbd_mid
         timeend3 = time.time()
-        print("3rd while time:",timeend3 - timestart3)
-        print("lbd_low:",lbd_lo)
-        print("lbd_high:", lbd_hi)
+#        print("3rd while time:",timeend3 - timestart3)
+#        print("lbd_low:",lbd_lo)
+#        print("lbd_high:", lbd_hi)
         print("-----------------------------")
         return lbd_hi, nquery
     
@@ -276,7 +276,7 @@ attack = blackbox(model)
 y0 = model.predict(image)
 print("predict pure image:",y0)
 #print("predict pure image:", y1)
-adv = attack.attack_untargeted(image,y0)
+adv = attack.attack_untargeted(image,y0,alpha = 8, beta = 0.005)
 print("new label:", model.predict(adv))
 
 
