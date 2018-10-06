@@ -139,7 +139,7 @@ class blackbox:
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                     opt_count += count
-                    print("alpha in the second for loop is: ",alpha)
+#                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
@@ -174,7 +174,7 @@ class blackbox:
         print("mnist")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return x0 + np.array(g_theta*best_theta), opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -292,9 +292,10 @@ print("True label", y_test[0])
 #adv = attack.attack_untargeted(image[0],y_test[0], alpha = 4, beta = 0.005, iterations = 1000)
 
 res = []
+count = []
 for i in range(10):
     print("image ",i," , pred label:",model.predict(x_test[i]))
-    adv = attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
+    adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
     dist = adv - x_test[i]
     res.append(np.linalg.norm(dist))
 
@@ -303,6 +304,8 @@ index = list(index)[0].tolist()
 
 avg_distortion = np.mean(np.array(res)[index])
 print("the average distortion of 10 pictures is:", avg_distortion)
+print("the average number of queries of 10 pictures is:", np.mean(count))
+
 #modifier = attack1.attack_untargeted(image[0],y_test[0],shape, best_theta = None,
 #                                     alpha = 4, beta = 0.005, iterations = 10)
 
