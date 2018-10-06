@@ -213,7 +213,7 @@ class blackbox:
 #        print("3rd while time:",timeend3 - timestart3)
 #        print("lbd_low:",lbd_lo)
 #        print("lbd_high:", lbd_hi)
-        print("-----------------------------")
+#        print("-----------------------------")
         return lbd_hi, nquery
     
     
@@ -291,7 +291,7 @@ print("True label", y_test[0])
 #adv = attack.attack_untargeted(image[0],y_test[0], alpha = 4, beta = 0.005, iterations = 1000)
 
 res = []
-for i in range(10):
+for i in range(1):
     print("Preds",model.predict(x_test[i]))
     adv = attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
     dist = adv - x_test[i]
