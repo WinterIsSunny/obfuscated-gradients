@@ -173,7 +173,7 @@ class blackbox:
         print("thermometer")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return np.array(g_theta*best_theta)
+        return np.array(g_theta*best_theta), opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -277,13 +277,17 @@ new_img = image / 255.0
 
 attack = blackbox(model)
 dist = []
+count = []
 for i in range(10):
     print("&*&*&*&*&*&*&*&* this is image ",i,"&*&*&*&*&*&**&")
-    mod = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.5, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.5, iterations = 1000)
     dist.append(np.linalg.norm(mod))
+    count.append(queries)
+    
     
 avg_dist = np.nanmean(dist)
-print("average distortion of 100 images is :", avg_dist)
+print("average distortion of 100 images is:", avg_dist)
+print("the number of queries for 10images: ",count )
 
 #print("original label:", label)
 #print("predicted label of clean imgage:", model.predict(new_img[0]))
