@@ -15,6 +15,7 @@ from keras.datasets import mnist
 import keras
 #from defense import *
 import tensorflow as tf
+import time
 
 from torch.autograd import Variable
 import torch
@@ -281,16 +282,25 @@ attack = blackbox(model)
 x_test = np.array(x_test, dtype=np.float32)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test /= 255.0
-image = x_test[:1]
+#image = x_test[:1]
 
 print("True label", y_test[0])
 print("Preds",model.predict(image[0]))
 
+
+#adv = attack.attack_untargeted(image[0],y_test[0], alpha = 4, beta = 0.005, iterations = 1000)
+
 res = []
-#dists =[]
-#shape = 128
-#shape = image[0].shape
-adv = attack.attack_untargeted(image[0],y_test[0], alpha = 4, beta = 0.005, iterations = 1000)
+for i in range(10):
+    adv = attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
+    dist = adv - x_test[i]
+    res.append(np.linalg.norm(dist))
+
+index = np.nonzero(res)
+index = list(index)[0].tolist()
+
+avg_distortion = np.mean(np.array(res)[index])
+print("the average distortion of 10 pictures is:", avg_distortion)
 #modifier = attack1.attack_untargeted(image[0],y_test[0],shape, best_theta = None,
 #                                     alpha = 4, beta = 0.005, iterations = 10)
 
@@ -320,8 +330,8 @@ adv = attack.attack_untargeted(image[0],y_test[0], alpha = 4, beta = 0.005, iter
 #
 #print("final modifier  before GAN :", adv_mod.shape)
 
-adv = (image[0]+ modifier)
-print("new label is: ",model.predict(adv))
+#adv = (image[0]- adv)
+#print("new label is: ",model.predict(adv))
 
 
 

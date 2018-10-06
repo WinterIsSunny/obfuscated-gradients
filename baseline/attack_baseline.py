@@ -259,7 +259,7 @@ print("time consuming: ", timeend-timestart)
 
 
 dist = []
-for i in range(5):
+for i in range(10):
     print("================attacking image ",i+1,"=======================")
     mod = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
