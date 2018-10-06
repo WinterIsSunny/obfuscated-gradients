@@ -124,7 +124,7 @@ class blackbox:
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
-                print("alpha in the first for loop is: ",alpha)
+#                print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
@@ -293,7 +293,7 @@ print("True label", y_test[0])
 
 res = []
 for i in range(10):
-    print("Preds",model.predict(x_test[i]))
+    print("image ",i," , pred label:",model.predict(x_test[i]))
     adv = attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
     dist = adv - x_test[i]
     res.append(np.linalg.norm(dist))
