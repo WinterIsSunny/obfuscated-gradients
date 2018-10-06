@@ -240,12 +240,12 @@ model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess,[0.0,255.0])
 
 
-image = cifar.eval_data.xs[25:30]# np.array
+image = cifar.eval_data.xs[20:30]# np.array
 new_img = image / 255.0
 
 #image = np.clip(image,0,1)
 #image /= 255
-label = cifar.eval_data.ys[25:30]
+label = cifar.eval_data.ys[20:30]
 
 attack = blackbox(model)
 
@@ -260,7 +260,7 @@ print("time consuming: ", timeend-timestart)
 
 dist = []
 count = []
-for i in range(5):
+for i in range(10):
     print("================attacking image ",i+1,"=======================")
     mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
@@ -275,10 +275,10 @@ index2 = list(index2)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index1])
 avg_distortion = np.mean(np.array(count)[index2])
-print("the distortions for 5 images :", dist)
-print("the number of queries for 5 images :", count)
-print("the average distortion of 5  images is:", avg_distortion)
-print("the average queries of 5 images:", avg_distortion)
+print("the distortions for 10 images :", dist)
+print("the number of queries for 10 images :", count)
+print("the average distortion of 10 images is:", avg_distortion)
+print("the average queries of 10 images:", avg_distortion)
 
 #new_logits = model.predict(adv)
 #new_label = model.predict_label(adv)
