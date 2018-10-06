@@ -285,13 +285,14 @@ x_test /= 255.0
 #image = x_test[:1]
 
 print("True label", y_test[0])
-print("Preds",model.predict(image[0]))
+#print("Preds",model.predict(image[0]))
 
 
 #adv = attack.attack_untargeted(image[0],y_test[0], alpha = 4, beta = 0.005, iterations = 1000)
 
 res = []
 for i in range(10):
+    print("Preds",model.predict(x_test[i]))
     adv = attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
     dist = adv - x_test[i]
     res.append(np.linalg.norm(dist))
