@@ -43,7 +43,7 @@ class blackbox:
 #            print("Fail to classify the image. No need to attack.")
 #            return x0
     
-        num_directions = 100
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -84,7 +84,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 0.005:
+            if g_theta < 1:
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -103,7 +103,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            print("=============================================")
+#            print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -130,7 +130,7 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
-            print("=============================================")
+#            print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
@@ -144,7 +144,7 @@ class blackbox:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-            print("=============================================")
+#            print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
@@ -165,6 +165,7 @@ class blackbox:
                 if (beta < 0.0005):
                     print("beta is too samll")
                     break
+            print("distortion in this iteration:", g_theta)
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
