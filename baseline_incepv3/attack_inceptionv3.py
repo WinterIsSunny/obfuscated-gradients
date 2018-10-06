@@ -19,7 +19,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 4, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 8, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -95,7 +95,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            print("=============================================")
+#            print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -122,7 +122,7 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
-            print("=============================================")
+#            print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
@@ -136,7 +136,7 @@ class blackbox:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-            print("=============================================")
+#            print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
@@ -157,6 +157,7 @@ class blackbox:
                 if (beta < 0.0005):
                     print("beta is too samll")
                     break
+            print("distortion in this iteration:", g_theta)
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
