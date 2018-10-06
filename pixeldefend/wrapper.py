@@ -53,8 +53,10 @@ class MyModel:
         #label = classify(new_img)
         
         #print("the label of the image is :", label)
-        
+        timestart = time.time()
         adv_def = self.pixeldefend(new_img)
+        timeend = time.time()
+        print("time_cosuming for one image:", timestart-timeend)
         p = self.sess.run(self.model.predictions,
                        {self.model.x_input: [adv_def]})
 #        timeend = time.time()
