@@ -296,7 +296,7 @@ attack = blackbox(model)
 
 dist = []
 advs = []
-for i in range(500):
+for i in range(100):
     print("============== attacking image ",i+1,"=====================")
     adv = attack.attack_untargeted(train_img[i],train_lb[i])
     advs.append(adv)
