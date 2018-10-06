@@ -240,12 +240,12 @@ model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess,[0.0,255.0])
 
 
-image = cifar.eval_data.xs[:5]# np.array
+image = cifar.eval_data.xs[20:30]# np.array
 new_img = image / 255.0
 
 #image = np.clip(image,0,1)
 #image /= 255
-label = cifar.eval_data.ys[:5]
+label = cifar.eval_data.ys[20:30]
 
 attack = blackbox(model)
 
