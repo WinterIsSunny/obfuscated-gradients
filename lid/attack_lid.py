@@ -296,7 +296,7 @@ attack = blackbox(model)
 
 dist = []
 advs = []
-for i in range(100):
+for i in range(500):
     print("============== attacking image ",i+1,"=====================")
     adv = attack.attack_untargeted(train_img[i],train_lb[i])
     advs.append(adv)
@@ -305,7 +305,7 @@ for i in range(100):
 #np.save("mods.npy",np.array(mods))
 
 index = np.nonzero(dist)
-index = liast(index)[0].tolist()
+index = list(index)[0].tolist()
 dist_valid = np.array(dist)[index]  
 avg_dist = np.mean(dist)
 train_img_valid = np.array(train_img)[index]

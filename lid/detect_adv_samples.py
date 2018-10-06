@@ -56,6 +56,8 @@ def detect(args):
             "Artifact(s) to use 'kd', 'bu', 'lid'"
 
     X, Y = load_artifacts(args.dataset, args.attack, artifacts)
+    print("shape of X:", X.shape)
+    print("shape of Y:", Y.shape)
     #X = X[:, :-1]
 
     # normalization
