@@ -154,7 +154,7 @@ class blackbox:
         
         #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("defensegan")
+        print("mnist")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
 #        new_mod = self.get_modifier(g_theta*best_theta,x0,gan)
@@ -288,32 +288,33 @@ shape = image[0].shape
 modifier = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
                                          shape, best_theta = None,alpha = 2, beta = 0.05, iterations = 10)
 
-for i in range(3):
-    modifier = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
-                                         shape, best_theta = None,alpha = 2, beta = 0.05, iterations = 10)
-#    dist = pre_adv - image[0]
-    #dist_norm = np.linalg.norm(dist)
-    res.append(modifier)
-    #dists.append(dist_norm)
+#for i in range(3):
+#    modifier = attack1.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
+#                                         shape, best_theta = None,alpha = 2, beta = 0.05, iterations = 10)
+##    dist = pre_adv - image[0]
+#    #dist_norm = np.linalg.norm(dist)
+#    res.append(modifier)
+#    #dists.append(dist_norm)
+#
+#
+#res = np.array(res)
+#
+#xin = tf.placeholder(tf.float32, [3, 128])
+#mygan = Generator(3, xin)
+#it = session.run(mygan, {xin: res})
+#
+#distortion = np.sum((it)**2,(1,2,3))**.5
+##print("Distortions", distortion)
+#start = np.array([res[np.argmin(distortion)]])
+#
+#attack2 = blackbox(model)
+#print("label of pure image:", model.predict(image[0]))
+#adv_mod = attack2.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
+#                                        shape,best_theta = start, alpha = 4, beta = 0.005, iterations = 1000)
+#
+#print("final modifier  before GAN :", adv_mod.shape)
 
-
-res = np.array(res)
-
-xin = tf.placeholder(tf.float32, [3, 128])
-mygan = Generator(3, xin)
-it = session.run(mygan, {xin: res})
-
-distortion = np.sum((it)**2,(1,2,3))**.5
-#print("Distortions", distortion)
-start = np.array([res[np.argmin(distortion)]])
-
-attack2 = blackbox(model)
-print("label of pure image:", model.predict(image[0]))
-adv_mod = attack2.attack_untargeted(image[0],y_test[0],lambda x: Generator(1, x),
-                                        shape,best_theta = start, alpha = 4, beta = 0.005, iterations = 1000)
-
-print("final modifier  before GAN :", adv_mod.shape)
-adv = (image[0]+ Generator(1,adv_mod)).eval()
+adv = (image[0]+ modifier)
 print("new label is: ",model.predict(adv))
 
 
