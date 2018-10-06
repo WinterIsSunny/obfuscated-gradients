@@ -277,7 +277,7 @@ new_img = image / 255.0
 
 attack = blackbox(model)
 dist = []
-for i in range(100):
+for i in range(10):
     print("&*&*&*&*&*&*&*&* this is image ",i,"&*&*&*&*&*&**&")
     mod = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.5, iterations = 1000)
     dist.append(np.linalg.norm(mod))
