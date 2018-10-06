@@ -13,7 +13,7 @@ from keras.datasets import mnist
 #import matplotlib.pyplot as plt
 #import l2_attack
 import keras
-from defense import *
+#from defense import *
 import tensorflow as tf
 
 from torch.autograd import Variable
