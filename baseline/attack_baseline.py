@@ -245,14 +245,14 @@ labels = cifar.eval_data.ys[:1000]
 
 count = 0
 pre_labs = []
-for i in range(10):
+for i in range(100):
     pre_lab = sess.run(model.predictions, {model.x_input: [images[i]]})[0]
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
-print("original label:", labels[:10])
+print("original label:", labels[:100])
 print("predicted labels", pre_labs)
-print("accuracy of 100 images :", count/10)
+print("accuracy of 100 images :", count/100)
     
 #count = 0
 #for i in range(1000):
