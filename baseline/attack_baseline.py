@@ -240,45 +240,69 @@ model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 model = PytorchModel(model,sess,[0.0,255.0])
 
 
-image = cifar.eval_data.xs[20:30]# np.array
-new_img = image / 255.0
+images = cifar.eval_data.xs[:1000]
+labels = cifar.eval_data.ys[:1000]
 
-#image = np.clip(image,0,1)
-#image /= 255
-label = cifar.eval_data.ys[20:30]
+count = 0
+pre_labs = []
+for i in range(100):
+    pre_lab = model.predict(images[i])
+    pre_labs.append(pre_lab)
+    if labels[i] == pre_lab: 
+        count+=1
+print("accuracy of 100 images :", count/100)
+    
+count = 0
+for i in range(1000):
+    pre_lab = model.predict(images[i])
+    pre_labs.append(pre_lab)
+    if labels[i] == pre_lab: 
+        count+=1
 
-attack = blackbox(model)
-
-print("original label is:",label)
-timestart = time.time()
-print("predicted label on clean data is: ", model.predict_label(new_img[0]))
-timeend = time.time()
-print("time consuming: ", timeend-timestart)
-
-#adv = attack.attack_untargeted(new_img[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
-
-
-dist = []
-count = []
-for i in range(10):
-    print("================attacking image ",i+1,"=======================")
-    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
-    dist.append(np.linalg.norm(mod))
-    count.append(queries)
-
-index1 = np.nonzero(dist)
-index1= list(index1)[0].tolist()
-
-index2 = np.nonzero(count)
-index2 = list(index2)[0].tolist()
+print("accuracy of 1000 images :", count/1000)
+    
 
 
-avg_distortion = np.mean(np.array(dist)[index1])
-avg_distortion = np.mean(np.array(count)[index2])
-print("the distortions for 10 images :", dist)
-print("the number of queries for 10 images :", count)
-print("the average distortion of 10 images is:", avg_distortion)
-print("the average queries of 10 images:", avg_distortion)
+
+
+
+# ==============================================
+
+
+#image = cifar.eval_data.xs[20:30]# np.array
+#new_img = image / 255.0
+#
+#label = cifar.eval_data.ys[20:30]
+#
+#attack = blackbox(model)
+#
+#print("original label is:",label)
+#timestart = time.time()
+#print("predicted label on clean data is: ", model.predict_label(new_img[0]))
+#timeend = time.time()
+#print("time consuming: ", timeend-timestart)
+#
+#dist = []
+#count = []
+#for i in range(10):
+#    print("================attacking image ",i+1,"=======================")
+#    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
+#    dist.append(np.linalg.norm(mod))
+#    count.append(queries)
+#
+#index1 = np.nonzero(dist)
+#index1= list(index1)[0].tolist()
+#
+#index2 = np.nonzero(count)
+#index2 = list(index2)[0].tolist()
+#
+#
+#avg_distortion = np.mean(np.array(dist)[index1])
+#avg_distortion = np.mean(np.array(count)[index2])
+#print("the distortions for 10 images :", dist)
+#print("the number of queries for 10 images :", count)
+#print("the average distortion of 10 images is:", avg_distortion)
+#print("the average queries of 10 images:", avg_distortion)
 
 #new_logits = model.predict(adv)
 #new_label = model.predict_label(adv)
