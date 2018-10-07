@@ -261,7 +261,7 @@ class blackbox:
 ###########test #############################################
 sess = tf.Session()
 
-directory = os.path.join("data/n01440764")
+directory = os.path.join("data/n01440764/")
 files = []
 for file in os.listdir(directory):
     files.append(load_image(file))
