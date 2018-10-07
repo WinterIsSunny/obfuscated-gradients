@@ -246,7 +246,7 @@ labels = cifar.eval_data.ys[:1000]
 count = 0
 pre_labs = []
 for i in range(100):
-    pre_lab = model.predict(images[i])
+    pre_lab = model.predict_label(images[i])
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
@@ -254,7 +254,7 @@ print("accuracy of 100 images :", count/100)
     
 count = 0
 for i in range(1000):
-    pre_lab = model.predict(images[i])
+    pre_lab = model.predict_label(images[i])
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
