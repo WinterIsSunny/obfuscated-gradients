@@ -237,7 +237,7 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-model = PytorchModel(model,sess,[0.0,255.0])
+#model = PytorchModel(model,sess,[0.0,255.0])
 
 
 images = cifar.eval_data.xs[:1000]
@@ -246,8 +246,10 @@ labels = cifar.eval_data.ys[:1000]
 count = 0
 pre_labs = []
 for i in range(100):
-    pre_lab = model.predict_label(images[i])
-#    pre_lab = sess.run(model.predictions, {model.x_input: [images[i]]})[0]
+#    pre_lab = model.predict_label(images[i])
+    new_img = images[i] / 255.0
+    image = np.clip(new_img*255.0,0.0,255.0)
+    pre_lab = sess.run(model.predictions, {model.x_input: [image]})[0]
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
