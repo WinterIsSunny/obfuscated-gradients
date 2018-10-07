@@ -263,7 +263,7 @@ sess = tf.Session()
 
 mypath = os.path.join("data/n01440764")
 print("path of images:", mypath)
-files = [ load_image(img) for img in os.listdir(mypath) if os.path.isfile(os.path.join(mypath,f)) ]
+files = [ load_image(img) for img in os.listdir(mypath)  ]
 #for file in os.listdir(directory):
 #    files.append(load_image(file))
 #    
