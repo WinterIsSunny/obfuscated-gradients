@@ -11,6 +11,7 @@ import numpy as np
 import inceptionv3
 from utils import *
 #from defense import *
+import os
 from wrapper import MyModel
 import torch
 import time
@@ -259,8 +260,17 @@ class blackbox:
 
 ###########test #############################################
 sess = tf.Session()
-orig = load_image('cat.jpg')
-image = orig.copy()/255.0
+
+directory = os.path.join("data/n01440764")
+files = []
+for file in os.listdir(directory):
+    files.append(load_image(file))
+    
+images = files[:100]
+images = images/255.0
+
+#orig = load_image('cat.jpg')
+#image = orig.copy()/255.0
 #x = tf.placeholder(tf.float32, (299, 299, 3))
 #x_expanded = tf.expand_dims(x, axis=0)
 #x_pred = defend(x_expanded)
@@ -274,10 +284,10 @@ model = MyModel(inceptionv3,sess,[0.0,255.0])
 #print("after loading model")
 attack = blackbox(model)
 #label = 287
-y0 = model.predict(image)
+y0 = model.predict(images[0])
 print("predict pure image:",y0)
 #print("predict pure image:", y1)
-adv = attack.attack_untargeted(image,y0,alpha = 8, beta = 0.005)
+adv = attack.attack_untargeted(images[0],y0,alpha = 8, beta = 0.005)
 
 
 print("new label:", model.predict(adv))
