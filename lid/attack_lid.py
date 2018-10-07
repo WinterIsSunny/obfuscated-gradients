@@ -279,24 +279,24 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-train_img = cifar.eval_data.xs[:500]/255.0-.5
-train_lb = cifar.eval_data.ys[:500]
+train_img = cifar.eval_data.xs[:5000]/255.0-.5
+train_lb = cifar.eval_data.ys[:5000]
 test_img = cifar.eval_data.xs[500:600]/255.0-.5
 test_lb = cifar.eval_data.ys[500:600]
 attack = blackbox(model)
 
 
-labels = train_lb[:100]
-images = train_img[:100]
+labels = train_lb[:1000]
+images = train_img[:1000]
 count = 0
 pre_labs = []
-for i in range(100):
+for i in range(1000):
     pre_lab = model.predict(images[i])
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
 
-print("accuracy of 100 images :", count/100)
+print("accuracy of 100 images :", count/1000)
     
 
 
