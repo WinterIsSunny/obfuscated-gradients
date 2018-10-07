@@ -261,7 +261,7 @@ class blackbox:
 ###########test #############################################
 sess = tf.Session()
 
-directory = os.path.join("/data/n01440764/")
+directory = os.path.join("data/n01440764")
 print("path of images:", directory)
 files = []
 for file in os.listdir(directory):
