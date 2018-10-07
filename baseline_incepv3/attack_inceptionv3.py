@@ -269,6 +269,8 @@ for file in os.listdir(directory):
 images = files[:100]
 images = images/255.0
 
+
+
 #orig = load_image('cat.jpg')
 #image = orig.copy()/255.0
 #x = tf.placeholder(tf.float32, (299, 299, 3))
