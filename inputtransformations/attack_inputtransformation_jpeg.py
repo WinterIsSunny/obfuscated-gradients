@@ -147,11 +147,11 @@ class blackbox:
 #            print("current alpha:",alpha)
 #            print("g_theta")
 #            print("number of queries:", opt_count+query_count)
-            if alpha < 1e-9:
-                alpha = 1.0
+            if alpha < 1e-10:
+                alpha = 1e-6
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta <  5*1e-10):
+                if (beta <  5*1e-12):
                     break
             print("new label in this iteration:", self.model.predict(x0+np.array(best_theta*g_theta)))
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")

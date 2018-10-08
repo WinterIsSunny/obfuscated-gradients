@@ -78,7 +78,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 0.005:
+            if g_theta < 5*1e-8:
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -152,8 +152,8 @@ class blackbox:
             print("current alpha:",alpha)
 #            print("g_theta")
             print("number of queries:", opt_count+query_count)
-            if alpha < 1e-9:
-                alpha = 1.0
+            if alpha < 1e-6:
+                alpha = 1e-3
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 5*1e-10):
@@ -248,7 +248,7 @@ class blackbox:
         lbd_lo = 0.
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
-        while (lbd_hi - lbd_lo) > 1e-3:
+        while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
@@ -300,7 +300,7 @@ count = []
 label_tmp = np.zeros(15)
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2*1e-6, beta = 5*1e-8, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 0.002, beta = 5*1e-6, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
