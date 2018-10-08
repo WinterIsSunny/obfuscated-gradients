@@ -117,7 +117,7 @@ class blackbox:
                 
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
-                alpha = alpha * 1.1
+                alpha = alpha * 2
                 print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
@@ -153,10 +153,10 @@ class blackbox:
 #            print("g_theta")
             print("number of queries:", opt_count+query_count)
             if alpha < 1e-6:
-                alpha = 0.01
+                alpha = 2
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-12):
+                if (beta < 1e-10):
                     print("beta is too samll")
                     break
             print("distortion in this iteration:", g_theta)
@@ -248,7 +248,7 @@ class blackbox:
         lbd_lo = 0.
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while (lbd_hi - lbd_lo) > 1e-3:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
@@ -300,7 +300,7 @@ count = []
 label_tmp = np.zeros(15)
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.0005, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
