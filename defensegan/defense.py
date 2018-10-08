@@ -16,7 +16,7 @@ import tflib.cifar10
 import tflib.inception_score
 import tflib.plot
 
-import l2_attack
+#import l2_attack
 import keras
 from keras.datasets import mnist
 
