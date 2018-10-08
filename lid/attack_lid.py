@@ -340,6 +340,7 @@ advs = []
 count = []
 for i in range(15):
     print("============== attacking image ",i+1,"=====================")
+    print("shape of this image:",test_img[i].shape )
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
