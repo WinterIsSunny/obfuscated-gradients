@@ -292,7 +292,8 @@ attack = blackbox(model)
 y0 = model.predict(images[0])
 print("predict pure image:",y0)
 adv = attack.attack_untargeted(images[0],y0,alpha = 8, beta = 0.005)
-print("new label:", model.predict(adv))
+
+#print("new label:", model.predict(adv))
 
 dist = []
 count = []
