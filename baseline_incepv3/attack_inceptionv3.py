@@ -267,7 +267,9 @@ print("path of images:", mypath)
 files = []
 for file in os.listdir(mypath):
     print("this path is correct")
-#    files.append(load_image(file))
+    
+    orig = load_image(file)
+    files.append(orig)
     
 images = files[:100]
 images = images/255.0
