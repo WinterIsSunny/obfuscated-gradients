@@ -281,8 +281,8 @@ model = Model(model,model_logits,sess,[0.0,1.0])
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 train_img = cifar.eval_data.xs[:5000]/255.0-.5
 train_lb = cifar.eval_data.ys[:5000]
-test_img = cifar.eval_data.xs[4:20]/255.0-.5
-test_lb = cifar.eval_data.ys[4:20]
+test_img = cifar.eval_data.xs[:20]/255.0-.5
+test_lb = cifar.eval_data.ys[:20]
 attack = blackbox(model)
 
 #
@@ -340,7 +340,7 @@ advs = []
 count = []
 for i in range(15):
     print("============== attacking image ",i+1,"=====================")
-    adv,queries= attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
+    adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
     dist.append(np.linalg.norm(adv-test_img[i]))
