@@ -473,7 +473,7 @@ attack = blackbox(model)
 #print("true label of the original image is: ", true_label)
 
 
-adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
+#adv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
 
 #adv = attack.attack_targeted(image,true_label,924)
 
