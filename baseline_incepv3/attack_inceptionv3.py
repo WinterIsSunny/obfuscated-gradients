@@ -267,7 +267,7 @@ print("path of images:", mypath)
 files = []
 for file in os.listdir(mypath):
     print("this path is correct")
-    
+    print(type(file))
     orig = load_image(file)
     files.append(orig)
     
