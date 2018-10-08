@@ -483,7 +483,7 @@ count = []
 label_tmp = np.zeros(15)
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attjack_untargeted(images[i],label_tmp[i],alpha = 2*1e-6, beta = 5*1e-8, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2*1e-6, beta = 5*1e-8, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
