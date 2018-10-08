@@ -19,11 +19,11 @@ class PyModel(object):
     
     def predict_label(self, image):
         if self.bounds[1] == 255.0:
-            print("scale of this model is 255")
+#            print("scale of this model is 255")
             new_img = image * 255.0
             new_img = np.clip(new_img,0.0,255.0)
         else:
-            print("scale of this model is 1")
+#            print("scale of this model is 1")
             new_img = np.clip(image,0.0,1.0)
 
         new_img = [new_img]
