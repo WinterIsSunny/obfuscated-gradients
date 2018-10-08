@@ -242,22 +242,26 @@ class blackbox:
     def get_modifier(self,modifier,x0,gan):
 #        img = np.expand_dims(x0,0)
         modifier = np.expand_dims(np.array(modifier),0)
-#        x_new = tf.placeholder(tf.float32,modifier.shape)
+        x_new = tf.placeholder(tf.float32,(1,128))
 #        noise = tf.reshape(x_new, [1,128])
-        mod_tf = tf.convert_to_tensor(modifier)
-        print("shape of modifier before GAN:", mod_tf.shape )
-        new_mod = gan(mod_tf)
+#        mod_tf = tf.convert_to_tensor(modifier)
+#        print("shape of modifier before GAN:", mod_tf.shape )
+#        new_mod = gan(mod_tf)
 #        print(type(new_img))
-        new_mod = new_mod[0]
-        with tf.Session():
-            new_mod = new_mod.eval()
-#        print(new_img.get_shape())
-        new_mod = np.sum(x0 - new_mod, 0)
+#        new_mod = new_mod[0]
+        new_mod = gan(x_new)
+        with tf.Session() as sess:
+            img_gan = sess.run(new_mod,{x_new:modifier})
+            print("dimension of img_gan is :",img_gan.get_shape())
+            img_npy = img_gan.eval()
+        
+        new_mod = np.sum(np.expand_dims(x0,0)-img_npy,0)
+#        new_mod = np.sum(x0 - img_gan, 0)
         # return np array modifier 
         return new_mod
         
         
-    
+# ================================== test ===========================================#
 
 
 session = keras.backend.get_session()
