@@ -281,8 +281,8 @@ model = Model(model,model_logits,sess,[0.0,1.0])
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 train_img = cifar.eval_data.xs[:5000]/255.0-.5
 train_lb = cifar.eval_data.ys[:5000]
-test_img = cifar.eval_data.xs[:15]/255.0-.5
-test_lb = cifar.eval_data.ys[:15]
+test_img = cifar.eval_data.xs[:100]/255.0-.5
+test_lb = cifar.eval_data.ys[:100]
 attack = blackbox(model)
 
 #
