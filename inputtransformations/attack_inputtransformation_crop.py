@@ -251,21 +251,52 @@ class blackbox:
 
 
 sess = tf.Session()
-orig = load_image('cat.jpg')
+#orig = load_image('cat.jpg')
 #print("type of orig:. ", type(orig))
 #print("size of orig: ", orig.shape)
 #print("length of orig: ",len(orig))
 #TARGET = 924 # guacamole  
 
 model = MyModel(inceptionv3,sess,[0.0,255.0])
+attack = blackbox(model)
 #print(orig.shape)
 #image = tf.convert_to_tensor(orig)
 #image_extend = tf.expand_dims(image, axis=0)
 #print("shape of image_extend: ", image_extend.shape)
-image = np.copy(orig)/255.0
+#image = np.copy(orig)/255.0
+
+mypath = os.path.join("data/n01440764/")
+print("path of images:", mypath)
+labels = pd.read_csv("data/train.txt", sep = " ", header = None)
+print("type of labels:",type(labels))
+
+files = [load_image(mypath + file) for file in os.listdir(mypath)]
+
+#for file in os.listdir(mypath):
+#    orig = load_image(mypath + file)
+#    files.append(orig)s
+    
+images = np.asarray(files[:100])
+images = images/255.0
+
+dist = []
+count = []
+label_tmp = np.zeros(15)
+for i in range(15):
+    print("================attacking image ",i+1,"=======================")
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i]))
+    count.append(queries)
+    
+print("the distortions for 15 images :")
+for i in dist:
+    print(i)
+print("the number of queries for 15 images :")
+for j in count:
+    print(j)
 
 #print(len(image),type(image))
-true_label = model.predict(image,287)
+#true_label = model.predict(image,287)
 #for i in range(20):
 #    timestart = time.time()
 #    true_label = model.predict(image,287)
@@ -276,11 +307,11 @@ true_label = model.predict(image,287)
 #    print("time consuming for one query:", timeend - timestart)
 
 
-attack = blackbox(model)
-adv = attack.attack_untargeted(image,true_label, alpha = 2, beta = 0.05, iterations = 1000)
+
+#adv = attack.attack_untargeted(image,true_label, alpha = 2, beta = 0.05, iterations = 1000)
 
 #adv = attack.attack_targeted(image,true_label,924)
 
-adv_label = model.predict(adv,287)
-print("label after attack is: ", adv_label)
+#adv_label = model.predict(adv,287)
+#print("label after attack is: ", adv_label)
 
