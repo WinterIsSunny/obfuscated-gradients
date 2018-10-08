@@ -152,11 +152,11 @@ class blackbox:
             print("current alpha:",alpha)
             print("g_theta")
             print("number of queries:", opt_count+query_count)
-            if alpha < 1e-4:
+            if alpha < 1e-9:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0005):
+                if (beta < 5*1e-10):
                     print("beta is too samll")
                     break
             print("distortion in this iteration:", g_theta)
