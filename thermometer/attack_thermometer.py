@@ -165,7 +165,8 @@ class blackbox:
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
-#            print("=-=-=--will enter next iteration=-=-=--=-=-")
+            print("iteration:",i)
+            print("=-=-=--will enter next iteration=-=-=--=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
