@@ -123,7 +123,7 @@ class blackbox:
                 
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
-                alpha = alpha * 2
+                alpha = alpha * 1.1
                 print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
