@@ -269,7 +269,7 @@ for file in os.listdir(mypath):
     orig = load_image(mypath + file)
     files.append(orig)
     
-images = np.array(files[:100])
+images = np.asarray(files[:100])
 images = images/255.0
 
 
