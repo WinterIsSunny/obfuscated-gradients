@@ -21,7 +21,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 8, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 4, beta = 1e-4, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -153,7 +153,7 @@ class blackbox:
 #            print("g_theta")
             print("number of queries:", opt_count+query_count)
             if alpha < 1e-6:
-                alpha = 1e-3
+                alpha = 0.01
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 5*1e-10):
@@ -300,7 +300,7 @@ count = []
 label_tmp = np.zeros(15)
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 0.002, beta = 5*1e-6, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 0.2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
