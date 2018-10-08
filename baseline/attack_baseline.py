@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 #from CW import CW
 import utils
-from models import PytorchModel
+from models import PyModel
 from allmodels import load_mnist_data
 from torch.autograd import Variable
 import torch
@@ -237,7 +237,7 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-#model = PytorchModel(model,sess,[0.0,255.0])
+model = PyModel(model,sess,[0.0,255.0])
 
 
 images = cifar.eval_data.xs[:1000]

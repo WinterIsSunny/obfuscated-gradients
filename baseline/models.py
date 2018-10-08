@@ -3,7 +3,7 @@ from torch.autograd import Variable
 import numpy as np
 import tensorflow as tf
 
-class PytorchModel(object):
+class PyModel(object):
     def __init__(self,model, sess,bounds):
         self.model = model
         #self.model.eval()
