@@ -155,9 +155,9 @@ class blackbox:
             
             #print(alpha)
 #            print("%3d th iteration" % i)
-#            print("current alpha:",alpha)
+            print("current alpha:",alpha)
 #            print("g_theta")
-#            print("number of queries:", opt_count+query_count)
+            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
