@@ -268,7 +268,8 @@ files = []
 for file in os.listdir(mypath):
     print("this path is correct")
     print(file)
-    orig = load_image(file)
+    print("path for image :", mypath+file)
+    orig = load_image(mypath + file)
     files.append(orig)
     
 images = files[:100]
