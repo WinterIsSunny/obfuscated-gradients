@@ -156,7 +156,7 @@ class blackbox:
                 alpha = 0.01
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 5*1e-10):
+                if (beta < 1e-12):
                     print("beta is too samll")
                     break
             print("distortion in this iteration:", g_theta)
