@@ -274,10 +274,10 @@ labels = cifar.eval_data.ys[:1000]
 # ==============================================
 
 
-image = cifar.eval_data.xs[20:30]# np.array
+image = cifar.eval_data.xs[:15]# np.array
 new_img = image / 255.0
 
-label = cifar.eval_data.ys[20:30]
+label = cifar.eval_data.ys[:15]
 
 attack = blackbox(model)
 
@@ -289,25 +289,29 @@ print("time consuming: ", timeend-timestart)
 
 dist = []
 count = []
-for i in range(10):
+for i in range(15):
     print("================attacking image ",i+1,"=======================")
     mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
 
-index1 = np.nonzero(dist)
-index1= list(index1)[0].tolist()
+#index1 = np.nonzero(dist)
+#index1= list(index1)[0].tolist()
+#
+#index2 = np.nonzero(count)
+#index2 = list(index2)[0].tolist()
 
-index2 = np.nonzero(count)
-index2 = list(index2)[0].tolist()
 
-
-avg_distortion = np.mean(np.array(dist)[index1])
-avg_distortion = np.mean(np.array(count)[index2])
-print("the distortions for 10 images :", dist)
-print("the number of queries for 10 images :", count)
-print("the average distortion of 10 images is:", avg_distortion)
-print("the average queries of 10 images:", avg_distortion)
+#avg_distortion = np.mean(np.array(dist)[index1])
+#avg_distortion = np.mean(np.array(count)[index2])
+print("the distortions for 15 images :")
+for i in dist:
+    print(i)
+print("the number of queries for 15 images :")
+for j in count:
+    print(j)
+#print("the average distortion of 10 images is:", avg_distortion)
+#print("the average queries of 10 images:", avg_distortion)
 
 #new_logits = model.predict(adv)
 #new_label = model.predict_label(adv)
