@@ -264,7 +264,7 @@ sess = tf.Session()
 
 mypath = os.path.join("data/n01440764/")
 print("path of images:", mypath)
-labels = pd.read_csv("train.txt", sep = " ", header = None)
+labels = pd.read_csv("data/train.txt", sep = " ", header = None)
 print("type of labels:",type(labels))
 
 files = [load_image(mypath + file) for file in os.listdir(mypath)]
