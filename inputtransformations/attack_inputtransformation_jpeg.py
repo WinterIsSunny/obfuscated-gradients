@@ -18,6 +18,7 @@ from utils import *
 from defense import *
 from get_image import *
 import time
+import pandas as pd
 
 class blackbox:
     def __init__(self,model):
@@ -450,7 +451,7 @@ files = [load_image(mypath + file) for file in os.listdir(mypath)]
 
 #for file in os.listdir(mypath):
 #    orig = load_image(mypath + file)
-#    files.append(orig)
+#    files.append(orig)s
     
 images = np.asarray(files[:100])
 images = images/255.0
@@ -482,7 +483,7 @@ count = []
 label_tmp = np.zeros(15)
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2*1e-6, beta = 5*1e-8, iterations = 1000)
+    adv,queries = attack.attjack_untargeted(images[i],label_tmp[i],alpha = 2*1e-6, beta = 5*1e-8, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
