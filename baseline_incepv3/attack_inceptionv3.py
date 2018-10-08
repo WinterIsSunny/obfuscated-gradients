@@ -15,6 +15,7 @@ import os
 from wrapper import MyModel
 import torch
 import time
+import pandas as pd
 
 class blackbox:
     def __init__(self,model):
@@ -167,7 +168,7 @@ class blackbox:
         print("inceptionv3")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return x0 + np.array(g_theta*best_theta), opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -207,7 +208,7 @@ class blackbox:
 #        print("3rd while time:",timeend3 - timestart3)
 #        print("lbd_low:",lbd_lo)
 #        print("lbd_high:", lbd_hi)
-        print("-----------------------------")
+#        print("-----------------------------")
         return lbd_hi, nquery
     
     
@@ -263,15 +264,17 @@ sess = tf.Session()
 
 mypath = os.path.join("data/n01440764/")
 print("path of images:", mypath)
-#files = [load_image(img) for img in os.listdir(mypath)]
-files = []
-for file in os.listdir(mypath):
-    orig = load_image(mypath + file)
-    files.append(orig)
+labels = pd.read_csv("train.txt", sep = " ", header = None)
+print("type of labels:",type(labels))
+
+files = [load_image(mypath + file) for file in os.listdir(mypath)]
+
+#for file in os.listdir(mypath):
+#    orig = load_image(mypath + file)
+#    files.append(orig)
     
 images = np.asarray(files[:100])
 images = images/255.0
-
 
 
 #orig = load_image('cat.jpg')
@@ -284,17 +287,28 @@ images = images/255.0
 
 #print("Before loading model")
 model = MyModel(inceptionv3,sess,[0.0,255.0])
-
-
-#print("after loading model")
 attack = blackbox(model)
-#label = 287
+
 y0 = model.predict(images[0])
 print("predict pure image:",y0)
-#print("predict pure image:", y1)
 adv = attack.attack_untargeted(images[0],y0,alpha = 8, beta = 0.005)
-
-
 print("new label:", model.predict(adv))
+
+dist = []
+count = []
+label_tmp = np.zeros(15)
+for i in range(15):
+    print("================attacking image ",i+1,"=======================")
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2*1e-6, beta = 5*1e-8, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i]))
+    count.append(queries)
+    
+print("the distortions for 15 images :")
+for i in dist:
+    print(i)
+print("the number of queries for 15 images :")
+for j in count:
+    print(j)
+    
 
 
