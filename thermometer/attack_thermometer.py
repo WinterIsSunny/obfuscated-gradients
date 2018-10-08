@@ -278,16 +278,22 @@ new_img = image / 255.0
 attack = blackbox(model)
 dist = []
 count = []
-for i in range(10):
+for i in range(15):
     print("&*&*&*&*&*&*&*&* this is image ",i,"&*&*&*&*&*&**&")
     mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.5, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
+print("the distortions for 15 images :")
+for i in dist:
+    print(i)
+print("the number of queries for 15 images :")
+for j in count:
+    print(j)   
     
-avg_dist = np.nanmean(dist)
-print("average distortion of 100 images is:", avg_dist)
-print("the number of queries for 10images: ",count )
+#avg_dist = np.nanmean(dist)
+#print("average distortion of 100 images is:", avg_dist)
+#print("the number of queries for 10images: ",count )
 
 #print("original label:", label)
 #print("predicted label of clean imgage:", model.predict(new_img[0]))
