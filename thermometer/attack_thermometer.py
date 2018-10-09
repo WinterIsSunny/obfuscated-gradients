@@ -161,7 +161,7 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.1
+                beta = beta * 0.5
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
@@ -282,7 +282,7 @@ dist = []
 count = []
 for i in range(15):
     print("&*&*&*&*&*&*&*&* this is image ",i,"&*&*&*&*&*&**&")
-    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.005, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
