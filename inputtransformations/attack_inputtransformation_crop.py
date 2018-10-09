@@ -143,15 +143,15 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            
-#            print("%3d th iteration" % i)
+            print("%3d th iteration" % i)
 #            print("current alpha:",alpha)
-#            print("g_theta")
-#            print("number of queries:", opt_count+query_count)
+            print("g_theta")
+            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0000005):
+                if (beta < 1e-10):
                     print("beta is too small")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -239,7 +239,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while (lbd_hi - lbd_lo) > 1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
