@@ -143,17 +143,17 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            
-#            print("%3d th iteration" % i)
-#            print("current alpha:",alpha)
+            print("%3d th iteration" % i)
+            print("current alpha:",alpha)
 #            print("g_theta")
-#            print("number of queries:", opt_count+query_count)
+            print("number of queries:", opt_count+query_count)
             if alpha < 1e-5:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta <  5*1e-10):
                     break
-            print("new label in this iteration:", self.model.predict(x0+np.array(best_theta*g_theta)))
+#            print("new label in this iteration:", self.model.predict(x0+np.array(best_theta*g_theta)))
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
