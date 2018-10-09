@@ -129,7 +129,7 @@ class blackbox:
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                     opt_count += count
-                    print("alpha in the second for loop is: ",alpha)
+#                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
@@ -144,10 +144,10 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            
-#            print("%3d th iteration" % i)
-#            print("current alpha:",alpha)
+            print("%3d th iteration" % i)
+            print("current alpha:",alpha)
 #            print("g_theta")
-#            print("number of queries:", opt_count+query_count)
+            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -155,6 +155,7 @@ class blackbox:
                 if (beta < 1e-10):
                     print("beta is too small")
                     break
+            print("distortion in this iteration:", g_theta)
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)

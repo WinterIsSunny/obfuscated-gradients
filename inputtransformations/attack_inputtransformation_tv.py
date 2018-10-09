@@ -65,7 +65,7 @@ class blackbox:
         
         #timestart = time.time()
         print("the best initialization: ",g_theta)
-        g1 = 1.0
+#        g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
         opt_count = 0
@@ -146,7 +146,7 @@ class blackbox:
 #            
             print("%3d th iteration" % i)
             print("current alpha:",alpha)
-            print("g_theta")
+#            print("g_theta")
             print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
@@ -155,6 +155,7 @@ class blackbox:
                 if (beta < 1e-10):
                     print("beta is too small")
                     break
+            print("distortion in this iteration:", g_theta)
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)

@@ -155,6 +155,7 @@ class blackbox:
                 if (beta < 1e-10):
                     print("beta is too small")
                     break
+            print("distortion in this iteration:", g_theta)
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
