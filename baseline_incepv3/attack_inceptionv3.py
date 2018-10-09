@@ -153,7 +153,7 @@ class blackbox:
 #            print("g_theta")
             print("number of queries:", opt_count+query_count)
             if alpha < 1e-6:
-                alpha = 2
+                alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
                 if (beta < 1e-10):
@@ -248,7 +248,7 @@ class blackbox:
         lbd_lo = 0.
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
-        while (lbd_hi - lbd_lo) > 1e-3:
+        while (lbd_hi - lbd_lo) > 1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
