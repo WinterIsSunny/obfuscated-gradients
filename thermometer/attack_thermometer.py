@@ -38,9 +38,9 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0) != y0):
-            print("Fail to classify the image. No need to attack.")
-            return np.nan
+#        if (self.model.predict(x0) != y0):
+#            print("Fail to classify the image. No need to attack.")
+#            return np.nan
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -280,9 +280,9 @@ new_img = image / 255.0
 attack = blackbox(model)
 dist = []
 count = []
-for i in range(12):
+for i in range(8):
     print("&*&*&*&*&*&*&*&* this is image ",i,"&*&*&*&*&*&**&")
-    mod,queries = attack.attack_untargeted(new_img[i+3],label[i+3],alpha = 4, beta = 0.005, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i+7],label[i+7],alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
