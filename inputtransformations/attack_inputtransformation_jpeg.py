@@ -147,11 +147,11 @@ class blackbox:
 #            print("current alpha:",alpha)
 #            print("g_theta")
 #            print("number of queries:", opt_count+query_count)
-            if alpha < 1e-10:
-                alpha = 1e-6
+            if alpha < 1e-5:
+                alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta <  5*1e-12):
+                if (beta <  5*1e-10):
                     break
             print("new label in this iteration:", self.model.predict(x0+np.array(best_theta*g_theta)))
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -239,7 +239,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while (lbd_hi - lbd_lo) > 1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
@@ -483,7 +483,7 @@ count = []
 label_tmp = np.zeros(15)
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2*1e-6, beta = 5*1e-8, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
