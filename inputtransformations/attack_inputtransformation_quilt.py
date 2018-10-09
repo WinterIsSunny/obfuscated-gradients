@@ -164,7 +164,7 @@ class blackbox:
         print("inputtransformation -- quilt")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return x0 + np.array(g_theta*best_theta),opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
