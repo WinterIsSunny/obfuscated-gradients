@@ -18,6 +18,8 @@ from utils import *
 from defense import *
 from get_image import *
 import time
+import os
+import pandas as pd
 
 class blackbox:
     def __init__(self,model):
@@ -112,7 +114,7 @@ class blackbox:
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
-                print("alpha in the first for loop is: ",alpha)
+#                print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
@@ -127,7 +129,7 @@ class blackbox:
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                     opt_count += count
-                    print("alpha in the second for loop is: ",alpha)
+#                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
@@ -142,15 +144,15 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            
-#            print("%3d th iteration" % i)
-#            print("current alpha:",alpha)
-#            print("g_theta")
-#            print("number of queries:", opt_count+query_count)
+            print("%3d th iteration" % i)
+            print("current alpha:",alpha)
+            print("g_theta")
+            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0000005):
+                if (beta < 1e-10):
                     print("beta is too small")
                     break
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
@@ -238,7 +240,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while (lbd_hi - lbd_lo) > 1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
@@ -251,34 +253,49 @@ class blackbox:
 
 
 sess = tf.Session()
-orig = load_image('cat.jpg')
+mypath = os.path.join("data/n01440764/")
+print("path of images:", mypath)
+labels = pd.read_csv("data/train.txt", sep = " ", header = None)
+print("type of labels:",type(labels))
+
+files = [load_image(mypath + file) for file in os.listdir(mypath)]
+
+images = np.asarray(files[:100])
+images = images/255.0
+#orig = load_image('cat.jpg')
+#image = np.copy(orig)/255.0
 #print("type of orig:. ", type(orig))
 #print("size of orig: ", orig.shape)
 #print("length of orig: ",len(orig))
 #TARGET = 924 # guacamole  
 
 model = MyModel(inceptionv3,sess,[0.0,255.0])
-#print(orig.shape)
-#image = tf.convert_to_tensor(orig)
-#image_extend = tf.expand_dims(image, axis=0)
-#print("shape of image_extend: ", image_extend.shape)
-image = np.copy(orig)/255.0
+attack = blackbox(model)
+
+dist = []
+count = []
+label_tmp = np.zeros(15)
+for i in range(15):
+    print("================attacking image ",i+1,"=======================")
+    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i]))
+    count.append(queries)
+    
+print("the distortions for 15 images :")
+for i in dist:
+    print(i)
+print("the number of queries for 15 images :")
+for j in count:
+    print(j)
 
 
-#print(len(image),type(image))
 
-for i in range(30):
-    timestart = time.time()
-    true_label = model.predict(image)
-    timeend = time.time()
-    print("true label of the original image is: ", true_label)
-    print("time consuming for one query:", timeend-timestart)
-
-
+#for i in range(30):
+#    timestart = time.time()
+#    true_label = model.predict(image)
+#    timeend = time.time()
+#    print("true label of the original image is: ", true_label)
+#    print("time consuming for one query:", timeend-timestart)
 #
-#attack = blackbox(model)
-#adv = attack.attack_untargeted(image,[287], alpha = 0.02, beta = 0.0005, iterations = 1000)
-#
-#adv_label = model.predict(adv)#print("target lable is: ", TARGET)
-#print("label after attack is: ", adv_label)
+
 
