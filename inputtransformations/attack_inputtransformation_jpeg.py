@@ -33,9 +33,9 @@ class blackbox:
             (x0, y0): original image
         """
 
-        if (self.model.predict(x0) != y0):
-            print("Fail to classify the image. No need to attack.")
-            return x0
+#        if (self.model.predict(x0) != y0):
+#            print("Fail to classify the image. No need to attack.")
+#            return x0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -154,6 +154,7 @@ class blackbox:
                 if (beta <  5*1e-10):
                     break
 #            print("new label in this iteration:", self.model.predict(x0+np.array(best_theta*g_theta)))
+            print("distortion in this iteration:", g_theta)
             print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
