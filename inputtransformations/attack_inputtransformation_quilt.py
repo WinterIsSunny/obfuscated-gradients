@@ -114,7 +114,7 @@ class blackbox:
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
-                print("alpha in the first for loop is: ",alpha)
+#                print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
@@ -156,7 +156,7 @@ class blackbox:
                     print("beta is too small")
                     break
             print("distortion in this iteration:", g_theta)
-            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+            print("=-=-==-=-=-will enter next iteration=-==-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
@@ -282,7 +282,7 @@ dist = []
 count = []
 label_tmp = np.zeros(15)
 for i in range(15):
-    print("================attacking image ",i+1,"=======================")
+    print("=============================attacking image ",i+1,"===================================")
     adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
