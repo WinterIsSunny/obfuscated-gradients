@@ -163,7 +163,7 @@ class blackbox:
         print("inputtransformation_jpeg")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta)
+        return x0 + np.array(g_theta*best_theta),opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -485,7 +485,7 @@ label_tmp = np.zeros(15)
 for i in range(14):
     print("================attacking image ",i+1,"=======================")
     adv,queries = attack.attack_untargeted(images[i+1],label_tmp[i+1],alpha = 2, beta = 0.005, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i]))
+    dist.append(np.linalg.norm(adv-images[i+1]))
     count.append(queries)
     
 print("the distortions for 15 images :")
