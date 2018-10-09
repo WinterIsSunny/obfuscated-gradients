@@ -155,7 +155,7 @@ class blackbox:
                     break
 #            print("new label in this iteration:", self.model.predict(x0+np.array(best_theta*g_theta)))
             print("distortion in this iteration:", g_theta)
-            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+            print("=-=-=-=-=-==-will enter next iteration=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
@@ -482,10 +482,10 @@ attack = blackbox(model)
 dist = []
 count = []
 label_tmp = np.zeros(15)
-for i in range(13):
-    print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i+2],label_tmp[i+2],alpha = 2, beta = 0.005, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i+2]))
+for i in range(10):
+    print("===================================attacking image ",i+1,"=========================================")
+    adv,queries = attack.attack_untargeted(images[i+5],label_tmp[i+5],alpha = 2, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i+5]))
     count.append(queries)
     
 print("the distortions for 15 images :")
