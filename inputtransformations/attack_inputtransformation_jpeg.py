@@ -482,10 +482,10 @@ attack = blackbox(model)
 dist = []
 count = []
 label_tmp = np.zeros(15)
-for i in range(14):
+for i in range(13):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i+1],label_tmp[i+1],alpha = 2, beta = 0.005, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i+1]))
+    adv,queries = attack.attack_untargeted(images[i+2],label_tmp[i+2],alpha = 2, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i+2]))
     count.append(queries)
     
 print("the distortions for 15 images :")
