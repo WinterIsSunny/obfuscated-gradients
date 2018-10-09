@@ -146,7 +146,6 @@ class blackbox:
 #            
             print("%3d th iteration" % i)
             print("current alpha:",alpha)
-            print("g_theta")
             print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
@@ -156,7 +155,7 @@ class blackbox:
                     print("beta is too small")
                     break
             print("distortion in this iteration:", g_theta)
-            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+            print("=-=-=-=-==-will enter next iteration=-=-=-=-=---=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
@@ -164,7 +163,7 @@ class blackbox:
         print("inputtransformation -- bitdepth")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta),pt_count+query_count
+        return x0 + np.array(g_theta*best_theta),opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -288,7 +287,7 @@ dist = []
 count = []
 label_tmp = np.zeros(15)
 for i in range(15):
-    print("================attacking image ",i+1,"=======================")
+    print("==================================attacking image ",i+1,"========================================")
     adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
