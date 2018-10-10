@@ -154,9 +154,9 @@ class blackbox:
         print("defensegan")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        mod = np.array(g_theta*best_theta)
-        print("return g_theta*best_theta, shape of it:", mod.shape)
-        return mod
+        mod_gan = np.array(g_theta*best_theta)
+        print("return g_theta*best_theta, shape of it:", mod_gan.shape)
+        return mod_gan
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -193,7 +193,7 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0,theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best:
-            modi = self.get_modifier(current_best*theta,x0)
+#            modi = self.get_modifier(current_best*theta,x0)
             if self.model.predict_gan(current_best*theta,x0) == y0:
                 nquery += 1
                 return float('inf'), nquery
@@ -229,7 +229,7 @@ class blackbox:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
 #            modi = self.get_modifier(lbd_mid*theta,x0,gan)
-            print("type of modi:", type(modi))
+#            print("type of modi:", type(modi))
             if self.model.predict_gan(lbd_mid*theta,x0) != y0:
                 lbd_hi = lbd_mid
             else:
@@ -310,7 +310,11 @@ adv_mod = attack2.attack_untargeted(image[0],y_test[0],shape,best_theta = start,
                                     beta = 0.005, iterations = 1000)
 
 print("final modifier  before GAN :", adv_mod.shape)
-adv = (image[0]+ Generator(1,adv_mod)).eval()
+
+with session.as_defaut():
+    adv_mod = Generator(1,adv_mod).eval()
+adv = image[0] + np.sum(adv_mod,0)
+#adv = (image[0]+ Generator(1,adv_mod)).eval()
 print("new label is: ",model.predict(adv))
 
 

@@ -15,15 +15,17 @@ class Model:
         self.gan = gan
         self.sess = sess
     
-    def predict_gan(self,mod):
+    def predict_gan(self,mod,x0):
         modifier = np.expand_dims(np.array(mod),0)
         x_new = tf.placeholder(tf.float32,(1,128))
-        img_gan = self.gan(x_new)
-        self.sess.run(img_gan,{x_new,modifier})
+        mod_gan = self.gan(x_new)
+        self.sess.run(mod_gan,{x_new,modifier})
         with self.sess.as_default():
-            image = img_gan.eval()
-        image = np.sum(image,0)
-        pred = self.predict(image)
+            mod = mod_gan.eval()
+        mod = np.sum(mod,0)
+        print("shape of mod:", mod.shape)
+        print("shape of x0:", x0.shape)
+        pred = self.predict(mod+x0)
         return pred
 
         
