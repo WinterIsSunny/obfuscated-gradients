@@ -19,7 +19,7 @@ class Model:
         modifier = np.expand_dims(np.array(mod),0)
         x_new = tf.placeholder(tf.float32,(1,128))
         mod_gan = self.gan(x_new)
-        self.sess.run(mod_gan,{x_new,modifier})
+        self.sess.run(mod_gan,{x_new:modifier})
         with self.sess.as_default():
             mod = mod_gan.eval()
         mod = np.sum(mod,0)
