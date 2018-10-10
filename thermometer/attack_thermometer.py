@@ -281,7 +281,7 @@ attack = blackbox(model)
 dist = []
 count = []
 for i in range(3):
-    print("=============================== this is image ",i,"========================================")
+    print("=============================== this is image ",i+12,"========================================")
     mod,queries = attack.attack_untargeted(new_img[i+12],label[i+12],alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
