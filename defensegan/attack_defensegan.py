@@ -251,9 +251,9 @@ class blackbox:
 #        new_mod = new_mod[0]
         new_mod = gan(x_new)
         with tf.Session() as sess:
-            img_gan = sess.run(new_mod,{x_new:modifier})
-            print("dimension of img_gan is :",img_gan.get_shape())
-            img_npy = img_gan.eval()
+            sess.run(new_mod,{x_new:modifier})
+            print("dimension of img_gan is :",new_mod.get_shape())
+            img_npy = new_mod.eval()
         
         new_mod = np.sum(np.expand_dims(x0,0)-img_npy,0)
 #        new_mod = np.sum(x0 - img_gan, 0)
