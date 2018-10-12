@@ -283,10 +283,10 @@ images = images/255.0
 dist = []
 count = []
 label_tmp = np.zeros(15)
-for i in range(15):
-    print("==================================attacking image ",i+1,"===========================================")
-    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 0.2, beta = 0.00005, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i]))
+for i in range(12):
+    print("==================================attacking image ",i+3,"===========================================")
+    adv,queries = attack.attack_untargeted(images[i+3],label_tmp[i+3],alpha = 0.2, beta = 0.00005, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i+3]))
     count.append(queries)
     
 print("the distortions for 15 images :")
