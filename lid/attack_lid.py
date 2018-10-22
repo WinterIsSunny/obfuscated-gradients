@@ -279,8 +279,8 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-train_img = cifar.eval_data.xs[:5000]/255.0-.5
-train_lb = cifar.eval_data.ys[:5000]
+train_img = cifar.eval_data.xs[50:5000]/255.0-.5
+train_lb = cifar.eval_data.ys[50:5000]
 test_img = cifar.eval_data.xs[:20]/255.0-.5
 test_lb = cifar.eval_data.ys[:20]
 attack = blackbox(model)
@@ -338,7 +338,7 @@ attack = blackbox(model)
 dist = []
 advs = []
 count = []
-for i in range(15):
+for i in range(5):
     print("============== attacking image ",i+1,"=====================")
     print("shape of this image:",test_img[i].shape )
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
@@ -348,10 +348,10 @@ for i in range(15):
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
-print("distortion of 15 images:")
+print("distortion of 5 images:")
 for i in dist:
     print(i)
-print("queries of 15 images:")
+print("queries of 5 images:")
 for j in count:
     print(j)
 print("==============================================")
@@ -376,6 +376,6 @@ lr, _, scaler = detect(T('cifar', 'blackbox', 'lid', 'blackbox'))
 
 t_artifacts = scaler.transform(artifacts)
 
-print('Detection rate clean', np.mean(lr.predict(t_artifacts[:n_samples])))
-print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-n_samples:])))
+print('Detection rate clean', lr.predict(t_artifacts[:n_samples]))
+print('Detection rate adversarial', lr.predict(t_artifacts[-n_samples:]))
 
