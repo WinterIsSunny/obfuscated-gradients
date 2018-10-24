@@ -300,14 +300,10 @@ print("accuracy of 100 images :", count/1000)
     
 
 
-timestart = time.time()
-print('Clean Model Prediction', model.predict(image[0]))
-timeend = time.time()
-print("time consuming:", timeend - timestart)
-
-mod = attack.attack_untargeted(image[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
-adv = image[0] + mod
-print("new label for adversarial sample: ", model.predict(adv))
+#timestart = time.time()
+#print('Clean Model Prediction', model.predict(image[0]))
+#timeend = time.time()
+#print("time consuming:", timeend - timestart)
 
 
 dist = []
