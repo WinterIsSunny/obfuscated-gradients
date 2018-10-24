@@ -35,9 +35,9 @@ class blackbox:
             (x0, y0): original image
         """
 
-#        if (self.model.predict(x0) != y0):
-#            print("Fail to classify the image. No need to attack.")
-#            return x0
+        if (self.model.predict(x0) != y0):
+            print("Fail to classify the image. No need to attack.")
+            return x0,0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -308,25 +308,32 @@ print("accuracy of 100 images :", count/1000)
 
 dist = []
 advs = []
+count = []
 for i in range(1000):
     print("============== attacking image ",i+1,"=====================")
-    adv = attack.attack_untargeted(train_img[i],train_lb[i])
+    adv, queries = attack.attack_untargeted(train_img[i],train_lb[i])
     advs.append(adv)
     dist.append(np.linalg.norm(adv-train_img[i]))
+    count.append(queries)
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
+# we only take those adv examples who is classified correctly
 index = np.nonzero(dist)
 index = list(index)[0].tolist()
-dist_valid = np.array(dist)[index]  
-avg_dist = np.mean(dist)
+dist_valid = np.array(dist)[index] 
+count_valid = np.array(count)[index]
 train_img_valid = np.array(train_img)[index]
+avg_dist = np.mean(dist_valid)
+avg_count = np.mean(count_valid)
 advs_valid = np.array(advs)[index]
 n_samples = len(index)
 
 print("length of valid samples:", n_samples)
 print("length of advs:",len(advs))
-print("average distortion of 500 images is :", avg_dist)
+print("average distortion of 1000 images is :", avg_dist)
+print("average queries of 1000 images is :", avg_count)
+
 
 artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
 
@@ -355,15 +362,19 @@ print("==============================================")
 
 index = np.nonzero(dist)
 index = list(index)[0].tolist()
-dist_valid = np.array(dist)[index]  
-avg_dist = np.mean(dist)
-test_img_valid = np.array(test_img)[index]
+dist_valid = np.array(dist)[index] 
+count_valid = np.array(count)[index]
+train_img_valid = np.array(train_img)[index]
+avg_dist = np.mean(dist_valid)
+avg_count = np.mean(count_valid)
 advs_valid = np.array(advs)[index]
 n_samples = len(index)
 
 print("length of valid samples:", n_samples)
-print("length of advs:",len(advs_valid))
-print("average distortion of 100 images is :", avg_dist)
+print("length of advs:",len(advs))
+print("average distortion of 1000 images is :", avg_dist)
+print("average queries of 1000 images is :", avg_count)
+
 
 artifacts, labels = get_lid(model.model, test_img_valid, test_img_valid, advs_valid, 10, n_samples, 'cifar',save = False)
 
