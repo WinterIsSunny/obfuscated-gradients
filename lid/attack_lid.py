@@ -279,66 +279,66 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-train_img = cifar.eval_data.xs[50:5000]/255.0-.5
-train_lb = cifar.eval_data.ys[50:5000]
-test_img = cifar.eval_data.xs[:20]/255.0-.5
-test_lb = cifar.eval_data.ys[:20]
+train_img = cifar.eval_data.xs[100:5000]/255.0-.5
+train_lb = cifar.eval_data.ys[100:5000]
+test_img = cifar.eval_data.xs[:100]/255.0-.5
+test_lb = cifar.eval_data.ys[:100]
 attack = blackbox(model)
 
-#
-#labels = train_lb[:1000]
-#images = train_img[:1000]
-#count = 0
-#pre_labs = []
-#for i in range(1000):
-#    pre_lab = model.predict(images[i])
-#    pre_labs.append(pre_lab)
-#    if labels[i] == pre_lab: 
-#        count+=1
-#
-#print("accuracy of 100 images :", count/1000)
-#    
+
+labels = train_lb[:1000]
+images = train_img[:1000]
+count = 0
+pre_labs = []
+for i in range(1000):
+    pre_lab = model.predict(images[i])
+    pre_labs.append(pre_lab)
+    if labels[i] == pre_lab: 
+        count+=1
+
+print("accuracy of 100 images :", count/1000)
+    
 
 
-#timestart = time.time()
-#print('Clean Model Prediction', model.predict(image[0]))
-#timeend = time.time()
-#print("time consuming:", timeend - timestart)
+timestart = time.time()
+print('Clean Model Prediction', model.predict(image[0]))
+timeend = time.time()
+print("time consuming:", timeend - timestart)
 
-#mod = attack.attack_untargeted(image[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
-#adv = image[0] + mod
-#print("new label for adversarial sample: ", model.predict(adv))
+mod = attack.attack_untargeted(image[0],label[0],alpha = 2, beta = 0.05, iterations = 1000)
+adv = image[0] + mod
+print("new label for adversarial sample: ", model.predict(adv))
 
 
-#dist = []
-#advs = []
-#for i in range(500):
-#    print("============== attacking image ",i+1,"=====================")
-#    adv = attack.attack_untargeted(train_img[i],train_lb[i])
-#    advs.append(adv)
-#    dist.append(np.linalg.norm(adv-train_img[i]))
-##np.save("dist.npy",np.array(dist))
-##np.save("mods.npy",np.array(mods))
-#
-#index = np.nonzero(dist)
-#index = list(index)[0].tolist()
-#dist_valid = np.array(dist)[index]  
-#avg_dist = np.mean(dist)
-#train_img_valid = np.array(train_img)[index]
-#advs_valid = np.array(advs)[index]
-#n_samples = len(index)
-#
-#print("length of valid samples:", n_samples)
-#print("length of advs:",len(advs))
-#print("average distortion of 500 images is :", avg_dist)
-#
-#artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
+dist = []
+advs = []
+for i in range(1000):
+    print("============== attacking image ",i+1,"=====================")
+    adv = attack.attack_untargeted(train_img[i],train_lb[i])
+    advs.append(adv)
+    dist.append(np.linalg.norm(adv-train_img[i]))
+#np.save("dist.npy",np.array(dist))
+#np.save("mods.npy",np.array(mods))
+
+index = np.nonzero(dist)
+index = list(index)[0].tolist()
+dist_valid = np.array(dist)[index]  
+avg_dist = np.mean(dist)
+train_img_valid = np.array(train_img)[index]
+advs_valid = np.array(advs)[index]
+n_samples = len(index)
+
+print("length of valid samples:", n_samples)
+print("length of advs:",len(advs))
+print("average distortion of 500 images is :", avg_dist)
+
+artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
 
 # =========================================== test =======================================
 dist = []
 advs = []
 count = []
-for i in range(5):
+for i in range(100):
     print("============== attacking image ",i+1,"=====================")
     print("shape of this image:",test_img[i].shape )
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
@@ -348,12 +348,13 @@ for i in range(5):
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
-print("distortion of 5 images:")
-for i in dist:
-    print(i)
-print("queries of 5 images:")
-for j in count:
-    print(j)
+print("distortion of 100 images:",dist)
+
+#for i in dist:
+#    print(i)
+print("queries of 100 images:",count)
+#for j in count:
+#    print(j)
 print("==============================================")
 
 index = np.nonzero(dist)

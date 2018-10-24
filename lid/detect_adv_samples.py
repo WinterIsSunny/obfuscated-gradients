@@ -29,7 +29,7 @@ def load_artifacts(dataset, attack, artifacts):
     for artifact in artifacts:
         print("  -- %s" % artifact)
         #file_name = os.path.join(PATH_DATA, "%s_%s_%s.npy" % (artifact, dataset, attack))
-        file_name = os.path.join("data/lid_cifar_blackbox.npy")
+        file_name = os.path.join("data/lid_cifar_blackbox2.npy")
         data = np.load(file_name)
         if X is None:
             X = data[:, :-1]
