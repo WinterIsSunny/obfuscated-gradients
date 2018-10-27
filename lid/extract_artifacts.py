@@ -52,7 +52,7 @@ def merge_and_generate_labels(X_pos, X_neg,save = False):
     print("shape of y, label")
     
     if save:
-        file_name =  os.path.join("data/lid_cifar_blackbox.npy")
+        file_name =  os.path.join("data/lid_cifar_blackbox2.npy")
         dataset = np.concatenate((X,y),1)
         np.save(file_name,dataset)
     
