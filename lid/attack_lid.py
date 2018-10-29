@@ -45,30 +45,31 @@ class blackbox:
         
         
         ### random initialization ###
-        for i in range(num_directions):
-            theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
-            initial_lbd = torch.norm(theta)
-            theta = theta/torch.norm(theta)
-            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
-                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-                query_count += count
-                if lbd < g_theta:
-                    best_theta, g_theta = theta,lbd
-#                    print("new g_theta :", g_theta,"***")
-#                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
-#                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
-#                    print("******")
-                    print("--------> Found distortion %.4f" % g_theta)
+#        for i in range(num_directions):
+#            theta = torch.randn(x0.shape).type(torch.FloatTensor)
+#            #print(theta.size())
+#            initial_lbd = torch.norm(theta)
+#            theta = theta/torch.norm(theta)
+#            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+#                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+#                query_count += count
+#                if lbd < g_theta:
+#                    best_theta, g_theta = theta,lbd
+##                    print("new g_theta :", g_theta,"***")
+##                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+##                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
+##                    print("******")
+#                    print("--------> Found distortion %.4f" % g_theta)
 
         ### foolbox initialization
-#        criterion = foolbox.criteria.Misclassification()
-#        attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
-#        new_img = attack(x0,y0)
-#        init_dir = new_img - x0
+        criterion = foolbox.criteria.Misclassification()
+        attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
+        new_img = attack(x0,y0)
+        init_dir = new_img - x0
+        g_theta = torch.norm(init_dir)
+        best_theta = init_dir/g_theta
         
-        
-        
+      
         
         #timestart = time.time()
         print("the best initialization: ",g_theta)
@@ -308,42 +309,42 @@ print("accuracy of 100 images :", count/1000)
 #print("time consuming:", timeend - timestart)
 
 
+#dist = []
+#advs = []
+#count = []
+#for i in range(1000):
+#    print("============== attacking image ",i+1,"=====================")
+#    adv, queries = attack.attack_untargeted(train_img[i],train_lb[i])
+#    advs.append(adv)
+#    dist.append(np.linalg.norm(adv-train_img[i]))
+#    count.append(queries)
+##np.save("dist.npy",np.array(dist))
+##np.save("mods.npy",np.array(mods))
+#
+## we only take those adv examples who is classified correctly
+#index = np.nonzero(dist)
+#index = list(index)[0].tolist()
+#dist_valid = np.array(dist)[index] 
+#count_valid = np.array(count)[index]
+#train_img_valid = np.array(train_img)[index]
+#avg_dist = np.mean(dist_valid)
+#avg_count = np.mean(count_valid)
+#advs_valid = np.array(advs)[index]
+#n_samples = len(index)
+#
+#print("length of valid samples:", n_samples)
+#print("length of advs:",len(advs))
+#print("average distortion of 1000 images is :", avg_dist)
+#print("average queries of 1000 images is :", avg_count)
+#
+#
+#artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
+
+# =========================================== test ======================================= 
 dist = []
 advs = []
 count = []
-for i in range(1000):
-    print("============== attacking image ",i+1,"=====================")
-    adv, queries = attack.attack_untargeted(train_img[i],train_lb[i])
-    advs.append(adv)
-    dist.append(np.linalg.norm(adv-train_img[i]))
-    count.append(queries)
-#np.save("dist.npy",np.array(dist))
-#np.save("mods.npy",np.array(mods))
-
-# we only take those adv examples who is classified correctly
-index = np.nonzero(dist)
-index = list(index)[0].tolist()
-dist_valid = np.array(dist)[index] 
-count_valid = np.array(count)[index]
-train_img_valid = np.array(train_img)[index]
-avg_dist = np.mean(dist_valid)
-avg_count = np.mean(count_valid)
-advs_valid = np.array(advs)[index]
-n_samples = len(index)
-
-print("length of valid samples:", n_samples)
-print("length of advs:",len(advs))
-print("average distortion of 1000 images is :", avg_dist)
-print("average queries of 1000 images is :", avg_count)
-
-
-artifacts, labels = get_lid(model.model, train_img_valid, train_img_valid, advs_valid, 10, n_samples, 'cifar',save = True)
-
-# =========================================== test =======================================
-dist = []
-advs = []
-count = []
-for i in range(100):
+for i in range(10):
     print("============== attacking image ",i+1,"=====================")
     print("shape of this image:",test_img[i].shape )
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
