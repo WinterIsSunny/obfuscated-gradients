@@ -64,6 +64,7 @@ class blackbox:
         ### foolbox initialization
         criterion = foolbox.criteria.Misclassification()
         attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
+        print("type of attack:", type(attack))
         new_img = attack(x0,y0)
         init_dir = new_img - x0
         g_theta = torch.norm(init_dir)
@@ -346,7 +347,7 @@ advs = []
 count = []
 for i in range(100):
     print("============== attacking image ",i+1,"=====================")
-    print("shape of this image:",test_img[i].shape )
+#    print("shape of this image:",test_img[i].shape )
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
@@ -354,11 +355,10 @@ for i in range(100):
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
-print("distortion of 100 images:",dist)
-
+#print("distortion of 100 images:",dist)
 #for i in dist:
 #    print(i)
-print("queries of 100 images:",count)
+#print("queries of 100 images:",count)
 #for j in count:
 #    print(j)
 print("==============================================")
@@ -372,12 +372,6 @@ avg_dist = np.mean(dist_valid)
 avg_count = np.mean(count_valid)
 advs_valid = np.array(advs)[index]
 n_samples = len(index)
-
-print("length of valid samples:", n_samples)
-print("length of advs:",len(advs))
-print("average distortion of 100 images is :", avg_dist)
-print("average queries of 100 images is :", avg_count)
-
 
 artifacts, labels = get_lid(model.model, test_img_valid, test_img_valid, advs_valid, 10, n_samples, 'cifar',save = False)
 
