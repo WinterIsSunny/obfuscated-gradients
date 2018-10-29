@@ -11,6 +11,7 @@ import tensorflow as tf
 class Model:
     def __init__(self,model, model_logit,sess,bounds):
         self.model = model
+        print("bounds of original model:", self.model.bounds())
         self.model_logit = model_logit
         self.sess = sess
         self.bounds = bounds
