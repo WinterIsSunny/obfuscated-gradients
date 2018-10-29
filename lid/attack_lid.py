@@ -64,7 +64,7 @@ class blackbox:
         ### foolbox initialization
         criterion = foolbox.criteria.Misclassification()
         attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
-        print("type of attack:", type(attack))
+#        print("type of attack:", type(attack))
         new_img = attack(x0,y0)
         init_dir = new_img - x0
         g_theta = torch.norm(init_dir)
@@ -348,6 +348,7 @@ count = []
 for i in range(100):
     print("============== attacking image ",i+1,"=====================")
 #    print("shape of this image:",test_img[i].shape )
+    print("type of this image:",type(test_img[i]))
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
