@@ -16,6 +16,10 @@ class Model:
         self.bounds = bounds
         self.x_input = tf.placeholder(tf.float32, (None, 32, 32, 3))
         self.logits = self.model_logit(self.x_input)
+        
+    def bounds(self):
+        return self.bounds[0],self.bounds[1]
+    
     def predict(self,image):
         if self.bounds[1] == 255.0:
             new_img = image + 0.5
