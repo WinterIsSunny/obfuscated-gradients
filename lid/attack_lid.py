@@ -63,9 +63,9 @@ class blackbox:
 
         ### foolbox initialization
         criterion = foolbox.criteria.Misclassification()
-        attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
+        attack = foolbox.attacks.SaltAndPepperNoiseAttack(self.model, criterion)
 #        print("type of attack:", type(attack))
-        new_img = attack(x0,y0)
+        new_img = attack(x0,y0,epsilons=50, repetitions=10)
         init_dir = new_img - x0
         g_theta = torch.norm(init_dir)
         best_theta = init_dir/g_theta
