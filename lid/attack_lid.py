@@ -20,7 +20,7 @@ from wrapper import Model
 import torch
 import time
 import cifar10_input
-
+import foolbox
 
 class blackbox:
     def __init__(self,model):
@@ -43,9 +43,8 @@ class blackbox:
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
-        #timestart = time.time()
         
-        
+        ### random initialization ###
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             #print(theta.size())
@@ -61,9 +60,12 @@ class blackbox:
 #                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
 #                    print("******")
                     print("--------> Found distortion %.4f" % g_theta)
-        
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+
+        ### foolbox initialization
+#        criterion = foolbox.criteria.Misclassification()
+#        attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
+#        new_img = attack(x0,y0)
+#        init_dir = new_img - x0
         
         
         
@@ -279,8 +281,8 @@ sess = K.get_session()
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-train_img = cifar.eval_data.xs[100:5000]/255.0-.5
-train_lb = cifar.eval_data.ys[100:5000]
+train_img = cifar.eval_data.xs[1000:5000]/255.0-.5
+train_lb = cifar.eval_data.ys[1000:5000]
 test_img = cifar.eval_data.xs[:100]/255.0-.5
 test_lb = cifar.eval_data.ys[:100]
 attack = blackbox(model)
