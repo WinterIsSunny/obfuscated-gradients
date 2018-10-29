@@ -63,7 +63,7 @@ class blackbox:
 
         ### foolbox initialization
         criterion = foolbox.criteria.Misclassification()
-        attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
+        attack = foolbox.attacks.BoundaryAttack(self.model.model, criterion)
 #        print("type of attack:", type(attack))
         new_img = attack(x0,y0)
         init_dir = new_img - x0
