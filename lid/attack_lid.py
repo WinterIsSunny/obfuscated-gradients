@@ -344,7 +344,7 @@ print("accuracy of 100 images :", count/1000)
 dist = []
 advs = []
 count = []
-for i in range(10):
+for i in range(100):
     print("============== attacking image ",i+1,"=====================")
     print("shape of this image:",test_img[i].shape )
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
@@ -375,8 +375,8 @@ n_samples = len(index)
 
 print("length of valid samples:", n_samples)
 print("length of advs:",len(advs))
-print("average distortion of 1000 images is :", avg_dist)
-print("average queries of 1000 images is :", avg_count)
+print("average distortion of 100 images is :", avg_dist)
+print("average queries of 100 images is :", avg_count)
 
 
 artifacts, labels = get_lid(model.model, test_img_valid, test_img_valid, advs_valid, 10, n_samples, 'cifar',save = False)
@@ -387,6 +387,6 @@ lr, _, scaler = detect(T('cifar', 'blackbox', 'lid', 'blackbox'))
 
 t_artifacts = scaler.transform(artifacts)
 
-print('Detection rate clean', lr.predict(t_artifacts[:n_samples]))
-print('Detection rate adversarial', lr.predict(t_artifacts[-n_samples:]))
+print('Detection rate clean', np.mean(lr.predict(t_artifacts[:n_samples])))
+print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-n_samples:])))
 
