@@ -45,29 +45,29 @@ class blackbox:
         
         
         ### random initialization ###
-        for i in range(num_directions):
-            theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
-            initial_lbd = torch.norm(theta)
-            theta = theta/torch.norm(theta)
-            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
-                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-                query_count += count
-                if lbd < g_theta:
-                    best_theta, g_theta = theta,lbd
-#                    print("new g_theta :", g_theta,"***")
-#                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
-#                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
-#                    print("******")
-                    print("--------> Found distortion %.4f" % g_theta)
+#        for i in range(num_directions):
+#            theta = torch.randn(x0.shape).type(torch.FloatTensor)
+#            #print(theta.size())
+#            initial_lbd = torch.norm(theta)
+#            theta = theta/torch.norm(theta)
+#            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+#                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+#                query_count += count
+#                if lbd < g_theta:
+#                    best_theta, g_theta = theta,lbd
+##                    print("new g_theta :", g_theta,"***")
+##                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
+##                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
+##                    print("******")
+#                    print("--------> Found distortion %.4f" % g_theta)
 
         ### foolbox initialization
-#        criterion = foolbox.criteria.Misclassification()
-#        attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
-#        new_img = attack(x0,y0)
-#        init_dir = new_img - x0
-#        g_theta = torch.norm(init_dir)
-#        best_theta = init_dir/g_theta
+        criterion = foolbox.criteria.Misclassification()
+        attack = foolbox.attacks.BoundaryAttack(self.model, criterion)
+        new_img = attack(x0,y0)
+        init_dir = new_img - x0
+        g_theta = torch.norm(init_dir)
+        best_theta = init_dir/g_theta
 #        
       
         
@@ -390,3 +390,7 @@ t_artifacts = scaler.transform(artifacts)
 print('Detection rate clean', np.mean(lr.predict(t_artifacts[:n_samples])))
 print('Detection rate adversarial', np.mean(lr.predict(t_artifacts[-n_samples:])))
 
+print("length of valid samples:", n_samples)
+print("length of advs:",len(advs))
+print("average distortion of 100 images is :", avg_dist)
+print("average queries of 100 images is :", avg_count)
