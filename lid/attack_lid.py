@@ -62,10 +62,13 @@ class blackbox:
 ##                    print("******")
 #                    print("--------> Found distortion %.4f" % g_theta)
 
-  
-      
-        
         #timestart = time.time()
+        
+        #initialized by foolbox
+        theta =torch.tensor(init)
+        g_theta = torch.norm(theta)
+        best_theta = theta/g_theta
+        
         print("the best initialization: ",g_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
@@ -350,9 +353,7 @@ for i in range(100):
     print("type of this image:",type(test_img[i]))
     new_img = fool_attack(test_img[i],test_lb[i],unpack=True, iterations=10000, max_directions= 100)
     init_dir = new_img - test_img[i]
-    g_theta = torch.norm(init_dir)
-    best_theta = init_dir/g_theta
-    adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],best_theta, alpha = 4, beta = 0.0005)
+    adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],init_dir, alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
     dist.append(np.linalg.norm(adv-test_img[i]))
