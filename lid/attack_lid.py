@@ -62,10 +62,11 @@ class blackbox:
 #                    print("--------> Found distortion %.4f" % g_theta)
 
         ### foolbox initialization
+        model = foolbox.models.TensorFlowModel(self.x_input,self.model.logits,self.model.bounds)
         criterion = foolbox.criteria.Misclassification()
-        attack = foolbox.attacks.SaltAndPepperNoiseAttack(self.model, criterion)
+        attack = foolbox.attacks.BoundaryAttack(model, criterion)
 #        print("type of attack:", type(attack))
-        new_img = attack(x0,y0,epsilons=50, repetitions=10)
+        new_img = attack(x0,y0,unpack=True, iterations=10000, max_directions= 100)
         init_dir = new_img - x0
         g_theta = torch.norm(init_dir)
         best_theta = init_dir/g_theta
