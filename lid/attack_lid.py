@@ -62,7 +62,7 @@ class blackbox:
 #                    print("--------> Found distortion %.4f" % g_theta)
 
         ### foolbox initialization
-        model = foolbox.models.TensorFlowModel(self.x_input,self.model.logits,self.model.bounds)
+        model = foolbox.models.TensorFlowModel(self.model.x_input,self.model.logits,self.model.bounds)
         criterion = foolbox.criteria.Misclassification()
         attack = foolbox.attacks.BoundaryAttack(model, criterion)
 #        print("type of attack:", type(attack))
