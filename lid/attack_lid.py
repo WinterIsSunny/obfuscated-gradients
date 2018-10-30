@@ -26,9 +26,10 @@ class blackbox:
     def __init__(self,model):
         self.model = model
     
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, init, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
+            init: initial direction
             alpha: learning rate 
             beta: learning rate
             train_dataset: set of training data
@@ -61,16 +62,7 @@ class blackbox:
 ##                    print("******")
 #                    print("--------> Found distortion %.4f" % g_theta)
 
-        ### foolbox initialization
-        model = foolbox.models.TensorFlowModel(self.model.x_input,self.model.logits,self.model.bounds)
-        criterion = foolbox.criteria.Misclassification()
-        attack = foolbox.attacks.BoundaryAttack(model, criterion)
-#        print("type of attack:", type(attack))
-        new_img = attack(x0,y0,unpack=True, iterations=10000, max_directions= 100)
-        init_dir = new_img - x0
-        g_theta = torch.norm(init_dir)
-        best_theta = init_dir/g_theta
-#        
+  
       
         
         #timestart = time.time()
@@ -281,6 +273,12 @@ model_logits = get_model("cifar", softmax=False)
 model_logits.load_weights("data/lid_model_cifar.h5")
 
 sess = K.get_session()
+x = tf.placeholder(tf.float32, (None, 32, 32, 3))
+logits = model(x)
+fool_model = foolbox.models.TensorFlowModel(x,logits,(0,1))
+criterion = foolbox.criteria.Misclassification()
+fool_attack = foolbox.attacks.BoundaryAttack(fool_model,)
+
 model = Model(model,model_logits,sess,[0.0,1.0])
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
@@ -291,17 +289,17 @@ test_lb = cifar.eval_data.ys[:100]
 attack = blackbox(model)
 
 
-labels = train_lb[:1000]
-images = train_img[:1000]
-count = 0
-pre_labs = []
-for i in range(1000):
-    pre_lab = model.predict(images[i])
-    pre_labs.append(pre_lab)
-    if labels[i] == pre_lab: 
-        count+=1
-
-print("accuracy of 100 images :", count/1000)
+#labels = train_lb[:1000]
+#images = train_img[:1000]
+#count = 0
+#pre_labs = []
+#for i in range(1000):
+#    pre_lab = model.predict(images[i])
+#    pre_labs.append(pre_lab)
+#    if labels[i] == pre_lab: 
+#        count+=1
+#
+#print("accuracy of 100 images :", count/1000)
     
 
 
@@ -350,7 +348,11 @@ for i in range(100):
     print("============== attacking image ",i+1,"=====================")
 #    print("shape of this image:",test_img[i].shape )
     print("type of this image:",type(test_img[i]))
-    adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],alpha = 4, beta = 0.0005)
+    new_img = fool_attack(test_img[i],test_lb[i],unpack=True, iterations=10000, max_directions= 100)
+    init_dir = new_img - test_img[i]
+    g_theta = torch.norm(init_dir)
+    best_theta = init_dir/g_theta
+    adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],best_theta, alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
     dist.append(np.linalg.norm(adv-test_img[i]))
