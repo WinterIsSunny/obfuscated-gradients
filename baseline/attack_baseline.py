@@ -255,7 +255,7 @@ model = PyModel(orig_model,sess,[0.0,255.0])
 
 
 images = cifar.eval_data.xs[:1000]/255
-labels = cifar.eval_data.ys[:1000]/255
+labels = cifar.eval_data.ys[:1000]
 
 #count = 0
 #pre_labs = []
