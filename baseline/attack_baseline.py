@@ -245,7 +245,7 @@ sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 logits = model(x)
-fool_model = foolbox.models.TensorFloxModel(x,logits,(0,255))
+fool_model = foolbox.models.TensorFlowModel(x,logits,(0,255))
 fool_attack = foolbox.attacks.BoundaryAttack(fool_model)
 
 model = PyModel(model,sess,[0.0,255.0])
