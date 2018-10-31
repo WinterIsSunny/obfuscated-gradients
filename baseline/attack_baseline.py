@@ -308,7 +308,7 @@ for i in range(20):
     print("================attacking image ",i+1,"=======================")
 #    init_op = tf.global_variables_initializer()
 #    sess.run(init_op)
-    new_img = fool_attack(image[i],label[i],unpack=False)
+    new_img = fool_attack(image[i].astype(float),label[i],unpack=False)
     new_img = new_img.image/255
     orig_img = image[i]/255
     print("type of adv img:", type(new_img))
