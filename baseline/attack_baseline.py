@@ -290,7 +290,7 @@ print("accuracy of 100 images :", count/100)
 
 
 image = cifar.eval_data.xs[18:100]# np.array
-test_img = image / 255.0
+test_img = image
 
 label = cifar.eval_data.ys[18:100]
 
@@ -309,7 +309,9 @@ for i in range(20):
     init_op = tf.global_variables_initializer()
     sess.run(init_op)
     new_img = fool_attack(test_img[i],label[i],unpack=False)
-    init_dir = torch.tensor(new_img.image - test_img[i]).float()
+    new_img = new_img.image/255
+    orig_img = test_img[i]/255
+    init_dir = torch.tensor(new_img - orig_img).float()
     mod,queries = attack.attack_untargeted(test_img[i],label[i],init_dir,alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
