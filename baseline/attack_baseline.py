@@ -306,7 +306,7 @@ dist = []
 count = []
 for i in range(20):
     print("================attacking image ",i+1,"=======================")
-    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 1000)
+    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 100, log_every_n_steps=50)
     new_img = new_img.image/255
     orig_img = image[i]/255
     print("type of adv img:", type(new_img))
