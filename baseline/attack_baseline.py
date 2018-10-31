@@ -241,14 +241,14 @@ class blackbox:
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
-sess = tf.Session()
-model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
+sess = tf.InteractiveSession()
+orig_model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
-logits = model(x)
+logits = orig_model(x)
 fool_model = foolbox.models.TensorFlowModel(x,logits,(0,255))
 fool_attack = foolbox.attacks.BoundaryAttack(fool_model)
 
-model = PyModel(model,sess,[0.0,255.0])
+model = PyModel(orig_model,sess,[0.0,255.0])
 
 
 images = cifar.eval_data.xs[:1000]
