@@ -302,7 +302,7 @@ dist = []
 count = []
 for i in range(20):
     print("================attacking image ",i+1,"=======================")
-    init_op = tf.global_initialize_all_variables()
+    init_op = tf.global_variables_initializer()
     sess.run(init_op)
     new_img = fool_attack(test_img[i],label[i])
     init_dir = new_img - test_img[i]
