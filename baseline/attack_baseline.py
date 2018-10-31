@@ -285,10 +285,10 @@ labels = cifar.eval_data.ys[:1000]
 # ==============================================
 
 
-image = cifar.eval_data.xs[:100]# np.array
+image = cifar.eval_data.xs[10:100]# np.array
 test_img = image / 255.0
 
-label = cifar.eval_data.ys[:100]
+label = cifar.eval_data.ys[10:100]
 
 attack = blackbox(model)
 
