@@ -278,9 +278,7 @@ model_logits.load_weights("data/lid_model_cifar.h5")
 sess = K.get_session()
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 logits = model(x)
-fool_model = foolbox.models.TensorFlowModel(x,logits,(0,1))
-criterion = foolbox.criteria.Misclassification()
-fool_attack = foolbox.attacks.BoundaryAttack(fool_model,)
+
 
 model = Model(model,model_logits,sess,[0.0,1.0])
 
@@ -351,6 +349,12 @@ for i in range(100):
     print("============== attacking image ",i+1,"=====================")
 #    print("shape of this image:",test_img[i].shape )
     print("type of this image:",type(test_img[i]))
+    img_tf = tf.convert_to_tensor(np.asarray(test_img[i]))
+    fool_model = foolbox.models.TensorFlowModel(img_tf,logits,(0,1))
+    init_op = tf.global_variables_initializer()
+    fool_model.session.run(init_op)
+    criterion = foolbox.criteria.Misclassification()
+    fool_attack = foolbox.attacks.BoundaryAttack(fool_model,criterion)
     new_img = fool_attack(test_img[i],test_lb[i],unpack=True, iterations=10000, max_directions= 100)
     init_dir = new_img - test_img[i]
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],init_dir, alpha = 4, beta = 0.0005)
