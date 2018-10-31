@@ -271,15 +271,16 @@ labels = cifar.eval_data.ys[:1000]
 #print("predicted labels", pre_labs)
 #print("accuracy of 100 images :", count/100)
 #    
-#count = 0
-#for i in range(1000):
-#    pre_lab = model.predict_label(images[i])
-#    pre_labs.append(pre_lab)
-#    if labels[i] == pre_lab: 
-#        count+=1
-#
-#print("accuracy of 1000 images :", count/1000)
-#    
+pre_labs = []
+count = 0
+for i in range(100):
+    pre_lab = model.predict_label(images[i])
+    pre_labs.append(pre_lab)
+    if labels[i] == pre_lab: 
+        count+=1
+
+print("accuracy of 1000 images :", count/100)
+    
 
 
 
@@ -288,10 +289,10 @@ labels = cifar.eval_data.ys[:1000]
 # ==============================================
 
 
-image = cifar.eval_data.xs[10:100]# np.array
+image = cifar.eval_data.xs[18:100]# np.array
 test_img = image / 255.0
 
-label = cifar.eval_data.ys[10:100]
+label = cifar.eval_data.ys[18:100]
 
 attack = blackbox(model)
 
@@ -315,7 +316,7 @@ for i in range(20):
 
 #index1 = np.nonzero(dist)
 #index1= list(index1)[0].tolist()
-#
+
 #index2 = np.nonzero(count)
 #index2 = list(index2)[0].tolist()
 
