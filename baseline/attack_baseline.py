@@ -36,8 +36,10 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
-        
-        if (self.model.predict_label(x0) != y0):
+        y1 = self.model.predict_label(x0)
+        print("prediction:", x0)
+        print("original label",y0)
+        if (y1 != y0):
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
