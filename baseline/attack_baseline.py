@@ -304,7 +304,7 @@ for i in range(20):
     print("================attacking image ",i+1,"=======================")
     new_img = fool_attack(test_img[i],label[i])
     init_dir = new_img - test_img[i]
-    mod,queries = attack.attack_untargeted(new_img[i],label[i],init_dir,alpha = 2, beta = 0.05, iterations = 1000)
+    mod,queries = attack.attack_untargeted(test_img[i],label[i],init_dir,alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
 

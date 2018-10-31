@@ -356,6 +356,7 @@ for i in range(100):
     fool_model.session.run(init_op)
     criterion = foolbox.criteria.Misclassification()
     fool_attack = foolbox.attacks.BoundaryAttack(fool_model,criterion)
+    
     new_img = fool_attack(test_img[i],test_lb[i],unpack=True, iterations=10000, max_directions= 100)
     init_dir = new_img - test_img[i]
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],init_dir, alpha = 4, beta = 0.0005)
