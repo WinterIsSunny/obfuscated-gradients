@@ -39,7 +39,7 @@ class blackbox:
         
         if (self.model.predict_label(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return np.nan
+            return x0
     
 #        num_directions = 500
 #        best_theta, g_theta = None, float('inf')
@@ -308,7 +308,7 @@ for i in range(20):
     print("type of new_img ",type(new_img.image))
     print("type of test_img ",type(test_img[i]))
     init_dir = np.asarray(new_img.image - test_img[i])
-    mod,queries = attack.attack_untargeted(test_img[i],label[i],init_dir,alpha = 2, beta = 0.05, iterations = 1000)
+    mod,queries = attack.attack_untargeted(test_img[i],label[i],init_dir,alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
 
