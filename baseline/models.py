@@ -26,7 +26,7 @@ class PyModel(object):
 #            print("scale of this model is 1")
             new_img = np.clip(image,0.0,1.0)
 
-#        new_img = [new_img]
+        new_img = [new_img]
         label = self.sess.run(self.model.predictions, {self.model.x_input: new_img})
         print("predicted label:", label)
 
