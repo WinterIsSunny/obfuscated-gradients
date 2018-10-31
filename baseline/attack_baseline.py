@@ -294,7 +294,7 @@ attack = blackbox(model)
 
 print("original label is:",label)
 timestart = time.time()
-print("predicted label on clean data is: ", model.predict_label(new_img[0]))
+print("predicted label on clean data is: ", model.predict_label(test_img[0]))
 timeend = time.time()
 print("time consuming: ", timeend-timestart)
 
