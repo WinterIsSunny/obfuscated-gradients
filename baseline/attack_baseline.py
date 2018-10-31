@@ -20,6 +20,7 @@ import torch
 
 import cifar10_input
 from cifar_model import Model
+import foolbox
 
 import time
 
@@ -27,7 +28,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0,init, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -40,29 +41,32 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
     
-        num_directions = 500
-        best_theta, g_theta = None, float('inf')
-        query_count = 0
-        
-        #timestart = time.time()
-        for i in range(num_directions):
-            theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
-            initial_lbd = torch.norm(theta)
-            theta = theta/torch.norm(theta)
-            #theta *= 255
-            if self.model.predict_label(x0+np.array(initial_lbd*theta)) != y0:
-                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-                query_count += count
-                if lbd < g_theta:
-                    best_theta, g_theta = theta,lbd
-                    print("--------> Found distortion %.4f" % g_theta)
+#        num_directions = 500
+#        best_theta, g_theta = None, float('inf')
+#        query_count = 0
+#        
+#        #timestart = time.time()
+#        for i in range(num_directions):
+#            theta = torch.randn(x0.shape).type(torch.FloatTensor)
+#            #print(theta.size())
+#            initial_lbd = torch.norm(theta)
+#            theta = theta/torch.norm(theta)
+#            #theta *= 255
+#            if self.model.predict_label(x0+np.array(initial_lbd*theta)) != y0:
+#                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+#                query_count += count
+#                if lbd < g_theta:
+#                    best_theta, g_theta = theta,lbd
+#                    print("--------> Found distortion %.4f" % g_theta)
             #timeend = time.time()
             #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
             
         
         
+        theta =torch.tensor(init)
+        g_theta = torch.norm(theta)
+        best_theta = theta/g_theta
         #timestart = time.time()
         #print("the best initialization: ",best_theta)
         g1 = 1.0
@@ -71,8 +75,10 @@ class blackbox:
         opt_count = 0
         stopping = 0.01
         prev_obj = 100000
+        
         for i in range(iterations):
             if g_theta < 1:
+                print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             #print("n_query:",opt_count)
             #print("best distortion:", g_theta)
@@ -156,8 +162,8 @@ class blackbox:
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("baseline")
         print("best distortion :", g_theta)
-        print("number of queries :", opt_count+query_count)
-        return np.array(g_theta*best_theta), opt_count+query_count
+        print("number of queries :", opt_count)
+        return np.array(g_theta*best_theta), opt_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -237,6 +243,11 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.Session()
 model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
+x = tf.placeholder(tf.float32, (None, 32, 32, 3))
+logits = model(x)
+fool_model = foolbox.models.TensorFloxModel(x,logits,(0,255))
+fool_attack = foolbox.attacks.BoundaryAttack(fool_model)
+
 model = PyModel(model,sess,[0.0,255.0])
 
 
@@ -274,10 +285,10 @@ labels = cifar.eval_data.ys[:1000]
 # ==============================================
 
 
-image = cifar.eval_data.xs[:15]# np.array
-new_img = image / 255.0
+image = cifar.eval_data.xs[:100]# np.array
+test_img = image / 255.0
 
-label = cifar.eval_data.ys[:15]
+label = cifar.eval_data.ys[:100]
 
 attack = blackbox(model)
 
@@ -289,9 +300,11 @@ print("time consuming: ", timeend-timestart)
 
 dist = []
 count = []
-for i in range(15):
+for i in range(20):
     print("================attacking image ",i+1,"=======================")
-    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 2, beta = 0.05, iterations = 1000)
+    new_img = fool_attack(test_img[i],label[i])
+    init_dir = new_img - test_img[i]
+    mod,queries = attack.attack_untargeted(new_img[i],label[i],init_dir,alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
 
