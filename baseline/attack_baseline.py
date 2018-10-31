@@ -254,8 +254,8 @@ fool_attack = foolbox.attacks.BoundaryAttack(fool_model)
 model = PyModel(orig_model,sess,[0.0,255.0])
 
 
-images = cifar.eval_data.xs[:1000]/255
-labels = cifar.eval_data.ys[:1000]
+images = cifar.eval_data.xs[18:1000]/255
+labels = cifar.eval_data.ys[18:1000]
 
 #count = 0
 #pre_labs = []
@@ -273,13 +273,13 @@ labels = cifar.eval_data.ys[:1000]
 #    
 pre_labs = []
 count = 0
-for i in range(100):
+for i in range(10):
     pre_lab = model.predict_label(images[i])
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
 
-print("accuracy of 100 images :", count/100)
+print("accuracy of 100 images :", count/10)
     
 
 
@@ -306,8 +306,6 @@ dist = []
 count = []
 for i in range(20):
     print("================attacking image ",i+1,"=======================")
-#    init_op = tf.global_variables_initializer()
-#    sess.run(init_op)
     new_img = fool_attack(image[i].astype(float),label[i],unpack=False)
     new_img = new_img.image/255
     orig_img = image[i]/255
