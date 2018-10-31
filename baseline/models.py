@@ -28,7 +28,7 @@ class PyModel(object):
 
         new_img = [new_img]
         label = self.sess.run(self.model.predictions, {self.model.x_input: new_img})
-        print("predicted label:", label)
+#        print("predicted label:", label)
 
         return label
         
