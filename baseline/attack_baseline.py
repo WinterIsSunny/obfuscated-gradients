@@ -273,13 +273,13 @@ labels = cifar.eval_data.ys[18:1000]
 #    
 pre_labs = []
 count = 0
-for i in range(10):
+for i in range(20):
     pre_lab = model.predict_label(images[i])
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
 
-print("accuracy of 100 images :", count/10)
+print("accuracy of 100 images :", count/20)
     
 
 
@@ -306,7 +306,7 @@ dist = []
 count = []
 for i in range(20):
     print("================attacking image ",i+1,"=======================")
-    new_img = fool_attack(image[i].astype(float),label[i],unpack=False)
+    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 1000)
     new_img = new_img.image/255
     orig_img = image[i]/255
     print("type of adv img:", type(new_img))
