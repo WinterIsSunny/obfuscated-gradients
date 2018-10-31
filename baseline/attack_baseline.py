@@ -65,8 +65,9 @@ class blackbox:
         
             
         
-        
-        theta =torch.tensor(init)
+        print("type of init:",type(init))
+        print("shape of init:",init.size())
+        theta =init
         g_theta = torch.norm(theta)
         best_theta = theta/g_theta
         #timestart = time.time()
@@ -307,7 +308,7 @@ for i in range(20):
     init_op = tf.global_variables_initializer()
     sess.run(init_op)
     new_img = fool_attack(test_img[i],label[i],unpack=False)
-    init_dir = np.asarray(new_img.image - test_img[i])
+    init_dir = torch.tensor(new_img.image - test_img[i]).float()
     mod,queries = attack.attack_untargeted(test_img[i],label[i],init_dir,alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
