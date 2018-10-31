@@ -350,7 +350,7 @@ for i in range(100):
 #    print("shape of this image:",test_img[i].shape )
     print("type of this image:",type(test_img[i]))
     img_tf = tf.convert_to_tensor(np.asarray(test_img[i]))
-    img_tf = tf.expand_dims(img_tf,1)
+    img_tf = tf.expand_dims(img_tf,0)
     fool_model = foolbox.models.TensorFlowModel(img_tf,logits,(0,1))
     init_op = tf.global_variables_initializer()
     fool_model.session.run(init_op)
