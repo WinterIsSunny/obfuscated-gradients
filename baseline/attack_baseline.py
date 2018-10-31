@@ -254,8 +254,8 @@ fool_attack = foolbox.attacks.BoundaryAttack(fool_model)
 model = PyModel(orig_model,sess,[0.0,255.0])
 
 
-images = cifar.eval_data.xs[:1000]
-labels = cifar.eval_data.ys[:1000]
+images = cifar.eval_data.xs[:1000]/255
+labels = cifar.eval_data.ys[:1000]/255
 
 #count = 0
 #pre_labs = []
@@ -279,7 +279,7 @@ for i in range(100):
     if labels[i] == pre_lab: 
         count+=1
 
-print("accuracy of 1000 images :", count/100)
+print("accuracy of 100 images :", count/100)
     
 
 
