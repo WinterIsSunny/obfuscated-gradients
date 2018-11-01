@@ -83,7 +83,7 @@ class blackbox:
                 break
             #print("n_query:",opt_count)
             #print("best distortion:", g_theta)
-            #print("iteration:", i )
+            print("iteration:", i )
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
