@@ -115,7 +115,9 @@ print("type of labels: ",type(labels))
 print("shape of images", images.get_shape())
 print("shape of image:", images[0].get_shape())
 print("shape of labels :",labels.get_shape())
-print("length of labels,", labels.get_shape()[0])
+print("dims of images:",images.get_shape()[0])
+
+
 
 
 
