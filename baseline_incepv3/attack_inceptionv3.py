@@ -16,6 +16,8 @@ from wrapper import MyModel
 import torch
 import time
 import pandas as pd
+import get_image
+import random
 
 class blackbox:
     def __init__(self,model):
@@ -262,19 +264,12 @@ class blackbox:
 ###########test #############################################
 sess = tf.Session()
 
-mypath = os.path.join("data/n01440764/")
-print("path of images:", mypath)
-labels = pd.read_csv("data/train.txt", sep = " ", header = None)
-print("type of labels:",type(labels))
+image_set,label_set= read_and_decode("/data3/ILSVRC2012/train/",(100000, 299, 299, 3),normalize=False,flatten = False)
+index = random.sampe(range(0,labels.get_shape[0]),100)
 
-files = [load_image(mypath + file) for file in os.listdir(mypath)]
+images = image_set[index]
+labels = label_set[index]
 
-#for file in os.listdir(mypath):
-#    orig = load_image(mypath + file)
-#    files.append(orig)
-    
-images = np.asarray(files[:100])
-images = images/255.0
 
 
 #orig = load_image('cat.jpg')
@@ -289,11 +284,6 @@ images = images/255.0
 model = MyModel(inceptionv3,sess,[0.0,255.0])
 attack = blackbox(model)
 
-#y0 = model.predict(images[0])
-#print("predict pure image:",y0)
-#adv = attack.attack_untargeted(images[0],y0,alpha = 8, beta = 0.005)
-
-#print("new label:", model.predict(adv))
 
 dist = []
 count = []
