@@ -311,6 +311,8 @@ for i in range(10):
     print("type of adv img:", type(new_img))
     print("type of orig_img:",type(orig_img))
     init_dir = torch.tensor(new_img - orig_img).float()
+    init_dist = torch.norm(init_dir)
+    print("initial distortion:", init_dist)
     mod,queries = attack.attack_untargeted(orig_img,label[i],init_dir,alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
