@@ -36,10 +36,8 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
-        y1 = self.model.predict_label(x0)
-        #print("prediction:", x0)
-        print("original label",y0)
-        if (y1 != y0):
+        
+        if (self.model.predict_label(x0)!= y0):
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
@@ -279,7 +277,7 @@ for i in range(20):
     if labels[i] == pre_lab: 
         count+=1
 
-print("accuracy of 100 images :", count/20)
+print("accuracy of 20 images :", count/20)
     
 
 
@@ -304,9 +302,9 @@ attack = blackbox(model)
 
 dist = []
 count = []
-for i in range(20):
+for i in range(10):
     print("================attacking image ",i+1,"=======================")
-    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 500, log_every_n_steps=50)
+    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 200, log_every_n_steps=50)
     new_img = new_img.image/255
     orig_img = image[i]/255
     print("type of adv img:", type(new_img))
@@ -325,10 +323,10 @@ for i in range(20):
 
 #avg_distortion = np.mean(np.array(dist)[index1])
 #avg_distortion = np.mean(np.array(count)[index2])
-print("the distortions for 15 images :")
+print("the distortions for 10 images :")
 for i in dist:
     print(i)
-print("the number of queries for 15 images :")
+print("the number of queries for 10 images :")
 for j in count:
     print(j)
 #print("the average distortion of 10 images is:", avg_distortion)
