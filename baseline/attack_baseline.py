@@ -276,7 +276,8 @@ for i in range(20):
     pre_labs.append(pre_lab)
     if labels[i] == pre_lab: 
         count+=1
-
+print("original labels:", labels[:20])
+print("predicted labels:",pre_labs)
 print("accuracy of 20 images :", count/20)
     
 
