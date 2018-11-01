@@ -112,8 +112,8 @@ images,labels= read_and_decode("/data3/ILSVRC2012/train/",(1000, 299, 299, 3),no
 
 print("type of images:",type(images))
 print("type of labels: ",type(labels))
-print("shape of images", tf.shape(images))
-print("shape of image:", tf.shape(images[0]))
+print("shape of images", images.get_shape())
+print("shape of image:", images[0].get_shape())
 print("length of images:",len(images))
 print("length of labels: ", len(labels))
 
