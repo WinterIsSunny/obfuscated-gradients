@@ -114,7 +114,6 @@ print("type of images:",type(images))
 print("type of labels: ",type(labels))
 print("shape of images", tf.shape(images))
 print("shape of image:", tf.shape(images[0]))
-
 print("length of images:",len(images))
 print("length of labels: ", len(labels))
 
