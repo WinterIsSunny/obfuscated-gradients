@@ -252,8 +252,8 @@ fool_attack = foolbox.attacks.BoundaryAttack(fool_model)
 model = PyModel(orig_model,sess,[0.0,255.0])
 
 
-images = cifar.eval_data.xs[18:1000]/255
-labels = cifar.eval_data.ys[18:1000]
+images = cifar.eval_data.xs[20:1000]/255
+labels = cifar.eval_data.ys[20:1000]
 
 #count = 0
 #pre_labs = []
@@ -305,7 +305,7 @@ dist = []
 count = []
 for i in range(10):
     print("================attacking image ",i+1,"=======================")
-    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 300, log_every_n_steps=50)
+    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 500, log_every_n_steps=50)
     print("type of new_img",type(new_img))
     if new_img is None:
         dist.append(0)
