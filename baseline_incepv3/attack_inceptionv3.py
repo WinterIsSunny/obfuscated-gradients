@@ -267,8 +267,8 @@ sess = tf.Session()
 
 # load images and lables
 all_images, _= read_and_decode("/data3/ILSVRC2012/train/",(100000, 299, 299, 3),normalize=False,flatten = False)
-labels = pd.read_csv("/data3/ILSVRC2012/train.txt",sep=" ",header = None)
-labels = labels[labels.columns[1]][:100000]
+all_labels = pd.read_csv("/data3/ILSVRC2012/train.txt",sep=" ",header = None)
+labels = all_labels[all_labels.columns[1]][:100000]
 index = random.sample(range(0,len(labels)),100)
 images = [all_images[i] for i in index]
 labels = np.asarray(labels[index])
