@@ -306,6 +306,7 @@ count = []
 for i in range(10):
     print("================attacking image ",i+1,"=======================")
     new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 200, log_every_n_steps=50)
+    print("type of new_img",type(new_img))
     new_img = new_img.image/255
     orig_img = image[i]/255
     print("type of adv img:", type(new_img))
