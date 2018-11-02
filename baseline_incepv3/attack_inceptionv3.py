@@ -295,6 +295,7 @@ for i in range(15):
     print("================attacking image ",i+1,"=======================")
     with sess.as_default():
         image = images[i].eval()
+    print("before attack")
     adv,queries = attack.attack_untargeted(image,labels[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
