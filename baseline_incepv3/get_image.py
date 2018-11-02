@@ -13,6 +13,7 @@ import glob
 import csv
 import tensorflow as tf
 import numpy as np
+import pandas as pd
 #from PIL import Image
 #from .utils import dense_to_one_hot
 
@@ -116,8 +117,7 @@ print("shape of images", images.get_shape())
 print("shape of image:", images[0].get_shape())
 print("shape of labels :",labels.get_shape())
 print("dims of images:",images.get_shape()[0])
-
-
+labels = pd.read_csv("data3/ILSVRC2012/train.txt")
 
 
 

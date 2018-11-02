@@ -83,7 +83,7 @@ class blackbox:
                 break
             #print("n_query:",opt_count)
             #print("best distortion:", g_theta)
-            print("iteration:", i )
+#            print("iteration:", i )
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -288,10 +288,10 @@ print("accuracy of 20 images :", count/20)
 # ==============================================
 
 
-image = cifar.eval_data.xs[18:100]# np.array
+image = cifar.eval_data.xs[17:100]# np.array
 
 
-label = cifar.eval_data.ys[18:100]
+label = cifar.eval_data.ys[17:100]
 
 attack = blackbox(model)
 
@@ -305,7 +305,7 @@ dist = []
 count = []
 for i in range(10):
     print("================attacking image ",i+1,"=======================")
-    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 200, log_every_n_steps=50)
+    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 300, log_every_n_steps=50)
     print("type of new_img",type(new_img))
     new_img = new_img.image/255
     orig_img = image[i]/255
