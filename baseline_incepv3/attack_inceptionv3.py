@@ -19,6 +19,7 @@ import pandas as pd
 import get_image
 import random
 
+
 class blackbox:
     def __init__(self,model):
         self.model = model
@@ -179,26 +180,26 @@ class blackbox:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            timestart1 = time.time()
+#            timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
-            timeend1 = time.time()
+#            timeend1 = time.time()
 #            print("1st while time:", timeend1 - timestart1)
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            timestart2 = time.time()
+#            timestart2 = time.time()
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-            timeend2 = time.time()
+#            timeend2 = time.time()
 #            print("2nd while time:", timeend2 - timestart2)
             
-        timestart3 = time.time()
+#        timestart3 = time.time()
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -206,7 +207,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        timeend3 = time.time()
+#        timeend3 = time.time()
 #        print("3rd while time:",timeend3 - timestart3)
 #        print("lbd_low:",lbd_lo)
 #        print("lbd_high:", lbd_hi)
@@ -264,11 +265,14 @@ class blackbox:
 ###########test #############################################
 sess = tf.Session()
 
-image_set,label_set= read_and_decode("/data3/ILSVRC2012/train/",(100000, 299, 299, 3),normalize=False,flatten = False)
-index = random.sampe(range(0,labels.get_shape[0]),100)
-
-images = image_set[index]
-labels = label_set[index]
+# load images and lables
+all_images, _= read_and_decode("/data3/ILSVRC2012/train/",(100000, 299, 299, 3),normalize=False,flatten = False)
+labels = pd.read_csv("/data3/ILSVRC2012/train.txt",sep=" ",header = None)
+labels = labels[labels.columns[1]][:100000]
+index = random.sample(range(0,len(labels)),100)
+images = [all_images[i] for i in index]
+labels = np.asarray(labels[index])
+# switch images to np.array
 
 
 
@@ -287,10 +291,11 @@ attack = blackbox(model)
 
 dist = []
 count = []
-label_tmp = np.zeros(15)
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],label_tmp[i],alpha = 2, beta = 0.005, iterations = 1000)
+    with sess.as_default():
+        image = images[i].eval()
+    adv,queries = attack.attack_untargeted(image,labels[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
