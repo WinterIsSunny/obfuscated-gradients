@@ -16,7 +16,7 @@ from wrapper import MyModel
 import torch
 import time
 import pandas as pd
-import get_image
+from get_image import *
 import random
 
 

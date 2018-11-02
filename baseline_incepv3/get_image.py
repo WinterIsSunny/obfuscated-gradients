@@ -108,17 +108,17 @@ def read_and_decode(path, imshape, normalize=False, flatten=True):
         
 #image_queue, length= read_raw_images("/data3/ILSVRC2012/train/")
 #print("length of images:",length)
-images,labels= read_and_decode("/data3/ILSVRC2012/train/",(1000, 299, 299, 3),normalize=False,flatten = False)
-#labels = read_labels("/data3/ILSVRC2012/")
-
-print("type of images:",type(images))
-print("type of labels: ",type(labels))
-print("shape of images", images.get_shape())
-print("shape of image:", images[0].get_shape())
-print("shape of labels :",labels.get_shape())
-print("dims of images:",images.get_shape()[0])
-labels = pd.read_csv("data3/ILSVRC2012/train.txt")
-
+#images,labels= read_and_decode("/data3/ILSVRC2012/train/",(1000, 299, 299, 3),normalize=False,flatten = False)
+##labels = read_labels("/data3/ILSVRC2012/")
+#
+#print("type of images:",type(images))
+#print("type of labels: ",type(labels))
+#print("shape of images", images.get_shape())
+#print("shape of image:", images[0].get_shape())
+#print("shape of labels :",labels.get_shape())
+#print("dims of images:",images.get_shape()[0])
+#labels = pd.read_csv("/data3/ILSVRC2012/train.txt")
+#
 
 
 
