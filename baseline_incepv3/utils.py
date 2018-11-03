@@ -4,6 +4,8 @@ import numpy as np
 import PIL.Image
 from imagenet_labels import label_to_name
 import matplotlib.pyplot as plt
+import random
+import os
 
 def one_hot(index, total):
     arr = np.zeros((total))
@@ -51,3 +53,25 @@ def make_classify(sess, input_, probs):
         fig.subplots_adjust(bottom=0.2)
         plt.show()
     return classify
+
+def read_images(path,n_samples):
+    """
+    randomly load n images from different classes
+    path:
+    imshape:
+    """
+    images = []
+    dir_list = os.listdir(path)
+    index = [random.randint(0,len(dir_list)) for i in range(n_samples)]
+    #print(index)
+    for i in index:
+        dirnames = dir_list[i]
+        #print(dirnames)
+        file_list = os.listdir(os.path.join(path,dirnames))
+        file_index = random.sample(range(0,len(file_list)),1)
+        file = file_list[file_index[0]]
+        file_path = os.path.join(path,dirnames,file)
+        #print(file_path)
+        img = load_image(file_path)
+        images.append(img)
+    return images,index

@@ -16,7 +16,6 @@ from wrapper import MyModel
 import torch
 import time
 import pandas as pd
-from get_image import *
 import random
 
 
@@ -266,15 +265,8 @@ class blackbox:
 sess = tf.Session()
 
 # load images and lables
-all_images, _= read_and_decode("/data3/ILSVRC2012/train/",(100000, 299, 299, 3),normalize=False,flatten = False)
-all_labels = pd.read_csv("/data3/ILSVRC2012/train.txt",sep=" ",header = None)
-labels = all_labels[all_labels.columns[1]][:100000]
-index = random.sample(range(0,len(labels)),100)
-images = [all_images[i] for i in index]
-labels = np.asarray(labels[index])
-# switch images to np.array
-
-
+images,labels = read_images("/data3/ILSVRC2012/train/",110)
+images = images/255
 
 #orig = load_image('cat.jpg')
 #image = orig.copy()/255.0
@@ -293,10 +285,8 @@ dist = []
 count = []
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    with sess.as_default():
-        image = images[i].eval()
-    print("before attack")
-    adv,queries = attack.attack_untargeted(image,labels[i],alpha = 2, beta = 0.005, iterations = 1000)
+
+    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
