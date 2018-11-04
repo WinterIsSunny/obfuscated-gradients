@@ -28,7 +28,11 @@ def optimistic_restore(session, save_file):
     saver.restore(session, save_file)
 
 def load_image(path):
+<<<<<<< HEAD
     return (np.asarray(PIL.Image.open(path).resize((299, 299, 3)))/255.0).astype(np.float32)
+=======
+    return (np.array(PIL.Image.open(path).resize((299, 299)))/255.0).astype(np.float32)
+>>>>>>> 28de79cb30cad3e9f41fd3747053d69b989cf759
 
 def make_classify(sess, input_, probs):
     def classify(img, correct_class=None, target_class=None):
