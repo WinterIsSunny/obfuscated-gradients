@@ -35,9 +35,9 @@ class blackbox:
         print("predicted label:", pred)
         print("true label:", y0)
 
-#        if (self.model.predict(x0) != y0):
-#            print("Fail to classify the image. No need to attack.")
-#            return x0
+        if (self.model.predict(x0) != y0):
+            print("Fail to classify the image. No need to attack.")
+            return x0,0
     
         num_directions = 100
         best_theta, g_theta = None, float('inf')
@@ -80,7 +80,8 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 5*1e-5:
+            if g_theta < 5*1e-4:
+                print("=========================> queries so far:",opt_count+query_count)
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -248,7 +249,7 @@ class blackbox:
         # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.
-        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
+#        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
         while (lbd_hi - lbd_lo) > 1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
@@ -266,7 +267,6 @@ sess = tf.Session()
 
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/",110)
-images = images/255
 
 #orig = load_image('cat.jpg')
 #image = orig.copy()/255.0
@@ -277,25 +277,34 @@ images = images/255
 #print("prediction :",preds)
 
 #print("Before loading model")
-model = MyModel(inceptionv3,sess,[0.0,255.0])
+model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
 
+compare = []
+for i in range(110):
+    pred = model.predict(images[i])
+    if pred == labels[i]:
+        compare.append(1)
+    else:
+        compare.append(0)
+print("accuracy of this model:", sum(compare)/len(compare))
 
-dist = []
-count = []
-for i in range(15):
-    print("================attacking image ",i+1,"=======================")
 
-    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i]))
-    count.append(queries)
-    
-print("the distortions for 15 images :")
-for i in dist:
-    print(i)
-print("the number of queries for 15 images :")
-for j in count:
-    print(j)
+#dist = []
+#count = []
+#for i in range(15):
+#    print("================attacking image ",i+1,"=======================")
+#
+#    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
+#    dist.append(np.linalg.norm(adv-images[i]))
+#    count.append(queries)
+#    
+#print("the distortions for 15 images :")
+#for i in dist:
+#    print(i)
+#print("the number of queries for 15 images :")
+#for j in count:
+#    print(j)
     
 
 
