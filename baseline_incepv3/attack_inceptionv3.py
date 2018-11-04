@@ -281,7 +281,7 @@ model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
 
 compare = []
-for i in range(110):
+for i in range(len(images)):
     pred = model.predict(images[i])
     if pred == labels[i]:
         compare.append(1)
