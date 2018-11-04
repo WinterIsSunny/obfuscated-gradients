@@ -72,6 +72,8 @@ def read_images(path,n_samples):
         file = file_list[0]
         file_path = os.path.join(path,dirnames,file)
         img = load_image(file_path)
+        if img.shape = (299,299):
+            continue
         images.append(img)
         #print("image:",img)
         #print("size of image",img.shape)
