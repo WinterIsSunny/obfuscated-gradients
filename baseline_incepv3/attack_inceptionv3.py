@@ -277,7 +277,7 @@ images,labels = read_images("/data3/ILSVRC2012/train/",110)
 #print("prediction :",preds)
 
 #print("Before loading model")
-model = MyModel(inceptionv3,sess,[0.0,255.0])
+model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
 
 compare = []

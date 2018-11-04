@@ -68,8 +68,8 @@ def read_images(path,n_samples):
     for i in index:
         dirnames = dir_list[i]
         file_list = os.listdir(os.path.join(path,dirnames))
-        file_index = random.sample(range(0,len(file_list)),1)
-        file = file_list[file_index[0]]
+        #file_index = random.sample(range(0,len(file_list)),1)
+        file = file_list[0]
         file_path = os.path.join(path,dirnames,file)
         img = load_image(file_path)
         images.append(img)
