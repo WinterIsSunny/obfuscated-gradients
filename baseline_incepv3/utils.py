@@ -29,9 +29,9 @@ def optimistic_restore(session, save_file):
 
 def load_image(path):
     image = PIL.Image.open(path)
-    rgbimg = image.convert("RGB")
+    #rgbimg = image.convert("RGB")
     #rgbimg.show()
-    return (np.array(rgbimg.resize((299, 299)))/255.0).astype(np.float32)
+    return (np.array(image.resize((299, 299)))/255.0).astype(np.float32)
 
 def make_classify(sess, input_, probs):
     def classify(img, correct_class=None, target_class=None):
@@ -75,5 +75,5 @@ def read_images(path,n_samples):
         images.append(img)
         #print("image:",img)
         #print("size of image",img.shape)
-    images = np.array(images)
+    #images = np.array(images)
     return images,index
