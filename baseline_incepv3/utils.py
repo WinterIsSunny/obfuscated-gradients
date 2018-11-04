@@ -28,8 +28,10 @@ def optimistic_restore(session, save_file):
     saver.restore(session, save_file)
 
 def load_image(path):
-    return (np.array(PIL.Image.open(path).resize((299, 299)))/255.0).astype(np.float32)
-
+    image = PIL.Image.open(path)
+    rgbimg = image.convert("RGB")
+    #rgbimg.show()
+    return (np.array(rgbimg.resize((299, 299)))/255.0).astype(np.float32)
 
 def make_classify(sess, input_, probs):
     def classify(img, correct_class=None, target_class=None):
@@ -57,24 +59,21 @@ def make_classify(sess, input_, probs):
 
 def read_images(path,n_samples):
     """
-    randomly load n images from different classes
     path:
-    imshape:
+    n_samples:
     """
     images = []
     dir_list = os.listdir(path)
     index = [random.randint(0,len(dir_list)) for i in range(n_samples)]
-    #print(index)
     for i in index:
         dirnames = dir_list[i]
-        #print(dirnames)
         file_list = os.listdir(os.path.join(path,dirnames))
         file_index = random.sample(range(0,len(file_list)),1)
         file = file_list[file_index[0]]
         file_path = os.path.join(path,dirnames,file)
-        #print(file_path)
         img = load_image(file_path)
         images.append(img)
-        print("shape of image:", img.shape)
+        #print("image:",img)
+        #print("size of image",img.shape)
     images = np.array(images)
     return images,index
