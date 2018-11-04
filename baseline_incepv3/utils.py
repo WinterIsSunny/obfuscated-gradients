@@ -64,7 +64,7 @@ def read_images(path,n_samples):
     """
     images = []
     dir_list = os.listdir(path)
-    index = [random.randint(0,len(dir_list)) for i in range(n_samples)]
+    index = [random.randint(0,len(dir_list)-1) for i in range(n_samples)]
     for i in index:
         dirnames = dir_list[i]
         file_list = os.listdir(os.path.join(path,dirnames))
