@@ -74,4 +74,5 @@ def read_images(path,n_samples):
         #print(file_path)
         img = load_image(file_path)
         images.append(img)
+    images = np.array(images)
     return images,index

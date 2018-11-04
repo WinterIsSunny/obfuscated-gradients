@@ -266,7 +266,6 @@ sess = tf.Session()
 
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/",110)
-images = np.array(images)
 images = images/255
 
 #orig = load_image('cat.jpg')
