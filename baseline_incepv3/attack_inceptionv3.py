@@ -280,31 +280,31 @@ images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
 
-compare = []
-for i in range(len(images)):
-    pred = model.predict(images[i])
-    if pred == labels[i]:
-        compare.append(1)
-    else:
-        compare.append(0)
-print("accuracy of this model:", sum(compare)/len(compare))
+#compare = []
+#for i in range(len(images)):
+#    pred = model.predict(images[i])
+#    if pred == labels[i]:
+#        compare.append(1)
+#    else:
+#        compare.append(0)
+#print("accuracy of this model:", sum(compare)/len(compare))
 
 
-#dist = []
-#count = []
-#for i in range(15):
-#    print("================attacking image ",i+1,"=======================")
-#
-#    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
-#    dist.append(np.linalg.norm(adv-images[i]))
-#    count.append(queries)
-#    
-#print("the distortions for 15 images :")
-#for i in dist:
-#    print(i)
-#print("the number of queries for 15 images :")
-#for j in count:
-#    print(j)
+dist = []
+count = []
+for i in range(15):
+    print("================attacking image ",i+1,"=======================")
+
+    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i]))
+    count.append(queries)
+    
+print("the distortions for 15 images :")
+for i in dist:
+    print(i)
+print("the number of queries for 15 images :")
+for j in count:
+    print(j)
     
 
 
