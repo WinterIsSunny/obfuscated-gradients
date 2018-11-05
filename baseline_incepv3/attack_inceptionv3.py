@@ -17,6 +17,8 @@ import torch
 import time
 import pandas as pd
 import random
+import foolbox
+
 
 
 class blackbox:
@@ -151,10 +153,10 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
             #print(alpha)
-            print("%3d th iteration" % i)
-            print("current alpha:",alpha)
+#            print("%3d th iteration" % i)
+#            print("current alpha:",alpha)
 #            print("g_theta:",g_theta)
-            print("number of queries:", opt_count+query_count)
+#            print("number of queries:", opt_count+query_count)
             if alpha < 1e-6:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -162,8 +164,8 @@ class blackbox:
                 if (beta < 1e-10):
                     print("beta is too samll")
                     break
-            print("distortion in this iteration:", g_theta)
-            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+#            print("distortion in this iteration:", g_theta)
+#            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
@@ -266,18 +268,14 @@ class blackbox:
 sess = tf.Session()
 
 # load images and lables
-images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",110)
+images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
 
-#orig = load_image('cat.jpg')
-#image = orig.copy()/255.0
-#x = tf.placeholder(tf.float32, (299, 299, 3))
-#x_expanded = tf.expand_dims(x, axis=0)
-#x_pred = defend(x_expanded)
-#logits, preds = inceptionv3.model(sess, x_pred)
-#print("prediction :",preds)
 
-#print("Before loading model")
 model = MyModel(inceptionv3,sess,[0.0,1.0])
+
+## foolbox model
+
+
 attack = blackbox(model)
 
 #compare = []
@@ -294,7 +292,6 @@ dist = []
 count = []
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-
     adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
