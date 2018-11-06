@@ -30,11 +30,11 @@ class Model:
 
         
     def predict(self,image):
-        if self.bounds[1] == 255.0:
-            new_img = image*255.0
-            new_img = np.clip(new_img,0.0,255.0)
+        if self.bounds[1] == 255:
+            new_img = image*255
+            new_img = tf.clip_by_value(new_img,0,255)
         else:
-            new_img = np.clip(image,0.0,1.0)
+            new_img = tf.clip_by_value(image,0,1)
             
         new_img= np.expand_dims(new_img,0)
         
