@@ -18,14 +18,14 @@ import tensorflow as tf
 from torch.autograd import Variable
 import torch
 import numpy as np
-
+import time
 from wrapper import Model
 
 class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, shape , best_theta = None,alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, shape ,alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -39,31 +39,26 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
         
-        if best_theta == None:
-            num_directions = 1000
-            best_theta, g_theta = None, float('inf')
-            query_count = 0
-            
-            #timestart = time.time()
-            for i in range(num_directions):
-                theta = torch.randn(shape).type(torch.FloatTensor)
-                #print(theta.size())
-                initial_lbd = torch.norm(theta)
-                theta = theta/torch.norm(theta)
-                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-                query_count += count
-                if lbd < g_theta:
-                    best_theta, g_theta = theta,lbd
-                    print("--------> Found distortion %.4f" % g_theta)
-        else:
-            g_theta = float('inf')
-            best_theta,g_theta = self.fine_grained_binary_search( x0, y0, best_theta, initial_lbd, g_theta)
+
+        query_count = 0
+        g_theta = float('inf')
+        timestart = time.time()
+        num_directions = 1000
+        for i in range(num_directions):
+            theta = torch.randn(shape).type(torch.FloatTensor)
+            #print(theta.size())
+            initial_lbd = torch.norm(theta)
+            theta = theta/torch.norm(theta)
+            theta = np.array(theta)
+            initial_lbd = np.array(initial_lbd)
+            lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+            query_count += count
+            if lbd < g_theta:
+                best_theta, g_theta = theta,lbd
+                print("--------> Found distortion %.4f" % g_theta)
+            timeend = time.time()
+            print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
     
-        #timeend = time.time()
-        #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-    
-        
-        
         
         #timestart = time.time()
         g1 = 1.0
@@ -161,7 +156,8 @@ class blackbox:
         nquery = 0
         lbd = initial_lbd
 #        modifier = self.get_modifier(lbd*theta,x0,gan)
-        if self.model.predict_gan(lbd*theta,x0) == y0:
+        label,new_img = self.model.predict_gan(lbd*theta,x0)
+        if self.model.predict_gan(lbd*theta) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
@@ -267,8 +263,6 @@ model = keras.models.load_model("data/mnist")
 model = Model(model,[0.0,1.0],session,lambda x : Generator(1,x))
 
 
-attack1 = blackbox(model)
-
 #touse = [x for x in tf.trainable_variables() if 'Generator' in x.name]
 #saver = tf.train.Saver(touse)
 #saver.restore(session, 'data/mnist-gan')
@@ -278,44 +272,37 @@ x_test = np.array(x_test, dtype=np.float32)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test /= 255.0
 image = x_test[:1]
-
+shape = 128
 print("True label", y_test[0])
 print("Preds",model.predict(image[0]))
 
-res = []
-#dists =[]
-shape = 128
-for i in range(3):
-    modifier = attack1.attack_untargeted(image[0],y_test[0],shape, best_theta = None,
-                                         alpha = 2, beta = 0.05, iterations = 10)
-#    dist = pre_adv - image[0]
-    #dist_norm = np.linalg.norm(dist)
-    res.append(modifier)
-    #dists.append(dist_norm)
+#res = []
+##dists =[]
 
+#for i in range(3):
+#    modifier = attack1.attack_untargeted(image[0],y_test[0],shape, best_theta = None,
+#                                         alpha = 2, beta = 0.05, iterations = 10)
+##    dist = pre_adv - image[0]
+#    #dist_norm = np.linalg.norm(dist)
+#    res.append(modifier)
+#    #dists.append(dist_norm)
+#res = np.array(res)
+#xin = tf.placeholder(tf.float32, [3, 128])
+#mygan = Generator(3, xin)
+#it = session.run(mygan, {xin: res})
+#
+#distortion = np.sum((it)**2,(1,2,3))**.5
+##print("Distortions", distortion)
+#start = np.array([res[np.argmin(distortion)]])
 
-res = np.array(res)
-
-xin = tf.placeholder(tf.float32, [3, 128])
-mygan = Generator(3, xin)
-it = session.run(mygan, {xin: res})
-
-distortion = np.sum((it)**2,(1,2,3))**.5
-#print("Distortions", distortion)
-start = np.array([res[np.argmin(distortion)]])
-
-attack2 = blackbox(model)
+attack = blackbox(model)
 print("label of pure image:", model.predict(image[0]))
-adv_mod = attack2.attack_untargeted(image[0],y_test[0],shape,best_theta = start, alpha = 4, 
+adv = attack.attack_untargeted(image[0],y_test[0],shape,alpha = 4, 
                                     beta = 0.005, iterations = 1000)
 
-print("final modifier  before GAN :", adv_mod.shape)
 
-with session.as_defaut():
-    adv_mod = Generator(1,adv_mod).eval()
-adv = image[0] + np.sum(adv_mod,0)
-#adv = (image[0]+ Generator(1,adv_mod)).eval()
-print("new label is: ",model.predict(adv))
+
+print("final modifier  before GAN :", adv.shape)
 
 
 
