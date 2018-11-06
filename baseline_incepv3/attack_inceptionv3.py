@@ -82,7 +82,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 5*1e-4:
+            if g_theta < 0.05:
                 print("=========================> queries so far:",opt_count+query_count)
                 break
             gradient = torch.zeros(theta.size())
@@ -290,7 +290,7 @@ attack = blackbox(model)
 
 dist = []
 count = []
-for i in range(15):
+for i in range(1):
     print("================attacking image ",i+1,"=======================")
     adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
