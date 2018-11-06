@@ -28,7 +28,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0,init, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -41,33 +41,28 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
-#        num_directions = 500
-#        best_theta, g_theta = None, float('inf')
-#        query_count = 0
-#        
-#        #timestart = time.time()
-#        for i in range(num_directions):
-#            theta = torch.randn(x0.shape).type(torch.FloatTensor)
-#            #print(theta.size())
-#            initial_lbd = torch.norm(theta)
-#            theta = theta/torch.norm(theta)
-#            #theta *= 255
-#            if self.model.predict_label(x0+np.array(initial_lbd*theta)) != y0:
-#                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-#                query_count += count
-#                if lbd < g_theta:
-#                    best_theta, g_theta = theta,lbd
-#                    print("--------> Found distortion %.4f" % g_theta)
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        num_directions = 500
+        best_theta, g_theta = None, float('inf')
+        query_count = 0
+        
+        timestart = time.time()
+        for i in range(num_directions):
+            theta = torch.randn(x0.shape).type(torch.FloatTensor)
+            #print(theta.size())
+            initial_lbd = torch.norm(theta)
+            theta = theta/torch.norm(theta)
+            #theta *= 255
+            if self.model.predict_label(x0+np.array(initial_lbd*theta)) != y0:
+                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+                query_count += count
+                if lbd < g_theta:
+                    best_theta, g_theta = theta,lbd
+                    print("--------> Found distortion %.4f" % g_theta)
+            timeend = time.time()
+            print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
             
         
-        print("type of init:",type(init))
-        print("shape of init:",init.size())
-        theta =init
-        g_theta = torch.norm(theta)
-        best_theta = theta/g_theta
         #timestart = time.time()
         #print("the best initialization: ",best_theta)
         g1 = 1.0
@@ -244,16 +239,10 @@ cifar = cifar10_input.CIFAR10Data("../cifar10_data")
 
 sess = tf.InteractiveSession()
 orig_model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-x = tf.placeholder(tf.float32, (None, 32, 32, 3))
-logits = orig_model(x)
-fool_model = foolbox.models.TensorFlowModel(x,logits,(0,255))
-fool_attack = foolbox.attacks.BoundaryAttack(fool_model)
 
 model = PyModel(orig_model,sess,[0.0,255.0])
-
-
-images = cifar.eval_data.xs[20:1000]/255
-labels = cifar.eval_data.ys[20:1000]
+#images = cifar.eval_data.xs[20:1000]/255
+#labels = cifar.eval_data.ys[20:1000]
 
 #count = 0
 #pre_labs = []
@@ -269,56 +258,33 @@ labels = cifar.eval_data.ys[20:1000]
 #print("predicted labels", pre_labs)
 #print("accuracy of 100 images :", count/100)
 #    
-pre_labs = []
-count = 0
-for i in range(20):
-    pre_lab = model.predict_label(images[i])
-    pre_labs.append(pre_lab)
-    if labels[i] == pre_lab: 
-        count+=1
-print("original labels:", labels[:20])
-print("predicted labels:",pre_labs)
-print("accuracy of 20 images :", count/20)
-    
 
 
-
-
+#pre_labs = []
+#count = 0
+#for i in range(20):
+#    pre_lab = model.predict_label(images[i])
+#    pre_labs.append(pre_lab)
+#    if labels[i] == pre_lab: 
+#        count+=1
+#print("original labels:", labels[:20])
+#print("predicted labels:",pre_labs)
+#print("accuracy of 20 images :", count/20)
+#    
 
 # ==============================================
 
 
-image = cifar.eval_data.xs[17:100]# np.array
-
-
+image = cifar.eval_data.xs[17:100]/255# np.array
 label = cifar.eval_data.ys[17:100]
-
 attack = blackbox(model)
-
-#print("original label is:",label)
-#timestart = time.time()
-#print("predicted label on clean data is: ", model.predict_label(test_img[0]))
-#timeend = time.time()
-#print("time consuming: ", timeend-timestart)
 
 dist = []
 count = []
-for i in range(10):
+for i in range(1):
     print("================attacking image ",i+1,"=======================")
-    new_img = fool_attack(image[i].astype(float),label[i],unpack=False,iterations = 500, log_every_n_steps=50)
-    print("type of new_img",type(new_img))
-    if new_img is None:
-        dist.append(0)
-        count.append(0)
-        continue
-    new_img = new_img.image/255
-    orig_img = image[i]/255
-    print("type of adv img:", type(new_img))
-    print("type of orig_img:",type(orig_img))
-    init_dir = torch.tensor(new_img - orig_img).float()
-    init_dist = torch.norm(init_dir)
-    print("initial distortion:", init_dist)
-    mod,queries = attack.attack_untargeted(orig_img,label[i],init_dir,alpha = 4, beta = 0.005, iterations = 1000)
+    
+    mod,queries = attack.attack_untargeted(image[i],label[i], alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
 
@@ -340,11 +306,5 @@ for j in count:
 #print("the average distortion of 10 images is:", avg_distortion)
 #print("the average queries of 10 images:", avg_distortion)
 
-#new_logits = model.predict(adv)
-#new_label = model.predict_label(adv)
-#sess = tf.InteractiveSession()
-#new_logits = new_logits.eval()
-#new_label = np.argmax(new_logits)
-#print("new label is :", new_label)
 
 
