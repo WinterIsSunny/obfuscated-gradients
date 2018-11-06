@@ -290,7 +290,7 @@ print("accuracy of this model:", sum(compare)/len(compare))
 
 dist = []
 count = []
-for i in range(1):
+for i in range(10):
     print("================attacking image ",i+1,"=======================")
     adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
