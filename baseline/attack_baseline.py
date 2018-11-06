@@ -273,8 +273,8 @@ print("accuracy of 20 images :", count/20)
 # ==============================================
 
 
-image = cifar.eval_data.xs[18:100]/255# np.array
-label = cifar.eval_data.ys[18:100]
+image = cifar.eval_data.xs[:100]/255# np.array
+label = cifar.eval_data.ys[:100]
 attack = blackbox(model)
 
 dist = []
