@@ -279,26 +279,25 @@ attack = blackbox(model)
 
 dist = []
 count = []
-for i in range(1):
+for i in range(15):
     print("================attacking image ",i+1,"=======================")
     
     mod,queries = attack.attack_untargeted(image[i],label[i], alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
 
-#index1 = np.nonzero(dist)
-#index1= list(index1)[0].tolist()
+index = np.nonzero(dist)
+index = list(index)[0].tolist()
 
 #index2 = np.nonzero(count)
 #index2 = list(index2)[0].tolist()
 
-
-#avg_distortion = np.mean(np.array(dist)[index1])
-#avg_distortion = np.mean(np.array(count)[index2])
-print("the distortions for 10 images :")
+avg_distortion = np.mean(np.array(dist)[index])
+avg_count = np.mean(np.array(count)[index])
+print("the average distortion for %2d images :"%(len(index)),avg_distortion)
 for i in dist:
     print(i)
-print("the number of queries for 10 images :")
+print("the number of queries for %2d images :"%(len(index)), avg_count)
 for j in count:
     print(j)
 #print("the average distortion of 10 images is:", avg_distortion)
