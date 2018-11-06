@@ -278,14 +278,14 @@ model = MyModel(inceptionv3,sess,[0.0,1.0])
 
 attack = blackbox(model)
 
-#compare = []
-#for i in range(len(images)):
-#    pred = model.predict(images[i])
-#    if pred == labels[i]:
-#        compare.append(1)
-#    else:
-#        compare.append(0)
-#print("accuracy of this model:", sum(compare)/len(compare))
+compare = []
+for i in range(len(images)):
+    pred = model.predict(images[i])
+    if pred == labels[i]:
+        compare.append(1)
+    else:
+        compare.append(0)
+print("accuracy of this model:", sum(compare)/len(compare))
 
 
 dist = []

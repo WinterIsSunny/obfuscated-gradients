@@ -20,12 +20,12 @@ class Model:
         x_new = tf.placeholder(tf.float32,(1,128))
         mod_gan = self.gan(x_new)
         self.sess.run(mod_gan,{x_new:modifier})
-        with self.sess.as_default():
-            mod = mod_gan.eval()
-        mod = np.sum(mod,0)
-        print("shape of mod:", mod.shape)
-        print("shape of x0:", x0.shape)
-        pred = self.predict(mod+x0)
+        #with self.sess.as_default():
+         #   mod = mod_gan.eval()
+        mod = np.sum(mod_gan,0)
+        #print("shape of mod:", mod.shape)
+        #print("shape of x0:", x0.shape)
+        pred = self.predict(mod)
         return pred
 
         
