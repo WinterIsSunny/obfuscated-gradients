@@ -41,7 +41,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
-        num_directions = 500
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -236,14 +236,21 @@ class blackbox:
     
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-
 sess = tf.InteractiveSession()
 orig_model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-
 model = PyModel(orig_model,sess,[0.0,255.0])
-#images = cifar.eval_data.xs[20:1000]/255
-#labels = cifar.eval_data.ys[20:1000]
-
+images = cifar.eval_data.xs[20:1000]/255
+labels = cifar.eval_data.ys[20:1000]
+pre_labs = []
+count = 0
+for i in range(20):
+    pre_lab = model.predict_label(images[i])
+    pre_labs.append(pre_lab)
+    if labels[i] == pre_lab: 
+        count+=1
+print("original labels:", labels[:20])
+print("predicted labels:",pre_labs)
+print("accuracy of 20 images :", count/20)
 #count = 0
 #pre_labs = []
 #for i in range(100):
@@ -260,23 +267,14 @@ model = PyModel(orig_model,sess,[0.0,255.0])
 #    
 
 
-#pre_labs = []
-#count = 0
-#for i in range(20):
-#    pre_lab = model.predict_label(images[i])
-#    pre_labs.append(pre_lab)
-#    if labels[i] == pre_lab: 
-#        count+=1
-#print("original labels:", labels[:20])
-#print("predicted labels:",pre_labs)
-#print("accuracy of 20 images :", count/20)
-#    
+
+    
 
 # ==============================================
 
 
-image = cifar.eval_data.xs[17:100]/255# np.array
-label = cifar.eval_data.ys[17:100]
+image = cifar.eval_data.xs[18:100]/255# np.array
+label = cifar.eval_data.ys[18:100]
 attack = blackbox(model)
 
 dist = []
