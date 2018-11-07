@@ -55,7 +55,7 @@ class blackbox:
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            if self.model.predict_label(x0+np.array(initial_lbd*theta)) != y0:
+            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
                 lbd,comp_dec = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,g_theta,current_best,num_query)
                 if comp_dec > comp_theta:
                     comp_theta = comp_dec
@@ -237,6 +237,31 @@ class blackbox:
 #        print("-----------------------------")
         return lbd_hi, nquery
     
+    def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0, tol=1e-5,current_best = float('inf'),num_query = 10):
+        nquery = 0
+        if initial_lbd > current_best: 
+            if self.model.predict(x0+ np.array(current_best*theta)) == y0:
+                nquery += 1
+                return float('inf'), nquery
+            lbd = current_best
+        else:
+            lbd = initial_lbd
+    
+        lbd_hi = lbd
+        lbd_lo = 0.0
+    
+        while (lbd_hi - lbd_lo) > 1e-5:
+            lbd_mid = (lbd_lo + lbd_hi)/2.0
+            nquery += 1
+            if nquery > num_query:
+                break
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+                lbd_hi = lbd_mid
+            else:
+                lbd_lo = lbd_mid
+        comp_dec = (initial_lbd - lbd_hi)/initial_lbd
+       # print("number of query before return for this direction:",nquery)
+        return lbd_hi,comp_dec
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
