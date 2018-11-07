@@ -156,13 +156,12 @@ class blackbox:
         nquery = 0
         lbd = initial_lbd
 #        modifier = self.get_modifier(lbd*theta,x0,gan)
-        label,new_img = self.model.predict_gan(lbd*theta,x0)
-        if self.model.predict_gan(lbd*theta) == y0:
+        if self.model.predict_gan(lbd*theta)[0] == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
 #            modi = self.get_modifier(lbd_hi*theta,x0,gan)
-            while self.model.predict_gan(lbd_hi*theta,x0) == y0:
+            while self.model.predict_gan(lbd_hi*theta,x0)[0] == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -172,7 +171,7 @@ class blackbox:
             lbd_lo = lbd*0.99
             nquery += 1
 #            modi = self.get_modifier(lbd_lo*theta,gan)
-            while self.model.predict_gan(lbd*theta,x0) != y0 :
+            while self.model.predict_gan(lbd*theta,x0)[0] != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
@@ -180,7 +179,7 @@ class blackbox:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
 #            modi = self.get_modifier(lbd_mid*theta,x0,gan)
-            if self.model.predict_gan(lbd*theta,x0) != y0:
+            if self.model.predict_gan(lbd*theta,x0)[0] != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -190,7 +189,7 @@ class blackbox:
         nquery = 0
         if initial_lbd > current_best:
 #            modi = self.get_modifier(current_best*theta,x0)
-            if self.model.predict_gan(current_best*theta,x0) == y0:
+            if self.model.predict_gan(current_best*theta,x0)[0] == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
@@ -226,7 +225,7 @@ class blackbox:
             nquery += 1
 #            modi = self.get_modifier(lbd_mid*theta,x0,gan)
 #            print("type of modi:", type(modi))
-            if self.model.predict_gan(lbd_mid*theta,x0) != y0:
+            if self.model.predict_gan(lbd_mid*theta,x0)[0] != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid

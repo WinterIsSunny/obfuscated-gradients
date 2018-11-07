@@ -20,13 +20,13 @@ class Model:
         x_new = tf.placeholder(tf.float32,(1,128))
         mod = self.gan(x_new)
         self.sess.run(mod,{x_new:orig_mod})
-        #with self.sess.as_default():
+        #with self.sess.as_default():if
          #   mod = mod_gan.eval()
         mod = np.sum(mod,0)
-        #print("shape of mod:", mod.shape)
-        #print("shape of x0:", x0.shape)
+        print("shape of mod:", mod.shape)
+        print("shape of x0:", x0.shape)
         pred = self.predict(x0+mod)
-        return pred
+        return pred,mod
 
         
     def predict(self,image):
