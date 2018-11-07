@@ -58,7 +58,7 @@ class blackbox:
                 print("--------> Found distortion %.4f" % g_theta)
             timeend = time.time()
             print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-    
+
         
         #timestart = time.time()
         g1 = 1.0
