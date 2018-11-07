@@ -48,10 +48,8 @@ class blackbox:
         timestart = time.time()
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-            #theta *= 255
             if self.model.predict_label(x0+np.array(initial_lbd*theta)) != y0:
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
@@ -156,7 +154,7 @@ class blackbox:
         
         #timeend = time.time()
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        print("baseline")
+        print("mnist baseline 2")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count )
         return np.array(g_theta*best_theta), opt_count+query_count 
@@ -235,62 +233,29 @@ class blackbox:
     
     
 
-cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-sess = tf.InteractiveSession()
-orig_model = Model("../models/standard/", tiny=False, mode='eval', sess=sess)
-model = PyModel(orig_model,sess,[0.0,255.0])
-images = cifar.eval_data.xs[20:1000]/255
-labels = cifar.eval_data.ys[20:1000]
-pre_labs = []
-count = 0
-for i in range(20):
-    pre_lab = model.predict_label(images[i])
-    pre_labs.append(pre_lab)
-    if labels[i] == pre_lab: 
-        count+=1
-print("original labels:", labels[:20])
-print("predicted labels:",pre_labs)
-print("accuracy of 20 images :", count/20)
-#count = 0
-#pre_labs = []
-#for i in range(100):
-##    pre_lab = model.predict_label(images[i])
-#    new_img = images[i] / 255.0
-#    image = np.clip(new_img*255.0,0.0,255.0)
-#    pre_lab = sess.run(model.predictions, {model.x_input: [image]})[0]
-#    pre_labs.append(pre_lab)
-#    if labels[i] == pre_lab: 
-#        count+=1
-#print("original label:", labels[:100])
-#print("predicted labels", pre_labs)
-#print("accuracy of 100 images :", count/100)
-#    
+session = keras.backend.get_session()
+keras.backend.set_learning_phase(False)
+model = keras.models.load_model("data/mnist")
+model = Model(model,[0.0,1.0])
 
-
-
-    
-
-# ==============================================
-
-
-image = cifar.eval_data.xs[:100]/255# np.array
-label = cifar.eval_data.ys[:100]
 attack = blackbox(model)
+
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_test = np.array(x_test, dtype=np.float32)
+x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+x_test /= 255.0
 
 dist = []
 count = []
 for i in range(15):
-    print("================attacking image ",i+1,"=======================")
-    
-    mod,queries = attack.attack_untargeted(image[i],label[i], alpha = 4, beta = 0.005, iterations = 1000)
-    dist.append(np.linalg.norm(mod))
+    print("=========================image ",i+1,"==========================================")
+    adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
+    res = adv - x_test[i]
+    dist.append(np.linalg.norm(res))
     count.append(queries)
 
 index = np.nonzero(count)
 index = list(index)[0].tolist()
-
-#index2 = np.nonzero(count)
-#index2 = list(index2)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index])
 avg_count = np.mean(np.array(count)[index])
@@ -300,8 +265,3 @@ for i in dist:
 print("the number of queries for %2d images :"%(len(index)), avg_count)
 for j in count:
     print(j)
-#print("the average distortion of 10 images is:", avg_distortion)
-#print("the average queries of 10 images:", avg_distortion)
-
-
-

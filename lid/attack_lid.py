@@ -26,7 +26,7 @@ class blackbox:
     def __init__(self,model):
         self.model = model
     
-    def attack_untargeted(self, x0, y0, init, alpha = 2, beta = 0.005, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             init: initial direction
@@ -46,29 +46,22 @@ class blackbox:
         
         
         ### random initialization ###
-#        for i in range(num_directions):
-#            theta = torch.randn(x0.shape).type(torch.FloatTensor)
-#            #print(theta.size())
-#            initial_lbd = torch.norm(theta)
-#            theta = theta/torch.norm(theta)
-#            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
-#                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-#                query_count += count
-#                if lbd < g_theta:
-#                    best_theta, g_theta = theta,lbd
-##                    print("new g_theta :", g_theta,"***")
-##                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
-##                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
-##                    print("******")
-#                    print("--------> Found distortion %.4f" % g_theta)
+        timestart = time.time()
+        for i in range(num_directions):
+            theta = torch.randn(x0.shape).type(torch.FloatTensor)
+            #print(theta.size())
+            initial_lbd = torch.norm(theta)
+            theta = theta/torch.norm(theta)
+            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+                query_count += count
+                if lbd < g_theta:
+                    best_theta, g_theta = theta,lbd
+                    print("--------> Found distortion %.4f" % g_theta)
+            timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
 
-        #timestart = time.time()
-        
-        #initialized by foolbox
-        theta =torch.tensor(init)
-        g_theta = torch.norm(theta)
-        best_theta = theta/g_theta
-        
+
         print("the best initialization: ",g_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
@@ -347,18 +340,7 @@ advs = []
 count = []
 for i in range(100):
     print("============== attacking image ",i+1,"=====================")
-#    print("shape of this image:",test_img[i].shape )
-    print("type of this image:",type(test_img[i]))
-    img_tf = tf.convert_to_tensor(np.asarray(test_img[i]))
-    img_tf = tf.expand_dims(img_tf,0)
-    fool_model = foolbox.models.TensorFlowModel(img_tf,logits,(0,1))
-    init_op = tf.global_variables_initializer()
-    fool_model.session.run(init_op)
-    criterion = foolbox.criteria.Misclassification()
-    fool_attack = foolbox.attacks.BoundaryAttack(fool_model,criterion)
-    new_img = fool_attack(test_img[i],test_lb[i],unpack=True, iterations=10000, max_directions= 100)
-    init_dir = new_img - test_img[i]
-    adv,queries = attack.attack_untargeted(test_img[i],test_lb[i],init_dir, alpha = 4, beta = 0.0005)
+    adv,queries = attack.attack_untargeted(test_img[i],test_lb[i], alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
     dist.append(np.linalg.norm(adv-test_img[i]))
@@ -373,7 +355,7 @@ for i in range(100):
 #    print(j)
 print("==============================================")
 
-index = np.nonzero(dist)
+index = np.nonzero(count)
 index = list(index)[0].tolist()
 dist_valid = np.array(dist)[index] 
 count_valid = np.array(count)[index]

@@ -338,13 +338,13 @@ print("True label", y_test[0])
 dist = []
 count = []
 for i in range(15):
-    print("image ",i," , pred label:",model.predict(x_test[i]))
+    print("=========================image ",i+1,"==========================================")
     adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
     res = adv - x_test[i]
     dist.append(np.linalg.norm(res))
     count.append(queries)
 
-index = np.nonzero(dist)
+index = np.nonzero(count)
 index = list(index)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index])
