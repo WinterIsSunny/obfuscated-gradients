@@ -5,24 +5,19 @@ Created on Wed Jul 25 13:23:24 2018
 
 @author: yusu
 """
-
-import tensorflow as tf
-import numpy as np
-import matplotlib.pyplot as plt
+from keras.datasets import mnist
+#import matplotlib
 #%matplotlib inline
-
-#from CW import CW
-import utils
-from models import PyModel
-from allmodels import load_mnist_data
-from torch.autograd import Variable
-import torch
-
-import cifar10_input
-from cifar_model import Model
-import foolbox
-
+#import matplotlib.pyplot as plt
+#import l2_attack
+import keras
+#from defense import *
+import tensorflow as tf
 import time
+import torch
+import numpy as np
+
+from wrapper import Model
 
 class blackbox:
     def __init__(self,model):
