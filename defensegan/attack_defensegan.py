@@ -17,7 +17,7 @@ import tensorflow as tf
 from torch.autograd import Variable
 import torch
 import numpy as np
-#from wrapper import Model
+from wrapper import Model
 
 class blackbox:
     def __init__(self,model):
