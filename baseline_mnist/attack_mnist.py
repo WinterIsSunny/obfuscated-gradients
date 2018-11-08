@@ -328,17 +328,14 @@ x_test = np.array(x_test, dtype=np.float32)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test /= 255.0
 #image = x_test[:1]
-
-print("True label", y_test[0])
-#print("Preds",model.predict(image[0]))
-
-
 #adv = attack.attack_untargeted(image[0],y_test[0], alpha = 4, beta = 0.005, iterations = 1000)
 
 dist = []
 count = []
 for i in range(15):
     print("=========================image ",i+1,"==========================================")
+    print("true label:",y_test[i])
+    print("predicted label:",model.predict(x_test[i]))
     adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
     res = adv - x_test[i]
     dist.append(np.linalg.norm(res))
