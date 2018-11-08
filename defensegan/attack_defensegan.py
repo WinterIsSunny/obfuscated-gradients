@@ -18,6 +18,9 @@ import torch
 import numpy as np
 from wrapper import Model
 import time
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 class blackbox:
     def __init__(self,model):
@@ -66,6 +69,7 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
+            print("type of best_theta*g_thetha", type(best_theta*g_theta))
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
             mod_norm = np.linalg.norm(orig_mod)
             if mod_norm < 0.05:
