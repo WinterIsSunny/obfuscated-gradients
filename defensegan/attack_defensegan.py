@@ -17,6 +17,7 @@ from torch.autograd import Variable
 import torch
 import numpy as np
 from wrapper import Model
+import time
 
 class blackbox:
     def __init__(self,model):
@@ -36,7 +37,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
         
-        num_directions = 1000
+        num_directions = 50
         best_theta, g_theta = None, float('inf')
         query_count = 0
             
