@@ -43,9 +43,9 @@ class blackbox:
             
         timestart = time.time()
         for i in range(num_directions):
-            theta = np.random.randn(shape)
+            theta = torch.randn(shape)
             #print(theta.size())
-            initial_lbd = np.linalg.norm(theta)
+            initial_lbd = torch.norm(theta)
             theta = theta/initial_lbd
             lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
             query_count += count
@@ -76,10 +76,10 @@ class blackbox:
             q = 10
             min_g1 = float('inf')
             for _ in range(q):
-                u = np.random.randn(theta.shape).type(np.float32)
-                u = u/np.linalg.norm(u)
+                u = torch.randn(theta.shape).type(np.float32)
+                u = u/torch.norm(u)
                 ttt = theta+beta * u
-                ttt = ttt/np.linalg.norm(ttt)
+                ttt = ttt/torch.norm(ttt)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -99,7 +99,7 @@ class blackbox:
         
             for _ in range(15):
                 new_theta = theta - alpha * gradient
-                new_theta = new_theta/np.linalg.norm(new_theta)
+                new_theta = new_theta/tensor.norm(new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
                 alpha = alpha * 2
@@ -114,7 +114,7 @@ class blackbox:
                 for _ in range(15):
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
-                    new_theta = new_theta/np.linalg.norm(new_theta)
+                    new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                     opt_count += count
                     if new_g2 < g2:
@@ -152,7 +152,8 @@ class blackbox:
         return mod_gan
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
-        lbd = initial_lbd
+        theta = np.asarray(theta)
+        lbd = np.asarray(initial_lbd)
         pred,_ = self.model.predict_gan(lbd*theta,x0)
         if pred == y0:
             lbd_lo = lbd
@@ -185,6 +186,8 @@ class blackbox:
     
     def fine_grained_binary_search(self, x0, y0,theta, initial_lbd, current_best):
         nquery = 0
+        theta = np.asarray(theta)
+        initial_lbd = torch.norm(initial_lbd)
         if initial_lbd > current_best:
 #            modi = self.get_modifier(current_best*theta,x0)
             pred,_ = self.model.predict_gan(current_best*theta,x0)
