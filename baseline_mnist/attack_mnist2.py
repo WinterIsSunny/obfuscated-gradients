@@ -240,6 +240,16 @@ x_test = np.array(x_test, dtype=np.float32)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test /= 255.0
 
+count = []
+for i in range(20):
+    label = model.predict(x_test[i])
+    if label == y_test[i]:
+        count.append(1)
+    else:
+        count.append(0)
+    
+print("accuracy of this model is:", sum(count)/len(count))
+
 
 dist = []
 count = []
