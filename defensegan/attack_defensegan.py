@@ -186,8 +186,8 @@ class blackbox:
     
     def fine_grained_binary_search(self, x0, y0,theta, initial_lbd, current_best):
         nquery = 0
-        theta = np.asarray(theta)
-        initial_lbd = torch.norm(initial_lbd)
+        theta = np.array(theta)
+        initial_lbd = np.asarray(initial_lbd)
         if initial_lbd > current_best:
 #            modi = self.get_modifier(current_best*theta,x0)
             pred,_ = self.model.predict_gan(current_best*theta,x0)
