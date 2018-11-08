@@ -273,8 +273,6 @@ image = x_test[:1]
 shape = 128
 xin = tf.placeholder(tf.float32, [1, 128])
 mygan = Generator(1, xin)
-print("True label", y_test[0])
-print("Preds",model.predict(image[0]))
 
 #res = []
 ##dists =[]
