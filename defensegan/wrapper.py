@@ -1,3 +1,7 @@
+
+import numpy as np
+import tensorflow as tf 
+
 class Model:
     def __init__(self,model,bounds,sess,gan):
         self.model = model
