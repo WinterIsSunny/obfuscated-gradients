@@ -64,7 +64,7 @@ def read_images(path_img,path_lab,n_samples):
     path:
     n_samples:
     """
-    random.seed(a = 0)
+    random.seed(a = 5555)
     all_labels = pd.read_csv(path_lab,sep=" ",header = None)
     all_labels.columns = ['path','label']
     images = []
