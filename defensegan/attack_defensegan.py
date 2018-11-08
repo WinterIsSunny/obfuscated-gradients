@@ -6,20 +6,18 @@ Created on Fri Jul 27 11:52:34 2018
 @author: yusu
 """
 
+import os
 from keras.datasets import mnist
 #import matplotlib
 #%matplotlib inline
 #import matplotlib.pyplot as plt
-#import l2_attack
 import keras
 from defense import *
 import tensorflow as tf
-
 from torch.autograd import Variable
 import torch
 import numpy as np
-import time
-from wrapper import Model
+#from wrapper import Model
 
 class blackbox:
     def __init__(self,model):
@@ -39,49 +37,49 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
         
-
-        query_count = 0
-        g_theta = float('inf')
-        timestart = time.time()
         num_directions = 1000
+        best_theta, g_theta = None, float('inf')
+        query_count = 0
+            
+        timestart = time.time()
         for i in range(num_directions):
-            theta = torch.randn(shape).type(torch.FloatTensor)
+            theta = np.random.randn(shape)
             #print(theta.size())
-            initial_lbd = torch.norm(theta)
-            theta = theta/torch.norm(theta)
-            theta = np.array(theta)
-            initial_lbd = np.array(initial_lbd)
+            initial_lbd = np.linalg.norm(theta)
+            theta = theta/initial_lbd
             lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
             query_count += count
             if lbd < g_theta:
                 best_theta, g_theta = theta,lbd
                 print("--------> Found distortion %.4f" % g_theta)
-            timeend = time.time()
-            print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
-
+        timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+    
+        
+        
         
         #timestart = time.time()
         g1 = 1.0
-        theta, g2 = best_theta.clone(), g_theta
+        theta, g2 = best_theta.copy(), g_theta
         torch.manual_seed(0)
         opt_count = 0
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-#            mod_initial = self.get_modifier(best_theta*g_theta,x0,gan)
-#            mod_norm = torch.norm(mod_initial)
-#            if mod_norm < 1:
-#                #print("break here 1?")
-#                break
+            _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
+            mod_norm = np.linalg.norm(orig_mod)
+            if mod_norm < 0.05:
+                print("====================query number after distortion < 0.05 =======================: ",opt_count)
+                break
             
-            gradient = torch.zeros(theta.size())
+            gradient = np.zeros(theta.shape)
             q = 10
             min_g1 = float('inf')
             for _ in range(q):
-                u = torch.randn(theta.size()).type(torch.FloatTensor)
-                u = u/torch.norm(u)
+                u = np.random.randn(theta.shape).type(np.float32)
+                u = u/np.linalg.norm(u)
                 ttt = theta+beta * u
-                ttt = ttt/torch.norm(ttt)
+                ttt = ttt/np.linalg.norm(ttt)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -101,7 +99,7 @@ class blackbox:
         
             for _ in range(15):
                 new_theta = theta - alpha * gradient
-                new_theta = new_theta/torch.norm(new_theta)
+                new_theta = new_theta/np.linalg.norm(new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
                 alpha = alpha * 2
@@ -116,7 +114,7 @@ class blackbox:
                 for _ in range(15):
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
-                    new_theta = new_theta/torch.norm(new_theta)
+                    new_theta = new_theta/np.linalg.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                     opt_count += count
                     if new_g2 < g2:
@@ -131,7 +129,7 @@ class blackbox:
                 theta, g2 = min_ttt, min_g1
     
             if g2 < g_theta:
-                best_theta, g_theta = theta.clone(), g2
+                best_theta, g_theta = theta.copy(), g2
             
             #print(alpha)
             if alpha < 1e-4:
@@ -155,13 +153,13 @@ class blackbox:
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-#        modifier = self.get_modifier(lbd*theta,x0,gan)
-        if self.model.predict_gan(lbd*theta)[0] == y0:
+        pred,_ = self.model.predict_gan(lbd*theta,x0)
+        if pred == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-#            modi = self.get_modifier(lbd_hi*theta,x0,gan)
-            while self.model.predict_gan(lbd_hi*theta,x0)[0] == y0:
+            pred,_ = self.model.predict_gan(lbd_hi*theta,x0)
+            while pred == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -170,16 +168,16 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-#            modi = self.get_modifier(lbd_lo*theta,gan)
-            while self.model.predict_gan(lbd*theta,x0)[0] != y0 :
+            pred,_ = self.model.predict_gan(lbd*theta,x0)
+            while pred != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-#            modi = self.get_modifier(lbd_mid*theta,x0,gan)
-            if self.model.predict_gan(lbd*theta,x0)[0] != y0:
+            pred,_ = self.model.predict_gan(lbd*theta,x0)
+            if pred != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -189,7 +187,8 @@ class blackbox:
         nquery = 0
         if initial_lbd > current_best:
 #            modi = self.get_modifier(current_best*theta,x0)
-            if self.model.predict_gan(current_best*theta,x0)[0] == y0:
+            pred,_ = self.model.predict_gan(current_best*theta,x0)
+            if pred == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
@@ -225,7 +224,8 @@ class blackbox:
             nquery += 1
 #            modi = self.get_modifier(lbd_mid*theta,x0,gan)
 #            print("type of modi:", type(modi))
-            if self.model.predict_gan(lbd_mid*theta,x0)[0] != y0:
+            pred,_ = self.model.predict_gan(lbd_mid*theta,x0)
+            if pred != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -252,13 +252,12 @@ class blackbox:
 #        # return np array modifier 
 #        return new_mod
         
-        
 # ================================== test ===========================================#
-
-
 session = keras.backend.get_session()
+
 keras.backend.set_learning_phase(False)
 model = keras.models.load_model("data/mnist")
+
 model = Model(model,[0.0,1.0],session,lambda x : Generator(1,x))
 
 
@@ -272,6 +271,8 @@ x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test /= 255.0
 image = x_test[:1]
 shape = 128
+xin = tf.placeholder(tf.float32, [1, 128])
+mygan = Generator(1, xin)
 print("True label", y_test[0])
 print("Preds",model.predict(image[0]))
 
@@ -296,12 +297,9 @@ print("Preds",model.predict(image[0]))
 
 attack = blackbox(model)
 print("label of pure image:", model.predict(image[0]))
-adv = attack.attack_untargeted(image[0],y_test[0],shape,alpha = 4, 
-                                    beta = 0.005, iterations = 1000)
+adv_mod = attack.attack_untargeted(image[0],y_test[0],shape,alpha = 4, beta = 0.005, iterations = 1000)
 
-
-
-print("final modifier  before GAN :", adv.shape)
-
-
+mod = session.run(mygan,{xin:adv_mod})
+adv = image[0]+np.sum(mod,0)
+print("new label of adv_sample :", model.predict(adv))
 
