@@ -6,7 +6,6 @@ Created on Fri Jul 27 11:52:34 2018
 @author: yusu
 """
 
-import os
 from keras.datasets import mnist
 #import matplotlib
 #%matplotlib inline
@@ -60,7 +59,7 @@ class blackbox:
         
         #timestart = time.time()
         g1 = 1.0
-        theta, g2 = best_theta.copy(), g_theta
+        theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
         opt_count = 0
         stopping = 0.01
@@ -129,7 +128,7 @@ class blackbox:
                 theta, g2 = min_ttt, min_g1
     
             if g2 < g_theta:
-                best_theta, g_theta = theta.copy(), g2
+                best_theta, g_theta = theta.clone(), g2
             
             #print(alpha)
             if alpha < 1e-4:
