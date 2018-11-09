@@ -20,7 +20,6 @@ from wrapper import Model
 import time
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 class blackbox:
     def __init__(self,model):
@@ -40,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
         
-        num_directions = 50
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
             
@@ -50,11 +49,12 @@ class blackbox:
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/initial_lbd
-            lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-            query_count += count
-            if lbd < g_theta:
-                best_theta, g_theta = theta,lbd
-                print("--------> Found distortion %.4f" % g_theta)
+            if self.model.predict_gan(theta*initial_lbd,x0) != y0:
+                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+                query_count += count
+                if lbd < g_theta:
+                    best_theta, g_theta = theta,lbd
+                    print("--------> Found distortion %.4f" % g_theta)
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
     
@@ -72,15 +72,15 @@ class blackbox:
             print("type of best_theta*g_thetha", type(best_theta*g_theta))
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
             mod_norm = np.linalg.norm(orig_mod)
-            if mod_norm < 0.05:
+            if mod_norm < 1:
                 print("====================query number after distortion < 0.05 =======================: ",opt_count)
                 break
             
-            gradient = np.zeros(theta.shape)
+            gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
             for _ in range(q):
-                u = torch.randn(theta.shape).type(np.float32)
+                u = torch.randn(theta.size()).type(torch.FloatTensor)
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
@@ -103,7 +103,7 @@ class blackbox:
         
             for _ in range(15):
                 new_theta = theta - alpha * gradient
-                new_theta = new_theta/tensor.norm(new_theta)
+                new_theta = new_theta/torch.norm(new_theta)
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
                 alpha = alpha * 2
@@ -156,8 +156,7 @@ class blackbox:
         return mod_gan
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
-        theta = np.asarray(theta)
-        lbd = np.asarray(initial_lbd)
+        lbd = initial_lbd
         pred,_ = self.model.predict_gan(lbd*theta,x0)
         if pred == y0:
             lbd_lo = lbd
@@ -190,10 +189,7 @@ class blackbox:
     
     def fine_grained_binary_search(self, x0, y0,theta, initial_lbd, current_best):
         nquery = 0
-        theta = np.array(theta)
-        initial_lbd = np.asarray(initial_lbd)
         if initial_lbd > current_best:
-#            modi = self.get_modifier(current_best*theta,x0)
             pred,_ = self.model.predict_gan(current_best*theta,x0)
             if pred == y0:
                 nquery += 1
@@ -238,27 +234,8 @@ class blackbox:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
     
-#    def get_modifier(self,modifier,x0):
-##        img = np.expand_dims(x0,0)
-#        modifier = np.expand_dims(np.array(modifier),0)
-#        x_new = tf.placeholder(tf.float32,(1,128))
-##        noise = tf.reshape(x_new, [1,128])
-##        mod_tf = tf.convert_to_tensor(modifier)
-##        print("shape of modifier before GAN:", mod_tf.shape )
-##        new_mod = gan(mod_tf)
-##        print(type(new_img))
-##        new_mod = new_mod[0]
-#        new_mod = gan(x_new)
-#        with tf.Session() as sess:
-#            sess.run(new_mod,{x_new:modifier})
-#            print("dimension of img_gan is :",new_mod.get_shape())
-#            img_npy = new_mod.eval()
-#        
-#        new_mod = np.sum(np.expand_dims(x0,0)-img_npy,0)
-##        new_mod = np.sum(x0 - img_gan, 0)
-#        # return np array modifier 
-#        return new_mod
-        
+
+    
 # ================================== test ===========================================#
 session = keras.backend.get_session()
 
@@ -280,6 +257,8 @@ image = x_test[:1]
 shape = 128
 xin = tf.placeholder(tf.float32, [1, 128])
 mygan = Generator(1, xin)
+print("True label", y_test[0])
+print("Preds",model.predict(image[0]))
 
 #res = []
 ##dists =[]
@@ -303,8 +282,8 @@ mygan = Generator(1, xin)
 attack = blackbox(model)
 print("label of pure image:", model.predict(image[0]))
 adv_mod = attack.attack_untargeted(image[0],y_test[0],shape,alpha = 4, beta = 0.005, iterations = 1000)
-
+adv_mod = np.expand_dims(np.array(adv_mod),0)
 mod = session.run(mygan,{xin:adv_mod})
-adv = image[0]+np.sum(mod,0)
-print("new label of adv_sample :", model.predict(adv))
+adv = np.sum(mod,0)+image[0]
 
+print("new label of adv_sample :", model.predict(adv))
