@@ -41,27 +41,35 @@ class blackbox:
             return x0,0
     
         num_directions = 1000
+        num_query = 10
         best_theta, g_theta = None, float('inf')
         query_count = 0
+        comp_theta = 0
+        current_best = float('inf')
         
-        
-        ### random initialization ###
         timestart = time.time()
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
-                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
-                query_count += count
-                if lbd < g_theta:
-                    best_theta, g_theta = theta,lbd
-                    print("--------> Found distortion %.4f" % g_theta)
+                lbd,comp_dec = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,g_theta,current_best,num_query)
+                if comp_dec > comp_theta:
+                    comp_theta = comp_dec
+                    best_theta,g_theta = theta,lbd
+                    print("--------> Found abs-distortion %.4f with 10 queries" % g_theta)
+                    print("--------> Found comp-distortion %.4f with 10 queries" % comp_dec)
             timeend = time.time()
-        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        print("==========> Found best distortion %.4f in %.4f seconds" % (g_theta, timeend-timestart))
+        query_count = (num_directions+1)*num_query
+        #print("type of best_theta", type(best_theta))
+        #print("type of best_theta", type(g_theta))
+        lbd,count = self.fine_grained_binary_search( x0, y0, best_theta, g_theta, current_best)
+        g_theta = lbd
+        query_count += count
+        #initialized by foolbox
 
-
+        
         print("the best initialization: ",g_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
@@ -73,6 +81,7 @@ class blackbox:
             
            # print("iteration:",i)
             if g_theta < 1:
+                print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -206,6 +215,33 @@ class blackbox:
 #        print("-----------------------------")
         return lbd_hi, nquery
         
+    def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0, tol=1e-5,current_best = float('inf'),num_query = 10):
+        nquery = 0
+        if initial_lbd > current_best: 
+            if self.model.predict(x0+ np.array(current_best*theta)) == y0:
+                nquery += 1
+                return float('inf'), nquery
+            lbd = current_best
+        else:
+            lbd = initial_lbd
+    
+        lbd_hi = lbd
+        lbd_lo = 0.0
+    
+        while (lbd_hi - lbd_lo) > 1e-5:
+            lbd_mid = (lbd_lo + lbd_hi)/2.0
+            nquery += 1
+            if nquery > num_query:
+                break
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
+                lbd_hi = lbd_mid
+            else:
+                lbd_lo = lbd_mid
+        comp_dec = (initial_lbd - lbd_hi)/initial_lbd
+       # print("number of query before return for this direction:",nquery)
+        return lbd_hi,comp_dec
+    
+    
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
@@ -283,6 +319,7 @@ test_lb = cifar.eval_data.ys[:100]
 attack = blackbox(model)
 
 
+# =============================== pre-attack 1000 images for logistic training================
 #labels = train_lb[:1000]
 #images = train_img[:1000]
 #count = 0
@@ -340,6 +377,8 @@ advs = []
 count = []
 for i in range(100):
     print("============== attacking image ",i+1,"=====================")
+#    print("shape of this image:",test_img[i].shape )
+
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i], alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
@@ -355,7 +394,7 @@ for i in range(100):
 #    print(j)
 print("==============================================")
 
-index = np.nonzero(count)
+index = np.nonzero(dist)
 index = list(index)[0].tolist()
 dist_valid = np.array(dist)[index] 
 count_valid = np.array(count)[index]
