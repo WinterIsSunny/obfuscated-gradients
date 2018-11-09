@@ -79,7 +79,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 0.05:
+            if g_theta < 1:
                 print("=========================> queries so far:",opt_count+query_count)
                 break
             gradient = torch.zeros(theta.size())
