@@ -291,9 +291,21 @@ for i in range(10):
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
+    
+index = np.nonzero(count)
+index = list(index)[0].tolist()
+
+#index2 = np.nonzero(count)
+#index2 = list(index2)[0].tolist()
+
+avg_distortion = np.mean(np.array(dist)[index])
+avg_count = np.mean(np.array(count)[index])
+print("the average distortion for %2d images :"%(len(index)),avg_distortion)
 print("the distortions for 15 images :")
 for i in dist:
     print(i)
+    
+print("the number of queries for %2d images :"%(len(index)), avg_count)    
 print("the number of queries for 15 images :")
 for j in count:
     print(j)

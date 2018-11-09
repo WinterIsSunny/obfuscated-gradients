@@ -53,7 +53,8 @@ class blackbox:
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
-                lbd,comp_dec = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,g_theta,current_best,num_query)
+                lbd,comp_dec,count = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,g_theta,current_best,num_query)
+                query_count += count
                 if comp_dec > comp_theta:
                     comp_theta = comp_dec
                     best_theta,g_theta = theta,lbd
@@ -61,13 +62,12 @@ class blackbox:
                     print("--------> Found comp-distortion %.4f with 10 queries" % comp_dec)
             timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds" % (g_theta, timeend-timestart))
-        query_count = (num_directions+1)*num_query
         #print("type of best_theta", type(best_theta))
         #print("type of best_theta", type(g_theta))
         lbd,count = self.fine_grained_binary_search( x0, y0, best_theta, g_theta, current_best)
         g_theta = lbd
         query_count += count
-        #initialized by foolbox
+
 
         
         print("the best initialization: ",g_theta)
@@ -239,7 +239,7 @@ class blackbox:
                 lbd_lo = lbd_mid
         comp_dec = (initial_lbd - lbd_hi)/initial_lbd
        # print("number of query before return for this direction:",nquery)
-        return lbd_hi,comp_dec
+        return lbd_hi,comp_dec,nquery
     
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
@@ -375,7 +375,7 @@ attack = blackbox(model)
 dist = []
 advs = []
 count = []
-for i in range(100):
+for i in range(15):
     print("============== attacking image ",i+1,"=====================")
 #    print("shape of this image:",test_img[i].shape )
 
