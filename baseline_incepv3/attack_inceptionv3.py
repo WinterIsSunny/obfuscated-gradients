@@ -270,7 +270,6 @@ images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
 ## foolbox model
-images = images/255
 
 
 
