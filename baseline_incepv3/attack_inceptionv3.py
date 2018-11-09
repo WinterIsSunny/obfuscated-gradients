@@ -55,8 +55,6 @@ class blackbox:
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
                 query_count += 1 
-                #print(type(theta),type(initial_lbd),type(g_theta))
-                #print("find a new adv direction, new label:", self.model.predict(x0+np.array(initial_lbd*theta)))
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
@@ -64,8 +62,8 @@ class blackbox:
 #                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
                     print("--------> Found distortion %.4f" % g_theta)
         
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+            timeend = time.time()
+            print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
         
         
@@ -269,12 +267,10 @@ sess = tf.Session()
 
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
-
-
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 
 ## foolbox model
-
+images = images/255
 
 attack = blackbox(model)
 
