@@ -268,7 +268,7 @@ sess = tf.Session()
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
-
+attack = blackbox(model)
 ## foolbox model
 images = images/255
 
@@ -286,6 +286,7 @@ print("accuracy of this model:", sum(compare)/len(compare))
 
 dist = []
 count = []
+
 for i in range(10):
     print("================attacking image ",i+1,"=======================")
     adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
