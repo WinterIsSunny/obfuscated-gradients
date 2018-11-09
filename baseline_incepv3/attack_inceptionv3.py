@@ -45,8 +45,7 @@ class blackbox:
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
-        #timestart = time.time()
-        
+        timestart = time.time()
         
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
@@ -62,8 +61,8 @@ class blackbox:
 #                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta)))
                     print("--------> Found distortion %.4f" % g_theta)
         
-            timeend = time.time()
-            print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
         
         
