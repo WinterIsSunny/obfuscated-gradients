@@ -272,7 +272,7 @@ model = MyModel(inceptionv3,sess,[0.0,1.0])
 ## foolbox model
 images = images/255
 
-attack = blackbox(model)
+
 
 compare = []
 for i in range(len(images)):
