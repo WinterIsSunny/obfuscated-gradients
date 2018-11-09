@@ -386,12 +386,12 @@ for i in range(15):
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
-#print("distortion of 100 images:",dist)
-#for i in dist:
-#    print(i)
-#print("queries of 100 images:",count)
-#for j in count:
-#    print(j)
+print("distortion of 15 images:",dist)
+for i in dist:
+    print(i)
+print("queries of 15 images:",count)
+for j in count:
+    print(j)
 print("==============================================")
 
 index = np.nonzero(dist)

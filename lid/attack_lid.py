@@ -338,21 +338,23 @@ attack = blackbox(model)
 dist = []
 advs = []
 count = []
-for i in range(100):
+for i in range(15):
     print("============== attacking image ",i+1,"=====================")
     adv,queries = attack.attack_untargeted(test_img[i],test_lb[i], alpha = 4, beta = 0.0005)
     count.append(queries)
     advs.append(adv)
     dist.append(np.linalg.norm(adv-test_img[i]))
+
+
 #np.save("dist.npy",np.array(dist))
 #np.save("mods.npy",np.array(mods))
 
-#print("distortion of 100 images:",dist)
-#for i in dist:
-#    print(i)
-#print("queries of 100 images:",count)
-#for j in count:
-#    print(j)
+print("distortion of 15 images:",dist)
+for i in dist:
+    print(i)
+print("queries of 15 images:",count)
+for j in count:
+    print(j)
 print("==============================================")
 
 index = np.nonzero(count)
