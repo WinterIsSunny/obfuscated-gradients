@@ -295,9 +295,6 @@ for i in range(10):
 index = np.nonzero(count)
 index = list(index)[0].tolist()
 
-#index2 = np.nonzero(count)
-#index2 = list(index2)[0].tolist()
-
 avg_distortion = np.mean(np.array(dist)[index])
 avg_count = np.mean(np.array(count)[index])
 print("the average distortion for %2d images :"%(len(index)),avg_distortion)

@@ -38,9 +38,9 @@ class blackbox:
             (x0, y0): original image
         """
 
-#        if (self.model.predict(x0) != y0):
-#            print("Fail to classify the image. No need to attack.")
-#            return np.nan
+        if (self.model.predict(x0) != y0):
+            print("Fail to classify the image. No need to attack.")
+            return x0,0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -51,19 +51,15 @@ class blackbox:
         
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
                 query_count += 1
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
-                if (i+1)%500 == 0:
-                    print("iter:", i+1)
                 if lbd < g_theta:
                     best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
-        
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
@@ -85,7 +81,7 @@ class blackbox:
                 break
             
             gradient = torch.zeros(theta.size())
-            q = 50
+            q = 10
             min_g1 = float('inf')
             for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
@@ -280,23 +276,18 @@ for i in range(20):
 print("accuracy of this model is:", sum(count)/len(count))
 
 
-
-
 attack = blackbox(model)
 dist = []
 count = []
 for i in range(15):
     print("=============================== this is image ",i+1,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 4, beta = 0.005, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 8, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
     
 index = np.nonzero(count)
 index = list(index)[0].tolist()
-
-#index2 = np.nonzero(count)
-#index2 = list(index2)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index])
 avg_count = np.mean(np.array(count)[index])

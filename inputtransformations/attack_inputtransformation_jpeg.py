@@ -33,9 +33,9 @@ class blackbox:
             (x0, y0): original image
         """
 
-#        if (self.model.predict(x0) != y0):
-#            print("Fail to classify the image. No need to attack.")
-#            return x0
+        if (self.model.predict(x0) != y0):
+            print("Fail to classify the image. No need to attack.")
+            return x0,0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -56,8 +56,8 @@ class blackbox:
                     best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
         
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
         
         
