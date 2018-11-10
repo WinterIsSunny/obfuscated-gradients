@@ -265,7 +265,7 @@ model = Model('../models/thermometer_advtrain/',
 model = MyModel(model,sess,levels,[0.0,255.0])
 
 image = np.array(cifar.eval_data.xs[:100],dtype=np.float32)
-label = cifar.eval_data.ys[:100]
+labels = cifar.eval_data.ys[:100]
 
 new_img = image / 255.0
 
