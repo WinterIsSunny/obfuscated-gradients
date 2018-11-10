@@ -46,7 +46,7 @@ class blackbox:
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
-        #timestart = time.time()
+        timestart = time.time()
         
         
         for i in range(num_directions):
@@ -55,6 +55,7 @@ class blackbox:
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                query_count += 1
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if (i+1)%500 == 0:
@@ -63,15 +64,13 @@ class blackbox:
                     best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
         
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
         
         
         
         #timestart = time.time()
-        print("the best initialization: ",g_theta)
-        print("number of queries for initialization:", query_count)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
@@ -82,7 +81,7 @@ class blackbox:
             
            # print("iteration:",i)
             if g_theta < 1:
-                print("this is what we want")
+                print("=========================> queries so far:",opt_count+query_count)
                 break
             
             gradient = torch.zeros(theta.size())
@@ -153,11 +152,8 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-            #print(alpha)
-#            print("%3d th iteration" % i)
-            print("current alpha:",alpha)
-#            print("g_theta")
-            print("number of queries:", opt_count+query_count)
+
+#            print("number of queries:", opt_count+query_count)
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -165,12 +161,8 @@ class blackbox:
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
-            print("iteration:",i)
-            print("distortion in this iteration:", g_theta)
-            print("=-=-=--will enter next iteration=-=-=--=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
-        
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("thermometer")
         print("best distortion :", g_theta)
@@ -295,7 +287,7 @@ dist = []
 count = []
 for i in range(15):
     print("=============================== this is image ",i+1,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.005, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     

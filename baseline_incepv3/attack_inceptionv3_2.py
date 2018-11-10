@@ -152,11 +152,7 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-            #print(alpha)
-#            print("%3d th iteration" % i)
-#            print("current alpha:",alpha)
-#            print("g_theta:",g_theta)
-#            print("number of queries:", opt_count+query_count)
+
             if alpha < 1e-6:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -164,11 +160,7 @@ class blackbox:
                 if (beta < 1e-10):
                     print("beta is too samll")
                     break
-#            print("distortion in this iteration:", g_theta)
-#            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-    
-        #target = model.predict(x0 + g_theta*best_theta)
-        
+# 
         #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("inceptionv3_2")
         print("best distortion :", g_theta)
