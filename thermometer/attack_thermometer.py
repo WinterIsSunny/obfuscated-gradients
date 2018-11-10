@@ -277,29 +277,45 @@ label = cifar.eval_data.ys[:100]
 
 new_img = image / 255.0
 
+count = []
+for i in range(20):
+    label = model.predict(new_img[i])
+    if label == labels[i]:
+        count.append(1)
+    else:
+        count.append(0)
+    
+print("accuracy of this model is:", sum(count)/len(count))
+
+
+
+
 attack = blackbox(model)
 dist = []
 count = []
-for i in range(4):
-    print("=============================== this is image ",i+9,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i+10],label[i+10],alpha = 4, beta = 0.005, iterations = 1000)
+for i in range(15):
+    print("=============================== this is image ",i+1,"========================================")
+    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
+    
+index = np.nonzero(count)
+index = list(index)[0].tolist()
+
+#index2 = np.nonzero(count)
+#index2 = list(index2)[0].tolist()
+
+avg_distortion = np.mean(np.array(dist)[index])
+avg_count = np.mean(np.array(count)[index])
+print("the average distortion for %2d images :"%(len(index)),avg_distortion)
 print("the distortions for 15 images :")
 for i in dist:
     print(i)
+    
+print("the number of queries for %2d images :"%(len(index)), avg_count)    
 print("the number of queries for 15 images :")
 for j in count:
-    print(j)   
-    
-#avg_dist = np.nanmean(dist)
-#print("average distortion of 100 images is:", avg_dist)
-#print("the number of queries for 10images: ",count )
-
-#print("original label:", label)
-#print("predicted label of clean imgage:", model.predict(new_img[0]))
-#adv = attack.attack_untargeted(new_img[0],label[0],alpha = 4, beta = 0.5, iterations = 1000)
-#print("label of adversarial sample :", model.predict(adv))
+    print(j)
 
 

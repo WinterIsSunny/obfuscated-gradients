@@ -46,7 +46,7 @@ class blackbox:
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
-        #timestart = time.time()
+        timestart = time.time()
         
         
         for i in range(num_directions):
@@ -64,8 +64,8 @@ class blackbox:
                     best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
         
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
         
         
@@ -82,9 +82,9 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 1:
-                print("this is what we want")
-                break
+#            if g_theta < 1:
+#                print("this is what we want")
+#                break
             
             gradient = torch.zeros(theta.size())
             q = 50
@@ -296,7 +296,7 @@ dist = []
 count = []
 for i in range(15):
     print("=============================== this is image ",i+1,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.005, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 4, beta = 0.005, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
