@@ -273,15 +273,15 @@ model = Model('../models/thermometer_advtrain/',
               thermometer=True, levels=levels)
 model = MyModel(model,sess,levels,[0.0,255.0])
 
-image = np.array(cifar.eval_data.xs[:100],dtype=np.float32)
-label = cifar.eval_data.ys[:100]
+images = np.array(cifar.eval_data.xs[:100],dtype=np.float32)
+labels = cifar.eval_data.ys[:100]
 
-new_img = image / 255.0
+new_img = images / 255.0
 
 count = []
 for i in range(20):
-    label = model.predict(image[i])
-    if label == label[i]:
+    label = model.predict(new_img[i])
+    if label == labels[i]:
         count.append(1)
     else:
         count.append(0)
