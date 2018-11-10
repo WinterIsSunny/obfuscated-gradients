@@ -55,6 +55,7 @@ class blackbox:
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                query_count += 1
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if (i+1)%500 == 0:
@@ -276,6 +277,19 @@ image = np.array(cifar.eval_data.xs[:100],dtype=np.float32)
 label = cifar.eval_data.ys[:100]
 
 new_img = image / 255.0
+
+count = []
+for i in range(20):
+    label = model.predict(image[i])
+    if label == label[i]:
+        count.append(1)
+    else:
+        count.append(0)
+    
+print("accuracy of this model is:", sum(count)/len(count))
+
+
+
 
 attack = blackbox(model)
 dist = []
