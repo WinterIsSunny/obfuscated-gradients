@@ -42,7 +42,7 @@ class blackbox:
 #            print("Fail to classify the image. No need to attack.")
 #            return np.nan
     
-         num_directions = 1000
+        num_directions = 1000
         num_query = 10
         best_theta, g_theta = None, float('inf')
         query_count = 0
