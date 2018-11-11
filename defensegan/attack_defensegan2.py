@@ -48,7 +48,7 @@ class blackbox:
         
         timestart = time.time()
         for i in range(num_directions):
-            theta = torch.randn(x0.shape).type(torch.FloatTensor)
+            theta = torch.randn(shape).type(torch.FloatTensor)
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict_gan(initial_lbd*theta,x0) != y0:
