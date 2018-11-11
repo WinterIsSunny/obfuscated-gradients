@@ -153,7 +153,7 @@ class blackbox:
         print("number of queries :", opt_count+query_count)
         mod_gan = np.array(g_theta*best_theta)
         print("return g_theta*best_theta, shape of it:", mod_gan.shape)
-        return mod_gan
+        return mod_gan, opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -253,37 +253,35 @@ model = Model(model,[0.0,1.0],session,lambda x : Generator(1,x))
 x_test = np.array(x_test, dtype=np.float32)
 x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test /= 255.0
-image = x_test[:1]
+image = x_test[:100]
 shape = 128
 xin = tf.placeholder(tf.float32, [1, 128])
 mygan = Generator(1, xin)
 print("True label", y_test[0])
 print("Preds",model.predict(image[0]))
 
-#res = []
-##dists =[]
-
-#for i in range(3):
-#    modifier = attack1.attack_untargeted(image[0],y_test[0],shape, best_theta = None,
-#                                         alpha = 2, beta = 0.05, iterations = 10)
-##    dist = pre_adv - image[0]
-#    #dist_norm = np.linalg.norm(dist)
-#    res.append(modifier)
-#    #dists.append(dist_norm)
-#res = np.array(res)
-#xin = tf.placeholder(tf.float32, [3, 128])
-#mygan = Generator(3, xin)
-#it = session.run(mygan, {xin: res})
-#
-#distortion = np.sum((it)**2,(1,2,3))**.5
-##print("Distortions", distortion)
-#start = np.array([res[np.argmin(distortion)]])
-
 attack = blackbox(model)
-print("label of pure image:", model.predict(image[0]))
-adv_mod = attack.attack_untargeted(image[0],y_test[0],shape,alpha = 4, beta = 0.005, iterations = 1000)
-adv_mod = np.expand_dims(np.array(adv_mod),0)
-mod = session.run(mygan,{xin:adv_mod})
-adv = np.sum(mod,0)+image[0]
 
-print("new label of adv_sample :", model.predict(adv))
+
+dist = []
+count = []
+for i in range(15):
+    print("=====================attacking image %2d =========================="%(i))
+    print("label of pure image:", model.predict(image[i]))
+    adv_mod,query = attack.attack_untargeted(image[i],y_test[i],shape,alpha = 4, beta = 0.005, iterations = 1000)
+    adv_mod = np.expand_dims(np.array(adv_mod),0)
+    mod = session.run(mygan,{xin:adv_mod})
+    dist.append(np.linalg.norm(mod))
+    count.append(query)
+
+index = np.nonzero(count)
+index = list(index)[0].tolist()
+
+avg_distortion = np.mean(np.array(dist)[index])
+avg_count = np.mean(np.array(count)[index])
+print("the average distortion for %2d images :"%(len(index)),avg_distortion)
+for i in dist:
+    print(i)
+print("the number of queries for %2d images :"%(len(index)), avg_count)
+for j in count:
+    print(j)
