@@ -55,7 +55,7 @@ class blackbox:
                 query_count += 1
                 lbd,comp_dec,query = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,g_theta,current_best,num_query)
                 query_count += query
-                if comp_dec > comp_theta:a
+                if comp_dec > comp_theta:
                     comp_theta = comp_dec
                     best_theta,g_theta = theta,lbd
                     print("--------> Found abs-distortion %.4f with 10 queries" % g_theta)
