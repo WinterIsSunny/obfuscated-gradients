@@ -148,7 +148,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -202,8 +202,7 @@ class blackbox:
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
-            #timeend1 = time.time()
-#            print("1st while time:", timeend1 - timestart1)
+
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
@@ -212,10 +211,7 @@ class blackbox:
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-            #timeend2 = time.time()
-#            print("2nd while time:", timeend2 - timestart2)
-            
-        #timestart3 = time.time()
+
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -223,11 +219,6 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        #timeend3 = time.time()
-#        print("3rd while time:",timeend3 - timestart3)
-#        print("lbd_low:",lbd_lo)
-#        print("lbd_high:", lbd_hi)
-#        print("-----------------------------")
         return lbd_hi, nquery
     
     def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0, tol=1e-5,current_best = float('inf'),num_query = 10):
