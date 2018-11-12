@@ -36,7 +36,7 @@ class blackbox:
         print("predicted label:", pred)
         print("true label:", y0)
 
-        if (self.model.predict(x0) != y0):
+        if (pred != y0):
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
@@ -133,7 +133,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.8
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -202,14 +202,13 @@ class blackbox:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-#            timestart1 = time.time()
+=
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
                     return float('inf'), nquery
-#            timeend1 = time.time()
-#            print("1st while time:", timeend1 - timestart1)
+
         else:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
@@ -218,10 +217,7 @@ class blackbox:
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-#            timeend2 = time.time()
-#            print("2nd while time:", timeend2 - timestart2)
-            
-#        timestart3 = time.time()
+
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -229,11 +225,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-#        timeend3 = time.time()
-#        print("3rd while time:",timeend3 - timestart3)
-#        print("lbd_low:",lbd_lo)
-#        print("lbd_high:", lbd_hi)
-#        print("-----------------------------")
+
         return lbd_hi, nquery
     
     
@@ -248,30 +240,9 @@ class blackbox:
         else:
             lbd = initial_lbd
             
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
+
         lbd_hi = lbd
         lbd_lo = 0.
-#        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
         while (lbd_hi - lbd_lo) > 1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
@@ -310,7 +281,7 @@ count = []
 
 for i in range(10):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
