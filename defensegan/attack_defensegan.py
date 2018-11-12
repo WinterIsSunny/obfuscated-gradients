@@ -39,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
         
-        num_directions = 100
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
             
@@ -68,10 +68,9 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            print("type of best_theta*g_thetha", type(best_theta*g_theta))
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
             mod_norm = np.linalg.norm(orig_mod)
-            if mod_norm < 1:
+            if mod_norm < 5:
                 print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             
@@ -115,7 +114,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.25
+                    alpha = alpha * 0.9
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -138,7 +137,7 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.1
+                beta = beta * 0.5
                 if (beta < 0.000005):
                     break
     
@@ -150,7 +149,6 @@ class blackbox:
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         mod_gan = np.array(g_theta*best_theta)
-        print("return g_theta*best_theta, shape of it:", mod_gan.shape)
         return mod_gan, opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
@@ -266,7 +264,7 @@ count = []
 for i in range(15):
     print("=====================attacking image %2d =========================="%(i))
     print("label of pure image:", model.predict(image[i]))
-    adv_mod,query = attack.attack_untargeted(image[i],y_test[i],shape,alpha = 8, beta = 0.005, iterations = 1000)
+    adv_mod,query = attack.attack_untargeted(image[i],y_test[i],shape,alpha = 4, beta = 0.05, iterations = 1000)
     adv_mod = np.expand_dims(np.array(adv_mod),0)
     mod = session.run(mygan,{xin:adv_mod})
     dist.append(np.linalg.norm(mod))
