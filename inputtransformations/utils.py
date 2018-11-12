@@ -4,6 +4,9 @@ import numpy as np
 import PIL.Image
 from imagenet_labels import label_to_name
 import matplotlib.pyplot as plt
+import random
+import os
+import pandas as pd
 
 def one_hot(index, total):
     arr = np.zeros((total))
@@ -24,9 +27,6 @@ def optimistic_restore(session, save_file):
                 restore_vars.append(curr_var)
     saver = tf.train.Saver(restore_vars)
     saver.restore(session, save_file)
-
-def load_image(path):
-    return (np.asarray(PIL.Image.open(path).resize((299, 299)))/255.0).astype(np.float32)
 
 def make_classify(sess, input_, probs):
     def classify(img, correct_class=None, target_class=None):
@@ -51,3 +51,46 @@ def make_classify(sess, input_, probs):
         fig.subplots_adjust(bottom=0.2)
         plt.show()
     return classify
+
+def load_image(path):
+    image = PIL.Image.open(path)
+    rgbimg = image.convert("RGB")
+    #rgbimg.show()
+    return (np.array(rgbimg.resize((299, 299)))/255.0).astype(np.float32)
+
+def read_images(path_img,path_lab,n_samples):
+    """
+    path:
+    n_samples:
+    """
+    random.seed(a = 5555)
+    all_labels = pd.read_csv(path_lab,sep=" ",header = None)
+    all_labels.columns = ['path','label']
+    images = []
+    labels = []
+    dir_list = os.listdir(path_img)
+    index = [random.randint(0,len(dir_list)-1) for i in range(n_samples)]
+    for i in index:
+        dirnames = dir_list[i]
+        file_list = os.listdir(os.path.join(path_img,dirnames))
+        file_index = random.sample(range(0,len(file_list)),1)
+        file = file_list[file_index[0]]
+        file_path = os.path.join(path_img,dirnames,file)
+        img = load_image(file_path)
+        lab_name = os.path.join(dirnames,file)
+        #print("img path:", file_path)
+        #print("label path",lab_name)
+        if img.shape == (299,299):
+            #print("img path:", file_path)
+            continue
+        new_label = np.asarray(all_labels.label[all_labels.path == lab_name])
+        labels.append(new_label)
+        images.append(img)
+        #print("image:",img)
+        #print("size of image",img.shape)
+    #images = np.array(images)
+    images = np.asarray(images)
+    labels = np.asarray(labels)
+    #print("index:",index)
+    #print("labels",labels)
+    return images,labels
