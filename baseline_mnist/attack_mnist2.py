@@ -258,7 +258,7 @@ for i in range(15):
     print("true label:",y_test[i])
     print("predicted label:",model.predict(x_test[i]))
     adv_mod, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
-    dist.append(np.linalg.norm(adv_mod)
+    dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
 
 index = np.nonzero(count)

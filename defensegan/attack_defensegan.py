@@ -115,7 +115,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.25
+                    alpha = alpha * 0.8
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -267,7 +267,7 @@ count = []
 for i in range(15):
     print("=====================attacking image %2d =========================="%(i))
     print("label of pure image:", model.predict(image[i]))
-    adv_mod,query = attack.attack_untargeted(image[i],y_test[i],shape,alpha = 4, beta = 0.005, iterations = 1000)
+    adv_mod,query = attack.attack_untargeted(image[i],y_test[i],shape,alpha = 8, beta = 0.005, iterations = 1000)
     adv_mod = np.expand_dims(np.array(adv_mod),0)
     mod = session.run(mygan,{xin:adv_mod})
     dist.append(np.linalg.norm(mod))
