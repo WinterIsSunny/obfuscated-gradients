@@ -75,9 +75,8 @@ class blackbox:
         prev_obj = 100000
         for i in range(iterations):
             
-           # print("iteration:",i)
             if g_theta < 1:
-                print("=========================> queries so far:",opt_count+query_count)
+                print("=========query number after distortion < 1 ==============:",opt_count+query_count)
                 break
             
             gradient = torch.zeros(theta.size())
