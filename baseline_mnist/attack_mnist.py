@@ -13,7 +13,7 @@ from keras.datasets import mnist
 #import matplotlib.pyplot as plt
 #import l2_attack
 import keras
-#from defense import *
+from defense import *
 import tensorflow as tf
 import time
 from torch.autograd import Variable
@@ -37,9 +37,9 @@ class blackbox:
         print("predicted label:", pred)
         print("true label:", y0)
 
-#        if (self.model.predict(x0) != y0):
-#            print("Fail to classify the image. No need to attack.")
-#            return x0
+        if (self.model.predict(x0) != y0):
+            print("Fail to classify the image. No need to attack.")
+            return x0,0
     
         num_directions = 1000
         num_query = 10
