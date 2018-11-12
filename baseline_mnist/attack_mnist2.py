@@ -255,10 +255,10 @@ dist = []
 count = []
 for i in range(15):
     print("=========================image ",i+1,"==========================================")
-    print("true label:",y_test[i+20])
-    print("predicted label:",model.predict(x_test[i+20]))
-    adv, queries= attack.attack_untargeted(x_test[i+20],y_test[i+20], alpha = 4, beta = 0.005, iterations = 1000)
-    res = adv - x_test[i+20]
+    print("true label:",y_test[i])
+    print("predicted label:",model.predict(x_test[i]))
+    adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
+    res = adv - x_test[i]
     dist.append(np.linalg.norm(res))
     count.append(queries)
 
