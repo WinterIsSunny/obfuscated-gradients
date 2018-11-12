@@ -98,7 +98,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-#            print("=============================================")
+
     
             if (i+1)%50 == 0:
                 
@@ -110,8 +110,7 @@ class blackbox:
             min_theta = theta
             min_g2 = g2
             
-            #print("gradient:", gradient)
-           # print("theta:",theta)
+
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
@@ -148,11 +147,7 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-            #print(alpha)
-#            print("%3d th iteration" % i)
-#            print("current alpha:",alpha)
-#            print("g_theta:",g_theta)
-#            print("number of queries:", opt_count+query_count)
+
             if alpha < 1e-6:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -160,12 +155,7 @@ class blackbox:
                 if (beta < 1e-10):
                     print("beta is too samll")
                     break
-#            print("distortion in this iteration:", g_theta)
-#            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-    
-        #target = model.predict(x0 + g_theta*best_theta)
-        
-        #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
+
         print("inceptionv3")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
@@ -223,31 +213,9 @@ class blackbox:
             lbd = current_best
         else:
             lbd = initial_lbd
-            
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
+
         lbd_hi = lbd
         lbd_lo = 0.
-#        print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
         while (lbd_hi - lbd_lo) > 1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
