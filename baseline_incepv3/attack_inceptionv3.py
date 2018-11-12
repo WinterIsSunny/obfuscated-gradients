@@ -77,8 +77,7 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            
-           # print("iteration:",i)
+
             if g_theta < 1:
                 print("=========================> queries so far:",opt_count+query_count)
                 break
@@ -130,7 +129,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.8
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -287,7 +286,7 @@ count = []
 
 for i in range(10):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.005, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
