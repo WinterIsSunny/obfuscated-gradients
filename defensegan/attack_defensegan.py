@@ -39,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return np.nan
         
-        num_directions = 1000
+        num_directions = 100
         best_theta, g_theta = None, float('inf')
         query_count = 0
             
@@ -72,7 +72,7 @@ class blackbox:
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
             mod_norm = np.linalg.norm(orig_mod)
             if mod_norm < 1:
-                print("====================query number after distortion < 0.05 =======================: ",opt_count)
+                print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             
             gradient = torch.zeros(theta.size())
@@ -115,7 +115,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.8
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -139,8 +139,7 @@ class blackbox:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0005):
-                    #print("break here 4?")
+                if (beta < 0.000005):
                     break
     
         #target = model.predict(x0 + g_theta*best_theta)

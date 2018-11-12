@@ -113,7 +113,7 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
-    
+                
             if min_g2 >= g2:
                 for _ in range(15):
                     #print("enter second for loop")
