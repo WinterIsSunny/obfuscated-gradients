@@ -91,30 +91,26 @@ class blackbox:
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
-                #print("inner loop iteration: ", j)
                 g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/50)
-                #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-#            print("=============================================")
+
     
             if (i+1)%50 == 0:
                 
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
-#                    print("g2 is larger than prev_obj-stopping")
                     break
                 prev_obj = g2
     
             min_theta = theta
             min_g2 = g2
             
-            #print("gradient:", gradient)
-           # print("theta:",theta)
+
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
@@ -122,17 +118,16 @@ class blackbox:
                 new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
                 opt_count += count
                 alpha = alpha * 2
-#                print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
                     break
-#            print("=============================================")
+
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.9
+                    alpha = alpha * 0.8
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -310,7 +305,7 @@ dist = []
 count = []
 for i in range(15):
     print("=============================== this is image ",i+1,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i+2],labels[i+2],alpha = 8, beta = 0.005, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i+2],labels[i+2],alpha = 4, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     

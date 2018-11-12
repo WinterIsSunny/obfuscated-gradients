@@ -280,7 +280,7 @@ dist = []
 count = []
 for i in range(15):
     print("=============================== this is image ",i+1,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 8, beta = 0.005, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
