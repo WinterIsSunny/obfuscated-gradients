@@ -117,7 +117,7 @@ class blackbox:
             if min_g2 >= g2:
                 for _ in range(15):
                     #print("enter second for loop")
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.8
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -257,9 +257,8 @@ for i in range(15):
     print("=========================image ",i+1,"==========================================")
     print("true label:",y_test[i])
     print("predicted label:",model.predict(x_test[i]))
-    adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
-    res = adv - x_test[i]
-    dist.append(np.linalg.norm(res))
+    adv_mod, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(adv_mod)
     count.append(queries)
 
 index = np.nonzero(count)

@@ -188,7 +188,7 @@ class blackbox:
         print("mnist_baseline")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta), opt_count+query_count
+        return np.array(g_theta*best_theta), opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -341,9 +341,8 @@ for i in range(15):
     print("=========================image ",i+1,"==========================================")
     print("true label:",y_test[i])
     print("predicted label:",model.predict(x_test[i]))
-    adv, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
-    res = adv - x_test[i]
-    dist.append(np.linalg.norm(res))
+    adv_mod, queries= attack.attack_untargeted(x_test[i],y_test[i], alpha = 4, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
 
 index = np.nonzero(count)
