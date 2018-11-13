@@ -39,7 +39,7 @@ class blackbox:
 
         if (pred != y0):
             print("Fail to classify the image. No need to attack.")
-            return x0,0
+            return x0,0,0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -254,7 +254,7 @@ count = []
 index = [3,4,5,6,7,8,9,10]
 for i in index:
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i+10],labels[i+10],alpha = 4, beta = 0.05, iterations = 1000)
+    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
     count.append(queries)
     
