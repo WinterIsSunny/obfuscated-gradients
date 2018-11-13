@@ -135,9 +135,11 @@ class blackbox:
                 if (beta < 0.0005):
                     break
     
-        target = self.model.predict(x0 + np.array(g_theta*best_theta))
+        #target = self.model.predict(x0 + np.array(g_theta*best_theta))
         timeend = time.time()
-        print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
+        print("thermometer")
+        print("best distortion :", g_theta)
+        print("number of queries :", opt_count+query_count)
         return np.array(g_theta*best_theta), query_count+opt_count
     def fine_grained_binary_search_local(self,x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
@@ -167,6 +169,8 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+            print("while loop, hi, lo:",lbd_hi,lbd_lo)
+            
         return lbd_hi, nquery
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
