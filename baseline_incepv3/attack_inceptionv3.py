@@ -160,7 +160,7 @@ class blackbox:
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta), opt_count+query_count
-    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
+    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=0.01):
         nquery = 0
         lbd = initial_lbd
         
@@ -172,7 +172,7 @@ class blackbox:
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
-                if lbd_hi > 20:
+                if lbd_hi > 100:
                     return float('inf'), nquery
 #            timeend1 = time.time()
 #            print("1st while time:", timeend1 - timestart1)
@@ -251,7 +251,7 @@ print("accuracy of this model:", sum(compare)/len(compare))
 
 dist = []
 count = []
-index = [0,1,3,4,5,6,7,8,9,10]
+index = [3,4,5,6,7,8,9,10]
 for i in index:
     print("================attacking image ",i+1,"=======================")
     adv,queries = attack.attack_untargeted(images[i+10],labels[i+10],alpha = 4, beta = 0.05, iterations = 1000)
