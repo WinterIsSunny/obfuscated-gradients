@@ -135,19 +135,19 @@ class blackbox:
                 if (beta < 0.0005):
                     break
     
-        target = self.model.predict(x0 + g_theta*best_theta)
+        target = self.model.predict(x0 + np.array(g_theta*best_theta))
         timeend = time.time()
         print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
-        return g_theta*best_theta, query_count+opt_count
+        return np.array(g_theta*best_theta), query_count+opt_count
     def fine_grained_binary_search_local(self,x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
          
-        if self.model.predict(x0+lbd*theta) == y0:
+        if self.model.predict(x0+np.array(lbd*theta)) == y0:
             lbd_lo = lbd
             lbd_hi = lbd*1.01
             nquery += 1
-            while self.model.predict(x0+lbd_hi*theta) == y0:
+            while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 20:
@@ -156,14 +156,14 @@ class blackbox:
             lbd_hi = lbd
             lbd_lo = lbd*0.99
             nquery += 1
-            while self.model.predict(x0+lbd_lo*theta) != y0 :
+            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + lbd_mid*theta) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
@@ -172,41 +172,20 @@ class blackbox:
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
         if initial_lbd > current_best: 
-            if self.model.predict(x0+current_best*theta) == y0:
+            if self.model.predict(x0+np.array(current_best*theta)) == y0:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
         else:
             lbd = initial_lbd
         
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
     
         while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            if self.model.predict(x0 + lbd_mid*theta) != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
