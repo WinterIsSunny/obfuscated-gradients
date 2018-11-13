@@ -148,7 +148,7 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-            print("number of queries:", opt_count+query_count)
+#            print("number of queries:", opt_count+query_count)
             if alpha < 1e-5:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))

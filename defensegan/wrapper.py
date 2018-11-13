@@ -14,9 +14,7 @@ class Model:
         x_new = tf.placeholder(tf.float32,(1,128))
         mod = self.gan(x_new)
         mod = self.sess.run(mod,{x_new:orig_mod})
-        #print("type of mod",type(mod))
         mod = np.sum(mod,0)
-        #print("shape of mod",mod.shape)
         pred = self.predict(x0+mod)
         return pred,mod
 
