@@ -35,12 +35,8 @@ class blackbox:
             train_dataset: set of training data
             (x0, y0): original image
         """
-        #print(x0.type())
-        #print(y0.type())
-        #print(model.predict(x0).type())
-        y0 = y0.cuda()
-        print(y0.type())
-        
+
+
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
             return x0
