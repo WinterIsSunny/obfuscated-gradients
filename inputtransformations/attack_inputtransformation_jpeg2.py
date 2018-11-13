@@ -79,8 +79,8 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 5:
-                print("=========================> distortion < 1, number of query:",opt_count+query_count)
+            if g_theta < 2:
+                print("=========================> distortion < 2, number of query:",opt_count+query_count)
                 query_thre = opt_count+query_count
             gradient = torch.zeros(theta.size())
             q = 10

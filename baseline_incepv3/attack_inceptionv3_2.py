@@ -196,7 +196,7 @@ class blackbox:
         return lbd_hi,comp_dec,nquery
     
     
-    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
+    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-3):
         nquery = 0
         lbd = initial_lbd
         
@@ -208,7 +208,7 @@ class blackbox:
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
-                if lbd_hi > 20:
+                if lbd_hi > 100:
                     return float('inf'), nquery
 
         else:
