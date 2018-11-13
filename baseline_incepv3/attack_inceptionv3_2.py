@@ -86,6 +86,7 @@ class blackbox:
             if g_theta < 1:
                 print("====================query number after distortion < 1 =======================: ",opt_count+query_count)
                 query_thre = opt_count+query_count
+                break
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')

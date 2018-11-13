@@ -74,7 +74,9 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 0.001:
+            if g_theta < 1:
+                print("====================query number after distortion < 1 =======================: ",opt_count+query_count)
+                query_thre = opt_count+query_count
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -163,7 +165,7 @@ class blackbox:
         print("inputtransformation -- bitdepth")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta),opt_count+query_count
+        return x0 + np.array(g_theta*best_theta),opt_count+query_count,query_thre
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -254,57 +256,52 @@ class blackbox:
 
 sess = tf.Session()
 
-mypath = os.path.join("data/n01440764/")
-print("path of images:", mypath)
-labels = pd.read_csv("data/train.txt", sep = " ", header = None)
-print("type of labels:",type(labels))
-
-files = [load_image(mypath + file) for file in os.listdir(mypath)]
-
-images = np.asarray(files[:100])
-images = images/255.0
-
-
-#orig = load_image('cat.jpg')
-#print("type of orig:. ", type(orig))
-#print("size of orig: ", orig.shape)
-#print("length of orig: ",len(orig))
-#TARGET = 924 # guacamole  
-
-model = MyModel(inceptionv3,sess,[0.0,255.0])
-#print(orig.shape)
-#image = tf.convert_to_tensor(orig)
-#image_extend = tf.expand_dims(image, axis=0)
-#print("shape of image_extend: ", image_extend.shape)
-#image = np.copy(orig)/255.0
-
-#print(len(image),type(image))
-#true_label = model.predict(image)
-#print("true label of the original image is: ", true_label)
+# load images and lables
+images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
+model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
+
+
+compare = []
+for i in range(len(images)):
+    pred = model.predict(images[i])
+    if pred == labels[i]:
+        compare.append(1)
+    else:
+        compare.append(0)
+print("accuracy of this model:", sum(compare)/len(compare))
 
 dist = []
 count = []
-label_tmp = np.zeros(15)
-for i in range(1):
-    print("==================================attacking image ",i+14,"========================================")
-    adv,queries = attack.attack_untargeted(images[i+2],label_tmp[i+14],alpha = 2, beta = 0.005, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i+14]))
+threshold_query = []
+index = [0,1,3,4,5,6,7,8,9,10]
+for i in index:
+    print("================attacking image ",i+1,"=======================")
+    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
+    dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
+    threshold_query.append(threshold_query)
     
+    
+index = np.nonzero(count)
+index = list(index)[0].tolist()
+
+
+avg_distortion = np.mean(np.array(dist)[index])
+avg_count = np.mean(np.array(count)[index])
+avg_thre_query = np.mean(np.array(threshold_query))
+
+print("the average distortion for %2d images :"%(len(index)),avg_distortion)
 print("the distortions for 15 images :")
 for i in dist:
     print(i)
+    
+print("the number of queries for %2d images :"%(len(index)), avg_count)    
 print("the number of queries for 15 images :")
 for j in count:
     print(j)
-
-
-
-#dv = attack.attack_untargeted(image,true_label, alpha = 4, beta = 0.05, iterations = 1000)
-
-#adv = attack.attack_targeted(image,true_label,924)
-
-#adv_label = model.predict(adv)#print("target lable is: ", TARGET)
-#print("label after attack is: ", adv_label)
-
+    
+print("the number of queries for %2d images after threshold:"%(len(index)), avg_thre_query)    
+print("the number of queries for 15 images :")
+for j in threshold_query:
+    print(j)

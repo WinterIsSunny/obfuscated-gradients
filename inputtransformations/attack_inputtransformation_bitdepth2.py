@@ -280,7 +280,8 @@ print("accuracy of this model:", sum(compare)/len(compare))
 dist = []
 count = []
 threshold_query = []
-for i in range(10):
+index = [0,1,3,4,5,6,7,8,9,10]
+for i in index:
     print("================attacking image ",i+1,"=======================")
     adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
