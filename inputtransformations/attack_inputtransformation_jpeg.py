@@ -70,11 +70,12 @@ class blackbox:
         opt_count = 0
         stopping = 0.01
         prev_obj = 100000
+        query_thre = 0
         for i in range(iterations):
             
-           # print("iteration:",i)
-            if g_theta < 3e-06:
-                break
+            if g_theta < 5:
+                print("=========================> distortion < 1, number of query:",opt_count+query_count)
+                query_thre = opt_count+query_count
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -163,7 +164,7 @@ class blackbox:
         print("inputtransformation_jpeg")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta),opt_count+query_count
+        return x0 + np.array(g_theta*best_theta),opt_count+query_count,query_thre
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd

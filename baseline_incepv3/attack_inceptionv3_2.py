@@ -83,8 +83,8 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 1:
-                print("====================query number after distortion < 1 =======================: ",opt_count+query_count)
+            if g_theta < 2:
+                print("====================query number after distortion < 2 =======================: ",opt_count+query_count)
                 query_thre = opt_count+query_count
                 break
             gradient = torch.zeros(theta.size())
@@ -264,9 +264,6 @@ sess = tf.Session()
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
-## foolbox model
-
-
 
 compare = []
 for i in range(len(images)):

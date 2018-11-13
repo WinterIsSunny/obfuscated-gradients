@@ -79,7 +79,7 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 1:
+            if g_theta < 5:
                 print("=========================> distortion < 1, number of query:",opt_count+query_count)
                 query_thre = opt_count+query_count
             gradient = torch.zeros(theta.size())
@@ -129,7 +129,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.8
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
