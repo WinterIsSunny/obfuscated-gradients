@@ -39,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return torch.zeros(shape),0
         
-        num_directions = 1000
+        num_directions = 100
         best_theta, g_theta = None, float('inf')
         query_count = 0
             
@@ -201,8 +201,6 @@ class blackbox:
         while not np.isclose(lbd_hi,lbd_lo,1e-5):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-#            modi = self.get_modifier(lbd_mid*theta,x0,gan)
-#            print("type of modi:", type(modi))
             pred,_ = self.model.predict_gan(lbd_mid*theta,x0)
             if pred != y0:
                 lbd_hi = lbd_mid
