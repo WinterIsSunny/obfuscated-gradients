@@ -162,7 +162,7 @@ class blackbox:
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
-        while (lbd_hi - lbd_lo) > tol:
+        while not np.isclose(lbd_hi,lbd_lo,tol):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
