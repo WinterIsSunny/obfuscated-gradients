@@ -37,7 +37,7 @@ class blackbox:
         
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return np.nan
+            return torch.zeros(shape),0
         
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
@@ -70,7 +70,7 @@ class blackbox:
         for i in range(iterations):
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
             mod_norm = np.linalg.norm(orig_mod)
-            if mod_norm < 5:
+            if mod_norm < 1:
                 print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             
@@ -173,7 +173,7 @@ class blackbox:
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
     
-        while (lbd_hi - lbd_lo) > tol:
+        while not np.isclose(lbd_hi,lbd_lo,tol):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             pred,_ = self.model.predict_gan(lbd*theta,x0)
@@ -194,31 +194,11 @@ class blackbox:
         else:
             lbd = initial_lbd
         
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
+
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while not np.isclose(lbd_hi,lbd_lo,1e-5):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
 #            modi = self.get_modifier(lbd_mid*theta,x0,gan)
@@ -258,11 +238,10 @@ print("Preds",model.predict(image[0]))
 
 attack = blackbox(model)
 
-
 dist = []
 count = []
 for i in range(15):
-    print("=====================attacking image %2d =========================="%(i))
+    print("=====================attacking image %2d =========================="%(i+1))
     print("label of pure image:", model.predict(image[i]))
     adv_mod,query = attack.attack_untargeted(image[i],y_test[i],shape,alpha = 4, beta = 0.05, iterations = 1000)
     adv_mod = np.expand_dims(np.array(adv_mod),0)
