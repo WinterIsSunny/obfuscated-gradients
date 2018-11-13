@@ -174,7 +174,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while not np.isclose(lbd_hi,lbd_lo,tol):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
@@ -216,7 +216,7 @@ class blackbox:
             #print("2nd while time:", timeend2 - timestart2)
             
         #timestart3 = time.time()
-        while (lbd_hi - lbd_lo) > tol:
+        while not np.isclose(lbd_hi,lbd_lo,tol):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
@@ -264,7 +264,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while not np.isclose(lbd_hi,lbd_lo,tol):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
