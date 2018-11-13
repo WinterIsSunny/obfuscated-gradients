@@ -264,7 +264,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while not np.isclose(lbd_hi,lbd_lo,tol):
+        while not np.isclose(lbd_hi,lbd_lo,1e-3):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
