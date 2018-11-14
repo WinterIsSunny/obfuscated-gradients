@@ -82,7 +82,8 @@ class blackbox:
         query_thre = 0
         for i in range(iterations):
             
-           # print("iteration:",i)
+            print("iteration and distortion",i, g_theta)
+           
             if g_theta < 2:
                 print("====================query number after distortion < 2 =======================: ",opt_count+query_count)
                 query_thre = opt_count+query_count
@@ -231,7 +232,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-            print("continue while loop",tmp)
+            #print("continue while loop",tmp)
         print("new label in 3rd while loop",self.model.predict(x0 + np.array(lbd_hi*theta)))
 
         return lbd_hi, nquery
