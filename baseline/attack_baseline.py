@@ -72,12 +72,12 @@ class blackbox:
         prev_obj = 100000
         
         for i in range(iterations):
-            if g_theta < 1:
+            if g_theta < 2:
                 print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             #print("n_query:",opt_count)
             #print("best distortion:", g_theta)
-            print("iteration:", i )
+            #print("iteration:", i )
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
