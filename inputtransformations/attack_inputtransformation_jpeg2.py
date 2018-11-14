@@ -254,6 +254,7 @@ class blackbox:
 
 # ==================== test ==============================
 sess = tf.Session()
+torch.set_printoptions(precision=10)
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
 model = MyModel(inceptionv3,sess,[0.0,1.0])

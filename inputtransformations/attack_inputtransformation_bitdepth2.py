@@ -209,7 +209,7 @@ class blackbox:
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
-                if lbd_hi > 100:
+                if lbd_hi > 200:
                     return float('inf'), nquery
 #            timeend1 = time.time()
 #            print("1st while time:", timeend1 - timestart1)

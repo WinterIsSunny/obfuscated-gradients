@@ -97,7 +97,7 @@ class blackbox:
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=max(beta/10,1e-5))
                 #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -123,7 +123,7 @@ class blackbox:
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/10,1e-5))
                 opt_count += count
                 alpha = alpha * 2
 #                print("alpha in the first for loop is: ",alpha)
@@ -139,7 +139,7 @@ class blackbox:
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/10,1e-5))
                     opt_count += count
 #                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
@@ -160,7 +160,7 @@ class blackbox:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-10):
+                if (beta < 1e-5):
                     print("beta is too samll")
                     break
 # 
@@ -232,7 +232,7 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-            #print("continue while loop",tmp)
+            #print("continue while loop")
         print("new label in 3rd while loop",self.model.predict(x0 + np.array(lbd_hi*theta)))
 
         return lbd_hi, nquery
@@ -266,7 +266,7 @@ class blackbox:
 
 ###########test #############################################
 sess = tf.Session()
-
+torch.set_printoptions(precision=10)
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
