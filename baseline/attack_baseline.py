@@ -73,7 +73,7 @@ class blackbox:
         
         for i in range(iterations):
             if g_theta < 2:
-                print("====================query number after distortion < 1 =======================: ",opt_count)
+                print("====================query number after distortion < 2 =======================: ",opt_count)
                 break
             #print("n_query:",opt_count)
             #print("best distortion:", g_theta)
@@ -96,7 +96,6 @@ class blackbox:
             gradient = 1.0/q * gradient
     
             if (i+1)%50 == 0:
-                
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
                     break

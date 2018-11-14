@@ -235,28 +235,7 @@ class blackbox:
             lbd = current_best
         else:
             lbd = initial_lbd
-        
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
+ 
         lbd_hi = lbd
         lbd_lo = 0.0
     
@@ -297,7 +276,7 @@ threshold_query = []
 index = [0,1,3,4,5,6,7,8,9,10]
 for i in index:
     print("================attacking image ",i+1,"=======================")
-    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
+    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
     threshold_query.append(threshold_query)
