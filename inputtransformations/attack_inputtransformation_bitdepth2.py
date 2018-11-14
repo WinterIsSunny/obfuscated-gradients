@@ -20,7 +20,7 @@ from get_image import *
 import time
 import os 
 import pandas as pd
-torch.set_printoptions(precision=10)
+
 
 class blackbox:
     def __init__(self,model):
@@ -263,7 +263,7 @@ class blackbox:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
 
-
+torch.set_printoptions(precision=10)
 sess = tf.Session()
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
