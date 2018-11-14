@@ -219,14 +219,19 @@ class blackbox:
             while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-
-        while not np.isclose(lbd_hi,lbd_lo,tol):
+                
+        tmp = 0
+        while True:
+            if (lbd_hi - lbd_lo) < tol:
+                break
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
+            tmp += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+            print("continue while loop",tmp)
         print("new label in 3rd while loop",self.model.predict(x0 + np.array(lbd_hi*theta)))
 
         return lbd_hi, nquery
