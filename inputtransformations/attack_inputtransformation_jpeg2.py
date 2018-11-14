@@ -91,7 +91,7 @@ class blackbox:
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=max(beta/10,1e-5))
                 #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -116,7 +116,7 @@ class blackbox:
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/10,1e-5))
                 opt_count += count
                 alpha = alpha * 2
 #                print("alpha in the first for loop is: ",alpha)
@@ -132,7 +132,7 @@ class blackbox:
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/10,1e-5))
                     opt_count += count
 #                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
@@ -201,7 +201,7 @@ class blackbox:
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
-                if lbd_hi > 20:
+                if lbd_hi > 100:
                     return float('inf'), nquery
 #            timeend1 = time.time()
 #            print("1st while time:", timeend1 - timestart1)
@@ -272,10 +272,9 @@ print("accuracy of this model:", sum(compare)/len(compare))
 dist = []
 count = []
 threshold_query = []
-index = [0,1,3,4,5,6,7,8,9,10]
-for i in index:
+for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.05, iterations = 1000)
+    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
     threshold_query.append(threshold_query)
