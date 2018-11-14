@@ -80,8 +80,10 @@ class blackbox:
             if g_theta < 1:
                 print("=========================> distortion < 1, number of query:",opt_count+query_count)
                 query_thre = opt_count+query_count
+                break
+            
             gradient = torch.zeros(theta.size())
-            q = 10
+            q = 20
             min_g1 = float('inf')
             for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
@@ -110,7 +112,7 @@ class blackbox:
             
             #print("gradient:", gradient)
            # print("theta:",theta)
-            for _ in range(15):
+            for _ in range(10):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
@@ -126,7 +128,7 @@ class blackbox:
 #            print("=============================================")
     
             if min_g2 >= g2:
-                for _ in range(15):
+                for _ in range(10):
                     alpha = alpha * 0.5
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
@@ -150,11 +152,11 @@ class blackbox:
             print("%3d th iteration" % i)
             print("current alpha:",alpha)
             print("number of queries:", opt_count+query_count)
-            if alpha < 1e-4:
+            if alpha < 1e-6:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-10):
+                if (beta < 1e-6):
                     print("beta is too small")
                     break
             print("distortion in this iteration:", g_theta)
@@ -283,7 +285,7 @@ threshold_query = []
 index = [0,1,3,4,5,6,7,8,9,10]
 for i in index:
     print("================attacking image ",i+1,"=======================")
-    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
+    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 2, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
     threshold_query.append(threshold_query)

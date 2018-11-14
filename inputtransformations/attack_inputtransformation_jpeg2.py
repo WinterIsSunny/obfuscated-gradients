@@ -83,7 +83,7 @@ class blackbox:
                 print("=========================> distortion < 2, number of query:",opt_count+query_count)
                 query_thre = opt_count+query_count
             gradient = torch.zeros(theta.size())
-            q = 10
+            q = 20
             min_g1 = float('inf')
             for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
@@ -112,7 +112,7 @@ class blackbox:
             min_g2 = g2
             
 
-            for _ in range(15):
+            for _ in range(10):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
@@ -128,7 +128,7 @@ class blackbox:
 
     
             if min_g2 >= g2:
-                for _ in range(15):
+                for _ in range(10):
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
