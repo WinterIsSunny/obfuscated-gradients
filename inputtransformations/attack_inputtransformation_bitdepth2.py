@@ -260,8 +260,8 @@ class blackbox:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
 
-sess = tf.Session()
 
+sess = tf.Session()
 # load images and lables
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
