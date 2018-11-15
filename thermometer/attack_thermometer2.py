@@ -78,9 +78,9 @@ class blackbox:
         stopping = 0.01
         prev_obj = 100000
         for i in range(iterations):
-            
+            print("iteration %d , distortion %.4f "% (i+1,g_theta))
             if g_theta < 1:
-                print("=========================> queries so far:",opt_count+query_count)
+                print("=========================> queries so far, when g_theta < 1:",opt_count+query_count)
                 break
             
             gradient = torch.zeros(theta.size())
@@ -110,7 +110,6 @@ class blackbox:
             min_theta = theta
             min_g2 = g2
             
-
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
@@ -127,7 +126,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.8
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -150,7 +149,7 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.5
+                beta = beta * 0.1
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
@@ -191,43 +190,36 @@ class blackbox:
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-        
+        lbd = np.array(lbd)
+
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
-            lbd_lo = lbd
+            lbd_lo = lbd*1
             lbd_hi = lbd*1.01
             nquery += 1
-            #timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
-                if lbd_hi > 20:
+                if lbd_hi > 100:
                     return float('inf'), nquery
-            #timeend1 = time.time()
-            #print("1st while time:", timeend1 - timestart1)
         else:
-            lbd_hi = lbd
+            lbd_hi = lbd*1
             lbd_lo = lbd*0.99
             nquery += 1
-            #timestart2 = time.time()
-            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
+            while self.model.predict(x0+np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-            #timeend2 = time.time()
-            #print("2nd while time:", timeend2 - timestart2)
-            
-        #timestart3 = time.time()
-        while not np.isclose(lbd_hi,lbd_lo,tol):
+
+        while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-        #timeend3 = time.time()
-        #print("3rd while time:",timeend3 - timestart3)
-#        print("lbd_low:",lbd_lo)
-#        print("lbd_high:", lbd_hi)
-#        print("-----------------------------")
+
+        lbd_hi = np.array(lbd_hi)
+        lbd_hi = torch.FloatTensor(lbd_hi)
+
         return lbd_hi, nquery
     
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
@@ -284,7 +276,7 @@ dist = []
 count = []
 for i in range(15):
     print("=============================== this is image ",i+1,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i+4],labels[i+4],alpha = 4, beta = 0.05, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     

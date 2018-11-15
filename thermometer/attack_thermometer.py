@@ -86,7 +86,7 @@ class blackbox:
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/50)
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
@@ -110,7 +110,7 @@ class blackbox:
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
                 alpha = alpha * 2
 
@@ -123,10 +123,10 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.8
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                     opt_count += count
 
                     if new_g2 < g2:
@@ -147,7 +147,7 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.8
+                beta = beta * 0.1
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
@@ -162,46 +162,38 @@ class blackbox:
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return np.array(g_theta*best_theta), opt_count+query_count
-    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-3):
+    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-        
+        lbd = np.array(lbd)
+
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
-            lbd_lo = lbd
+            lbd_lo = lbd*1
             lbd_hi = lbd*1.01
             nquery += 1
-            #timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 100:
                     return float('inf'), nquery
-            #timeend1 = time.time()
-            #print("1st while time:", timeend1 - timestart1)
-            
         else:
-            lbd_hi = lbd
+            lbd_hi = lbd*1
             lbd_lo = lbd*0.99
             nquery += 1
-            #timestart2 = time.time()
-            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
+            while self.model.predict(x0+np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-            #timeend2 = time.time()
-            #print("2nd while time:", timeend2 - timestart2)
-        #print("lbd_hi and lbd_lo after 1st or 2nd while time", lbd_hi,lbd_lo)    
-        #timestart3 = time.time()
-        
-        while True:
-            if (lbd_hi - lbd_lo) < tol:
-                break
+
+        while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-            #print("3rd while loop :",lbd_hi,lbd_lo)
+
+        lbd_hi = np.array(lbd_hi)
+        lbd_hi = torch.FloatTensor(lbd_hi)
 
         return lbd_hi, nquery
     
@@ -259,7 +251,7 @@ count = []
 for i in range(15):
     print("=========================== this is image ",i+1,"==================================")
     print("original label:",labels[i+3])
-    mod,queries = attack.attack_untargeted(new_img[i+3],labels[i+3],alpha = 4, beta = 0.05, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i+3],labels[i+3],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     

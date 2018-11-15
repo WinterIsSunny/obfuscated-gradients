@@ -233,7 +233,7 @@ class blackbox:
             else:
                 lbd_lo = lbd_mid
             #print("continue while loop")
-        print("new label in 3rd while loop",self.model.predict(x0 + np.array(lbd_hi*theta)))
+        #print("new label in 3rd while loop",self.model.predict(x0 + np.array(lbd_hi*theta)))
 
         return lbd_hi, nquery
     
