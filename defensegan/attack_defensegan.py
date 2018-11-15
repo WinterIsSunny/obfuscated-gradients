@@ -39,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return torch.zeros(shape),0
         
-        num_directions = 50
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         print("original label is ", y0)
