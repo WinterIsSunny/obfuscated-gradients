@@ -55,10 +55,11 @@ class blackbox:
             #print("predicted label is", pred)
             
             if pred != y0:
-                print("new feasible direction and iteration", pred,i)
+#                print("new feasible direction and iteration", pred,i)
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
+                    print("new feasible direction and iteration", pred,i)
                     best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
         timeend = time.time()
