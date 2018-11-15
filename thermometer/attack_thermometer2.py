@@ -42,7 +42,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
-        num_directions = 1000
+        num_directions = 2000
         num_query = 10
         best_theta, g_theta = None, float('inf')
         query_count = 0
@@ -90,7 +90,7 @@ class blackbox:
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/50)
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
@@ -113,7 +113,7 @@ class blackbox:
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                 opt_count += count
                 alpha = alpha * 2
                 if new_g2 < min_g2:
@@ -128,7 +128,7 @@ class blackbox:
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
                     opt_count += count
 #                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
@@ -145,7 +145,7 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            print("number of queries:", opt_count+query_count)
-            if alpha < 1e-4:
+            if alpha < 1e-6:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
