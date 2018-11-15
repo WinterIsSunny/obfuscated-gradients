@@ -41,7 +41,7 @@ class blackbox:
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
-        #timestart = time.time()
+        timestart = time.time()
         
         
         for i in range(num_directions):
@@ -58,9 +58,10 @@ class blackbox:
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
-        
-        
-        
+        if g_theta > 10:
+            print("this image is hard to attack")
+            return x0,0
+
         #timestart = time.time()
         print("the best initialization: ",g_theta)
         g1 = 1.0
@@ -256,13 +257,12 @@ print("accuracy of this model:", sum(compare)/len(compare))
 
 dist = []
 count = []
-threshold_query = []
-for i in range(10):
+
+for i in range(20):
     print("================attacking image ",i+1,"=======================")
-    adv,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i]))
+    adv_mod,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
+    dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
-    threshold_query.append(threshold_query)
     
     
 index = np.nonzero(count)
@@ -271,7 +271,7 @@ index = list(index)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index])
 avg_count = np.mean(np.array(count)[index])
-avg_thre_query = np.mean(np.array(threshold_query))
+#avg_thre_query = np.mean(np.array(threshold_query))
 
 print("the average distortion for %2d images :"%(len(index)),avg_distortion)
 print("the distortions for 15 images :")
@@ -282,13 +282,6 @@ print("the number of queries for %2d images :"%(len(index)), avg_count)
 print("the number of queries for 15 images :")
 for j in count:
     print(j)
-    
-print("the number of queries for %2d images after threshold:"%(len(index)), avg_thre_query)    
-print("the number of queries for 15 images :")
-for j in threshold_query:
-    print(j)
-
-
 
 
 
