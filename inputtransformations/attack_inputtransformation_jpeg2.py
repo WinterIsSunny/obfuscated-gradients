@@ -77,8 +77,7 @@ class blackbox:
         prev_obj = 100000
         query_thre = 0
         for i in range(iterations):
-            
-           # print("iteration:",i)
+            print("iteration and distortion",i, g_theta)
             if g_theta < 2:
                 print("=========================> distortion < 2, number of query:",opt_count+query_count)
                 query_thre = opt_count+query_count
@@ -149,11 +148,11 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            print("number of queries:", opt_count+query_count)
-            if alpha < 1e-5:
+            if alpha < 1e-6:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-5):
+                if (beta < 1e-6):
                     break
     
         #target = model.predict(x0 + g_theta*best_theta)
@@ -192,31 +191,25 @@ class blackbox:
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-        
+        lbd = np.array(lbd)
+
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
-            lbd_lo = lbd
+            lbd_lo = lbd*1
             lbd_hi = lbd*1.01
             nquery += 1
-#            timestart1 = time.time()
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 100:
                     return float('inf'), nquery
-#            timeend1 = time.time()
-#            print("1st while time:", timeend1 - timestart1)
         else:
-            lbd_hi = lbd
+            lbd_hi = lbd*1
             lbd_lo = lbd*0.99
             nquery += 1
-#            timestart2 = time.time()
-            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
+            while self.model.predict(x0+np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-#            timeend2 = time.time()
-#            print("2nd while time:", timeend2 - timestart2)
-            
-#        timestart3 = time.time()
+
         while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
@@ -224,7 +217,12 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+
+        lbd_hi = np.array(lbd_hi)
+        lbd_hi = torch.FloatTensor(lbd_hi)
+
         return lbd_hi, nquery
+    
        
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
         nquery = 0
