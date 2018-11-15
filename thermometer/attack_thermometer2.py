@@ -70,7 +70,6 @@ class blackbox:
         g_theta = lbd
         query_count += count
         
-
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)

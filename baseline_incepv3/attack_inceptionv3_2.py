@@ -160,7 +160,7 @@ class blackbox:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-5):
+                if (beta < 1e-6):
                     print("beta is too samll")
                     break
 # 
@@ -197,43 +197,38 @@ class blackbox:
         return lbd_hi,comp_dec,nquery
     
     
-    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-3):
+    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-        
+        lbd = np.array(lbd)
+
         if self.model.predict(x0+np.array(lbd*theta)) == y0:
-            lbd_lo = lbd
+            lbd_lo = lbd*1
             lbd_hi = lbd*1.01
             nquery += 1
-            
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
                 if lbd_hi > 100:
                     return float('inf'), nquery
-
         else:
-            lbd_hi = lbd
+            lbd_hi = lbd*1
             lbd_lo = lbd*0.99
             nquery += 1
-#            timestart2 = time.time()
-            while self.model.predict(x0+ np.array(lbd_lo*theta)) != y0 :
+            while self.model.predict(x0+np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-                
-        tmp = 0
-        while True:
-            if (lbd_hi - lbd_lo) < tol:
-                break
+
+        while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            tmp += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-            #print("continue while loop")
-        #print("new label in 3rd while loop",self.model.predict(x0 + np.array(lbd_hi*theta)))
+
+        lbd_hi = np.array(lbd_hi)
+        lbd_hi = torch.FloatTensor(lbd_hi)
 
         return lbd_hi, nquery
     
