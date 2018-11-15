@@ -121,7 +121,7 @@ class blackbox:
             if min_g2 >= g2:
                 for _ in range(15):
                     #print("enter second for loop")
-                    alpha = alpha * 0.95
+                    alpha = alpha * 0.5
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -198,27 +198,6 @@ class blackbox:
         else:
             lbd = initial_lbd
         
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
     
@@ -230,7 +209,6 @@ class blackbox:
             else:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
-    
     
 
 cifar = cifar10_input.CIFAR10Data("../cifar10_data")
