@@ -46,7 +46,6 @@ class blackbox:
         
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
             if self.model.predict(x0+np.array(theta)) != y0:
                 initial_lbd = torch.norm(theta)
                 theta = theta/torch.norm(theta)
@@ -73,7 +72,7 @@ class blackbox:
         query_thre = 0
         for i in range(iterations):
             
-            if g_theta < 5:
+            if g_theta < 1:
                 print("=========================> distortion < 1, number of query:",opt_count+query_count)
                 query_thre = opt_count+query_count
             gradient = torch.zeros(theta.size())

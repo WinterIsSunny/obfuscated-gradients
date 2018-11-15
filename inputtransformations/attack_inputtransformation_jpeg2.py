@@ -60,8 +60,7 @@ class blackbox:
                     print("--------> Found comp-distortion %.4f with 10 queries" % comp_dec)
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds" % (g_theta, timeend-timestart))
-        query_count = (num_directions+1)*num_query
-
+        #query_count = (num_directions+1)*num_query
         lbd,count = self.fine_grained_binary_search( x0, y0, best_theta, g_theta, current_best)
         g_theta = lbd
         query_count += count

@@ -34,15 +34,15 @@ class blackbox:
             (x0, y0): original image
         """
 
-#        if (self.model.predict(x0) != y0):
-#            print("Fail to classify the image. No need to attack.")
-#            return x0
+        if (self.model.predict(x0) != y0):
+            print("Fail to classify the image. No need to attack.")
+            return x0,0,0
     
         num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
-        #timestart = time.time()
+        timestart = time.time()
         
         
         for i in range(num_directions):
@@ -57,12 +57,13 @@ class blackbox:
                     best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
         
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
+        if g_theta > 20:
+            return x0,0,0
         
-        
-        
+
         #timestart = time.time()
         print("the best initialization: ",g_theta)
         g1 = 1.0
@@ -73,9 +74,9 @@ class blackbox:
         prev_obj = 100000
         for i in range(iterations):
             
-           # print("iteration:",i)
-            if g_theta < 2:
-                print("====================query number after distortion < 2 =======================: ",opt_count+query_count)
+            print("iteration and distortion:",i,g_theta)
+            if g_theta < 0.05:
+                print("====================query number after distortion < 0.05 =======================: ",opt_count+query_count)
                 query_thre = opt_count+query_count
                 break
             gradient = torch.zeros(theta.size())
@@ -166,7 +167,7 @@ class blackbox:
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta),opt_count+query_count,query_thre
-    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
+    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-3):
         nquery = 0
         lbd = initial_lbd
         
@@ -201,11 +202,6 @@ class blackbox:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
-#        timeend3 = time.time()
-#        print("3rd while time:",timeend3 - timestart3)
-#        print("lbd_low:",lbd_lo)
-#        print("lbd_high:", lbd_hi)
-#        print("-----------------------------")
         return lbd_hi, nquery
        
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):
@@ -218,27 +214,6 @@ class blackbox:
         else:
             lbd = initial_lbd
         
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
         lbd_hi = lbd
         lbd_lo = 0.0
     
@@ -274,7 +249,7 @@ print("accuracy of this model:", sum(compare)/len(compare))
 dist = []
 count = []
 threshold_query = []
-index = [0,1,3,4,5,6,7,8,9,10]
+index = [0,1,2,4,5,6,7,8,9,10]
 for i in index:
     print("================attacking image ",i+1,"=======================")
     adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
