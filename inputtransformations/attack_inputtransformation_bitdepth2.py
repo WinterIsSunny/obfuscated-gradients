@@ -78,8 +78,8 @@ class blackbox:
         query_thre = 0
         for i in range(iterations):
             print("iteration and distortion",i, g_theta)
-            if g_theta < 1:
-                print("=========================> distortion < 1, number of query:",opt_count+query_count)
+            if g_theta < 2:
+                print("=========================> distortion < 2, number of query:",opt_count+query_count)
                 query_thre = opt_count+query_count
                 break
             
