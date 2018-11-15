@@ -60,7 +60,7 @@ class blackbox:
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
-        if g_theta > 20:
+        if g_theta > 10:
             return x0,0,0
         
 
@@ -88,7 +88,7 @@ class blackbox:
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2,tol=max(beta/500,3*1e-6))
                 #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -114,7 +114,7 @@ class blackbox:
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/500,3*1e-6))
                 opt_count += count
                 alpha = alpha * 2
 #                print("alpha in the first for loop is: ",alpha)
@@ -130,7 +130,7 @@ class blackbox:
                     alpha = alpha * 0.9
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/500,3*1e-6))
                     opt_count += count
 #                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
@@ -249,10 +249,10 @@ print("accuracy of this model:", sum(compare)/len(compare))
 dist = []
 count = []
 threshold_query = []
-index = [0,1,2,4,5,6,7,8,9,10]
-for i in index:
+
+for i in range(20):
     print("================attacking image ",i+1,"=======================")
-    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
+    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
     threshold_query.append(threshold_query)
