@@ -31,7 +31,7 @@ class MyModel:
             new_img = np.clip(image,0.0,1.0)
 
         adv_def = defend_reduce(new_img)
-        labels = self.sess.run([self.preds], {self.x: adv_def})
+        labels = self.sess.run(self.preds, {self.x: adv_def})
         #print("type of preds[0] is: ",type(preds[0]))
         return labels[0]
         
