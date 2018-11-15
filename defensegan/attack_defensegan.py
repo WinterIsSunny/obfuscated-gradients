@@ -39,16 +39,23 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return torch.zeros(shape),0
         
-        num_directions = 100
+        num_directions = 50
         best_theta, g_theta = None, float('inf')
         query_count = 0
-            
+        print("original label is ", y0)
+        
         timestart = time.time()
         for i in range(num_directions):
-            theta = torch.randn(shape)
+            #print("generating a new distortion")
+            theta = torch.randn(shape)*10
+            #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/initial_lbd
-            if self.model.predict_gan(theta*initial_lbd,x0) != y0:
+            pred,_ = self.model.predict_gan(theta*initial_lbd,x0)
+            #print("predicted label is", pred)
+            
+            if pred != y0:
+                print("new feasible direction and iteration", pred,i)
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
@@ -57,38 +64,44 @@ class blackbox:
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
     
-        
-        
-        
-        #timestart = time.time()
+
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
         opt_count = 0
         stopping = 0.01
         prev_obj = 100000
+        time1 = time.time()
+        new_lb,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
+        time2 = time.time()
+        print("new label is :", new_lb)
+        print("time consuming for one query -- gan:", time2-time1)
         for i in range(iterations):
+            print("this is interation:",i)
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
+            #print("loc1")
             mod_norm = np.linalg.norm(orig_mod)
-            if mod_norm < 1:
+            if mod_norm < 8:
                 print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             
             gradient = torch.zeros(theta.size())
-            q = 10
+            q = 5
             min_g1 = float('inf')
             for _ in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                g1, count = self.fine_grained_binary_search_local(x0, y0, ttt, initial_lbd = g2, tol=beta/500)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
+            #print("loc2")
+            
     
             if (i+1)%50 == 0:
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
@@ -109,12 +122,12 @@ class blackbox:
                     min_theta = new_theta 
                     min_g2 = new_g2
                 else:
-                    #print("break here 2 ?")
                     break
+            #print("loc3")
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.9
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -122,8 +135,8 @@ class blackbox:
                     if new_g2 < g2:
                         min_theta = new_theta 
                         min_g2 = new_g2
-                        #print("break here 3?")
                         break
+            #print("loc4")
     
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
@@ -133,58 +146,62 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-            #print(alpha)
-            if alpha < 1e-4:
+            if alpha < 1e-6:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.5
-                if (beta < 0.000005):
+                beta = beta * 0.1
+                if (beta < 1e-6):
+                    print("break because beta is too small")
                     break
     
-        #target = model.predict(x0 + g_theta*best_theta)
-        
-        #timeend = time.time()
-        #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("defensegan")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         mod_gan = np.array(g_theta*best_theta)
+        print("return g_theta*best_theta, shape of it:", mod_gan.shape)
         return mod_gan, opt_count+query_count
+    
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
-        pred,_ = self.model.predict_gan(lbd*theta,x0)
-        if pred == y0:
-            lbd_lo = lbd
+        lbd = np.array(lbd)
+
+        if self.model.predict(x0+np.array(lbd*theta)) == y0:
+            lbd_lo = lbd*1
             lbd_hi = lbd*1.01
             nquery += 1
-            pred,_ = self.model.predict_gan(lbd_hi*theta,x0)
-            while pred == y0:
+            while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
-                if lbd_hi > 20:
+                if lbd_hi > 100:
                     return float('inf'), nquery
         else:
-            lbd_hi = lbd
+            lbd_hi = lbd*1
             lbd_lo = lbd*0.99
             nquery += 1
-            pred,_ = self.model.predict_gan(lbd*theta,x0)
-            while pred != y0 :
+            while self.model.predict(x0+np.array(lbd_lo*theta)) != y0 :
                 lbd_lo = lbd_lo*0.99
                 nquery += 1
-    
-        while not np.isclose(lbd_hi,lbd_lo,tol):
+
+        while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            pred,_ = self.model.predict_gan(lbd*theta,x0)
-            if pred != y0:
+            if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
+
+        lbd_hi = np.array(lbd_hi)
+        lbd_hi = torch.FloatTensor(lbd_hi)
+
         return lbd_hi, nquery
     
+        
+
     def fine_grained_binary_search(self, x0, y0,theta, initial_lbd, current_best):
         nquery = 0
+        theta = np.array(theta)
+        initial_lbd = np.array(initial_lbd)
         if initial_lbd > current_best:
             pred,_ = self.model.predict_gan(current_best*theta,x0)
             if pred == y0:
@@ -194,20 +211,23 @@ class blackbox:
         else:
             lbd = initial_lbd
         
-
         lbd_hi = lbd
-        lbd_lo = 0.0
+        lbd_lo = 0
     
         while not np.isclose(lbd_hi,lbd_lo,1e-5):
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
-            pred,_ = self.model.predict_gan(lbd_mid*theta,x0)
-            if pred != y0:
+#            modi = self.get_modifier(lbd_mid*theta,x0,gan)
+#            print("type of modi:", type(modi))
+            #pred,_ = self.model.predict_gan(lbd_mid*theta,x0)
+            if self.model.predict_gan(lbd_mid*theta,x0)[0] != y0:
                 lbd_hi = lbd_mid
             else:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
     
+
+
 
     
 # ================================== test ===========================================#
