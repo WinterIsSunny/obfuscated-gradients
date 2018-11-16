@@ -256,7 +256,7 @@ count = []
 
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv_mod,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
+    adv_mod,queries = attack.attack_untargeted(images[i+1],labels[i+1],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
     

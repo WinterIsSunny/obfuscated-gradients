@@ -22,6 +22,7 @@ import os
 import pandas as pd
 
 torch.set_printoptions(precision=20)
+
 class blackbox:
     def __init__(self,model):
         self.model = model
@@ -228,7 +229,7 @@ class blackbox:
 sess = tf.Session()
 
 # load images and lables
-index = [1,972,429, 593,281,461,504,676,656,717,938, 812,365,84, 332,627,118,498,601,645]
+index = [222,972,429, 593,281,461,504,676,656,717,938, 812,365,84, 332,627,118,498,601,645]
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",index)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
@@ -249,7 +250,7 @@ count = []
 
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv_mod,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
+    adv_mod,queries = attack.attack_untargeted(images[i+1],labels[i+1],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
     
