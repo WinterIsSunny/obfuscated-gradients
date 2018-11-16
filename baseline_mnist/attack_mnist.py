@@ -20,6 +20,7 @@ import torch
 import numpy as np
 from wrapper import Model
 
+torch.set_printoptions(precision=20)
 class blackbox:
     def __init__(self,model):
         self.model = model
@@ -53,7 +54,7 @@ class blackbox:
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
-                lbd,comp_dec = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,g_theta,current_best,num_query)
+                lbd,comp_dec = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,current_best,num_query,1e-5)
                 if comp_dec > comp_theta:
                     comp_theta = comp_dec
                     best_theta,g_theta = theta,lbd
@@ -100,8 +101,8 @@ class blackbox:
         prev_obj = 100000
         for i in range(iterations):
  
-            if g_theta < 1:
-                print("====================query number after distortion < 1 =======================: ",opt_count)
+            if g_theta < 2:
+                print("====================query number after distortion < 2 =======================: ",opt_count)
                 break
             gradient = torch.zeros(theta.size())
             q = 10
@@ -172,11 +173,11 @@ class blackbox:
 #            print("current alpha:",alpha)
 #            print("g_theta")
 #            print("number of queries:", opt_count+query_count)
-            if alpha < 1e-4:
+            if alpha < 1e-6:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-5):
+                if (beta < 1e-6):
                     print("beta is too samll")
                     break
 
@@ -221,7 +222,7 @@ class blackbox:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
     
-    def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0, tol=1e-5,current_best = float('inf'),num_query = 10):
+    def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0, current_best = float('inf'),num_query = 10, tol=1e-5):
         nquery = 0
         if initial_lbd > current_best: 
             if self.model.predict(x0+ np.array(current_best*theta)) == y0:
@@ -234,7 +235,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while (lbd_hi - lbd_lo) > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
@@ -258,32 +259,12 @@ class blackbox:
         else:
             lbd = initial_lbd
             
-        ## original version
-        #lbd = initial_lbd
-        #while model.predict(x0 + lbd*theta) == y0:
-        #    lbd *= 2
-        #    nquery += 1
-        #    if lbd > 100:
-        #        return float('inf'), nquery
-        
-        #num_intervals = 100
-    
-        # lambdas = np.linspace(0.0, lbd, num_intervals)[1:]
-        # lbd_hi = lbd
-        # lbd_hi_index = 0
-        # for i, lbd in enumerate(lambdas):
-        #     nquery += 1
-        #     if model.predict(x0 + lbd*theta) != y0:
-        #         lbd_hi = lbd
-        #         lbd_hi_index = i
-        #         break
-    
-        # lbd_lo = lambdas[lbd_hi_index - 1]
+
         lbd_hi = lbd
-        lbd_lo = 0.
+        lbd_lo = 0
         print("label before fine binary search:", self.model.predict(x0+ np.array(lbd_hi*theta)))
     
-        while (lbd_hi - lbd_lo) > 1e-3:
+        while (lbd_hi - lbd_lo) > 1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
