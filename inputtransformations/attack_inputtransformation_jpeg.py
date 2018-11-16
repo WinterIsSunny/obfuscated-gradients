@@ -19,6 +19,8 @@ from defense import *
 from get_image import *
 import time
 import pandas as pd
+torch.set_printoptions(precision=20)
+
 
 class blackbox:
     def __init__(self,model):
@@ -37,13 +39,12 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
-        num_directions = 1000
+        num_directions = 10000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
         timestart = time.time()
-        
-        
+
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             if self.model.predict(x0+np.array(theta)) != y0:
@@ -70,12 +71,12 @@ class blackbox:
         opt_count = 0
         stopping = 0.01
         prev_obj = 100000
-        query_thre = 0
+    
         for i in range(iterations):
             
             if g_theta < 1:
                 print("=========================> distortion < 1, number of query:",opt_count+query_count)
-                query_thre = opt_count+query_count
+              
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -124,7 +125,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(15):
-                    alpha = alpha * 0.9
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/50)
@@ -144,27 +145,22 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            
-            print("%3d th iteration" % i)
-            print("current alpha:",alpha)
-#            print("g_theta")
-            print("number of queries:", opt_count+query_count)
-            if alpha < 1e-5:
+#            print("%3d th iteration" % i)
+#            print("current alpha:",alpha)
+##            print("g_theta")
+#            print("number of queries:", opt_count+query_count)
+            if alpha < 1e-6:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta <  5*1e-10):
+                if (beta <  1e-6):
                     break
-#            print("new label in this iteration:", self.model.predict(x0+np.array(best_theta*g_theta)))
-            print("distortion in this iteration:", g_theta)
-            print("=-=-=-=-=-==-will enter next iteration=-=-=-=-=-=-")
+
     
-        #target = model.predict(x0 + g_theta*best_theta)
-        
-        #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("inputtransformation_jpeg")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta),opt_count+query_count,query_thre
+        return x0 + np.array(g_theta*best_theta),opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -202,9 +198,7 @@ class blackbox:
                 lbd_lo = lbd_mid
 #        timeend3 = time.time()
 #        print("3rd while time:",timeend3 - timestart3)
-#        print("lbd_low:",lbd_lo)
-#        print("lbd_high:", lbd_hi)
-#        print("-----------------------------")
+
         return lbd_hi, nquery
        
     def fine_grained_binary_search(self, x0, y0, theta, initial_lbd, current_best):

@@ -121,7 +121,7 @@ class blackbox:
             if min_g2 >= g2:
                 for _ in range(15):
                     #print("enter second for loop")
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
@@ -143,11 +143,11 @@ class blackbox:
             #print(alpha)
 #            print("%3d th iteration" % i)
             #print("current alpha:",alpha)
-            if alpha < 1e-4:
+            if alpha < 1e-6:
                 alpha = 1.0
                 #print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 0.0005):
+                if (beta < 1e-6):
                     break
     
         #target = model.predict(x0 + g_theta*best_theta)

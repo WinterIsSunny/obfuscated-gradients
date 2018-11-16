@@ -136,7 +136,7 @@ class blackbox:
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/10,1e-5))
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/50,1e-5))
                     opt_count += count
 #                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
@@ -240,7 +240,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while (lbd_hi - lbd_lo) > 3*1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)

@@ -74,12 +74,13 @@ class blackbox:
         opt_count = 0
         stopping = 0.01
         prev_obj = 100000
-        query_thre = 0
+#        query_thre = 0
         for i in range(iterations):
             print("iteration and distortion",i, g_theta)
             if g_theta < 2:
                 print("=========================> distortion < 2, number of query:",opt_count+query_count)
-                query_thre = opt_count+query_count
+#                query_thre = opt_count+query_count
+                break
             gradient = torch.zeros(theta.size())
             q = 20
             min_g1 = float('inf')
@@ -269,13 +270,13 @@ print("accuracy of this model:", sum(compare)/len(compare))
 
 dist = []
 count = []
-threshold_query = []
+#threshold_query = []
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
     adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
     count.append(queries)
-    threshold_query.append(threshold_query)
+#    threshold_query.append(threshold_query)
     
     
 index = np.nonzero(count)
@@ -284,7 +285,7 @@ index = list(index)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index])
 avg_count = np.mean(np.array(count)[index])
-avg_thre_query = np.mean(np.array(threshold_query))
+#avg_thre_query = np.mean(np.array(threshold_query))
 
 print("the average distortion for %2d images :"%(len(index)),avg_distortion)
 print("the distortions for 15 images :")
@@ -296,8 +297,3 @@ print("the number of queries for 15 images :")
 for j in count:
     print(j)
     
-print("the number of queries for %2d images after threshold:"%(len(index)), avg_thre_query)    
-print("the number of queries for 15 images :")
-for j in threshold_query:
-    print(j)
-

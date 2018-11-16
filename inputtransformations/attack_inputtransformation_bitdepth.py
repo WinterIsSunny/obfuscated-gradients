@@ -20,6 +20,7 @@ from get_image import *
 import time
 import os 
 import pandas as pd
+torch.set_printoptions(precision=20)
 
 class blackbox:
     def __init__(self,model):
@@ -38,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
-        num_directions = 1000
+        num_directions = 10000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -147,9 +148,9 @@ class blackbox:
                 best_theta, g_theta = theta.clone(), g2
             
 #            
-            print("%3d th iteration" % i)
-            print("current alpha:",alpha)
-            print("number of queries:", opt_count+query_count)
+#            print("%3d th iteration" % i)
+#            print("current alpha:",alpha)
+#            print("number of queries:", opt_count+query_count)
             if alpha < 1e-6:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -157,17 +158,13 @@ class blackbox:
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
-#            print("distortion in this iteration:", g_theta)
-#            print("=-=-=-=-==-will enter next iteration=-=-=-=-=---=-")
-    
-        #target = model.predict(x0 + g_theta*best_theta)
-        
-        #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
+
         print("inputtransformation -- bitdepth")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta),opt_count+query_count
-    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-3):
+    
+    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-4):
         nquery = 0
         lbd = initial_lbd
         
