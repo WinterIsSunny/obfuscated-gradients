@@ -72,6 +72,11 @@ class blackbox:
         g_theta = lbd
         query_count += count
         
+        if g_theta >10:
+            print("this image is too hard to attack")
+            return x0, 0
+        
+        
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
         torch.manual_seed(0)
