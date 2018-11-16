@@ -112,7 +112,6 @@ class blackbox:
 #            print("=============================================")
     
             if (i+1)%50 == 0:
-                
                 print("Iteration %3d: g(theta + beta*u) = %.4f g(theta) = %.4f distortion %.4f num_queries %d" % (i+1, g1, g2, torch.norm(g2*theta), opt_count))
                 if g2 > prev_obj-stopping:
                     break
@@ -267,7 +266,9 @@ class blackbox:
 sess = tf.Session()
 torch.set_printoptions(precision=10)
 # load images and lables
-images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
+index = [9055,11773,88961,99300,17068,19601,5064,10518,91661,70857, 
+         51287,92442,68756, 36127, 68392,30867,28206,89060,77306]
+images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",index)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
 
@@ -284,8 +285,8 @@ print("accuracy of this model:", sum(compare)/len(compare))
 dist = []
 count = []
 threshold_query = []
-index = [3,4,5,6,7,8,9,10]
-for i in index:
+
+for i in rannge(15):
     print("================attacking image ",i+1,"=======================")
     adv,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 4, beta = 0.05, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))

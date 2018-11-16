@@ -232,12 +232,11 @@ class blackbox:
 sess = tf.Session()
 torch.set_printoptions(precision=10)
 # load images and lables
-images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",20)
+index = [9055,11773,88961,99300,17068,19601,5064,10518,91661,70857, 
+         51287,92442,68756, 36127, 68392,30867,28206,89060,77306]
+images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",idnex)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
-## foolbox model
-
-
 
 compare = []
 for i in range(len(images)):
@@ -248,12 +247,9 @@ for i in range(len(images)):
         compare.append(0)
 print("accuracy of this model:", sum(compare)/len(compare))
 
-index = [9055,11773,88961,99300,17068,19601,5064,10518,91661,70857, 
-         51287,92442,68756, 36127, 68392,30867,28206,89060,77306]
-
 dist = []
 count = []
-for i in index:
+for i in ragne(15):
     print("================attacking image ",i+1,"=======================")
     adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))

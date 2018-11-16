@@ -58,7 +58,7 @@ def load_image(path):
     #rgbimg.show()
     return (np.array(rgbimg.resize((299, 299)))/255.0).astype(np.float32)
 
-def read_images(path_img,path_lab,n_samples):
+def read_images(path_img,path_lab,index):
     """
     path:
     n_samples:
@@ -69,7 +69,7 @@ def read_images(path_img,path_lab,n_samples):
     images = []
     labels = []
     dir_list = os.listdir(path_img)
-    index = [random.randint(0,len(dir_list)-1) for i in range(n_samples)]
+    #index = [random.randint(0,len(dir_list)-1) for i in range(n_samples)]
     for i in index:
         dirnames = dir_list[i]
         file_list = os.listdir(os.path.join(path_img,dirnames))
