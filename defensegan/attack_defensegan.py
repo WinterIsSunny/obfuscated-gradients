@@ -46,13 +46,14 @@ class blackbox:
         
         timestart = time.time()
         for i in range(num_directions):
+            print("iteration:",i)
             #print("generating a new distortion")
             theta = torch.randn(shape)*10
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/initial_lbd
             pred,_ = self.model.predict_gan(theta*initial_lbd,x0)
-            #print("predicted label is", pred)
+            print("predicted label is", pred)
             if pred != y0:
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
