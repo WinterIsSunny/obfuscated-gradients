@@ -232,8 +232,7 @@ class blackbox:
 sess = tf.Session()
 torch.set_printoptions(precision=10)
 # load images and lables
-index = [9055,11773,88961,99300,17068,19601,5064,10518,91661,70857, 
-         51287,92442,68756, 36127, 68392,30867,28206,89060,77306]
+index = [845,972,429, 593,281,461,504,676,656,717,938, 812,365,84, 332,627,118,498,601,645]
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",index)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
