@@ -58,7 +58,7 @@ class blackbox:
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
-        if g_theta > 10:
+        if g_theta > 100:
             print("this image is hard to attack")
             return x0,0
 

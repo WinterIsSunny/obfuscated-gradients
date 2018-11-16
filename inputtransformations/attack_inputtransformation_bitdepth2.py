@@ -66,6 +66,11 @@ class blackbox:
         g_theta = lbd
         query_count += count
         
+        if g_theta > 100:
+            print("this image is hard to attack")
+            return x0,0
+        
+        
 
         print("the best initialization: ",g_theta)
         g1 = 1.0

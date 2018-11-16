@@ -60,12 +60,12 @@ class blackbox:
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
-        if g_theta > 10:
+        if g_theta > 100:
             print("this image is hard to attack")
             return x0,0
         
 
-        #timestart = time.time()
+        timestart = time.time()
         print("the best initialization: ",g_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
@@ -76,8 +76,8 @@ class blackbox:
         for i in range(iterations):
             
             print("iteration and distortion:",i,g_theta)
-            if g_theta < 0.05:
-                print("====================query number after distortion < 0.05 =======================: ",opt_count+query_count)
+            if g_theta < 1:
+                print("====================query number after distortion < 1 =======================: ",opt_count+query_count)
                 break
             gradient = torch.zeros(theta.size())
             q = 10
