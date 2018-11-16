@@ -39,9 +39,9 @@ class blackbox:
 
         if (pred != y0):
             print("Fail to classify the image. No need to attack.")
-            return x0,0,0
+            return x0,0
     
-        num_directions = 1000
+        num_directions = 5000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -63,7 +63,9 @@ class blackbox:
         timeend = time.time()
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
-        
+        if g_theta > 100:
+            print("this image is hard to attack")
+            return x0,0
         
         #timestart = time.time()
         print("the best initialization: ",g_theta)
@@ -79,6 +81,7 @@ class blackbox:
             if g_theta < 1:
                 print("=========================> queries so far:",opt_count+query_count)
                 break
+            
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')

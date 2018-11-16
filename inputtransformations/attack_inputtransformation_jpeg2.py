@@ -37,7 +37,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0,0
     
-        num_directions = 1000
+        num_directions = 5000
         num_query = 10
         best_theta, g_theta = None, float('inf')
         query_count = 0
@@ -65,6 +65,9 @@ class blackbox:
         g_theta = lbd
         query_count += count
         
+        if g_theta > 100:
+            print("this image is hard to attack")
+            return x0,0
         
         #timestart = time.time()
         print("the best initialization: ",g_theta)
