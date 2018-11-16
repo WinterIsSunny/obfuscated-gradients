@@ -80,8 +80,8 @@ class blackbox:
         prev_obj = 100000
         for i in range(iterations):
             print("iteration %d , distortion %.4f "% (i+1,g_theta))
-            if g_theta < 1:
-                print("=========================> queries so far, when g_theta < 1:",opt_count+query_count)
+            if g_theta < 2:
+                print("=========================> queries so far, when g_theta < 2:",opt_count+query_count)
                 break
             
             gradient = torch.zeros(theta.size())
@@ -174,7 +174,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while not np.isclose(lbd_hi,lbd_lo,tol):
+        while lbd_hi-lbd_lo > tol:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
@@ -236,7 +236,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while not np.isclose(lbd_hi,lbd_lo,1e-3):
+        while lbd_hi-lbd_lo > 5*1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
@@ -277,7 +277,7 @@ dist = []
 count = []
 for i in range(15):
     print("=============================== this is image ",i+1,"========================================")
-    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
+    mod,queries = attack.attack_untargeted(new_img[i],labels[i],alpha = 2, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(mod))
     count.append(queries)
     
