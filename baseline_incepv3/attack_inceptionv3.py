@@ -18,8 +18,7 @@ import time
 import pandas as pd
 import random
 import foolbox
-
-
+torch.set_printoptions(precision=10)
 
 class blackbox:
     def __init__(self,model):
@@ -218,7 +217,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.
     
-        while (lbd_hi - lbd_lo) > 1e-5:
+        while (lbd_hi - lbd_lo) > 3*1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             if self.model.predict(x0 + np.array(lbd_mid*theta)) != y0:
@@ -251,8 +250,8 @@ dist = []
 count = []
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
-    dist.append(np.linalg.norm(adv-images[i]))
+    adv,queries = attack.attack_untargeted(images[i+1],labels[i+1],alpha = 1, beta = 0.01, iterations = 1000)
+    dist.append(np.linalg.norm(adv-images[i+1]))
     count.append(queries)
     
     
