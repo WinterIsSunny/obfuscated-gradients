@@ -58,7 +58,7 @@ class blackbox:
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
                 query_count += 1
-                lbd,comp_dec,query = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,tol=1e-5,current_best,num_query)
+                lbd,comp_dec,query = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,current_best,num_query,1e-5)
                 query_count += query
                 if comp_dec > comp_theta:
                     comp_theta = comp_dec
@@ -166,7 +166,7 @@ class blackbox:
         print("number of queries :", opt_count+query_count)
         return np.array(g_theta*best_theta), opt_count+query_count
    
-    def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0, tol=1e-5,current_best = float('inf'),num_query = 10):
+    def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0,current_best = float('inf'),num_query = 10, tol=1e-5):
         nquery = 0
         if initial_lbd > current_best: 
             if self.model.predict(x0+ np.array(current_best*theta)) == y0:
