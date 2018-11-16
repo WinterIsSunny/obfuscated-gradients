@@ -20,8 +20,8 @@ from get_image import *
 import time
 import os 
 import pandas as pd
-torch.set_printoptions(precision=20)
 
+torch.set_printoptions(precision=20)
 class blackbox:
     def __init__(self,model):
         self.model = model
@@ -89,7 +89,7 @@ class blackbox:
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
                 #print("inner loop iteration: ", j)
-                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2,tol=max(beta/500,3*1e-6))
+                g1, count = self.fine_grained_binary_search_local( x0, y0, ttt, initial_lbd = g2,tol=max(beta/500,5*1e-6))
                 #print("g1 :",g1)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
@@ -115,10 +115,9 @@ class blackbox:
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
                 
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/500,3*1e-6))
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/500,5*1e-6))
                 opt_count += count
                 alpha = alpha * 2
-#                print("alpha in the first for loop is: ",alpha)
                 if new_g2 < min_g2:
                     min_theta = new_theta 
                     min_g2 = new_g2
@@ -131,7 +130,7 @@ class blackbox:
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/500,3*1e-6))
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/500,5*1e-6))
                     opt_count += count
 #                    print("alpha in the second for loop is: ",alpha)
                     if new_g2 < g2:
@@ -247,7 +246,7 @@ dist = []
 count = []
 
 
-for i in range(20):
+for i in range(15):
     print("================attacking image ",i+1,"=======================")
     adv_mod,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
