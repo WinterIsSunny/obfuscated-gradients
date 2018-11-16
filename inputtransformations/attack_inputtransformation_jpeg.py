@@ -174,7 +174,7 @@ class blackbox:
             while self.model.predict(x0+np.array(lbd_hi*theta)) == y0:
                 lbd_hi = lbd_hi*1.01
                 nquery += 1
-                if lbd_hi > 20:
+                if lbd_hi > 100:
                     return float('inf'), nquery
 #            timeend1 = time.time()
 #            print("1st while time:", timeend1 - timestart1)
@@ -215,7 +215,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 5*1e-4:
+        while (lbd_hi - lbd_lo) > 5*1e-5:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
