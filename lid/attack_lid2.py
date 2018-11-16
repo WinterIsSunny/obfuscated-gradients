@@ -80,8 +80,8 @@ class blackbox:
         for i in range(iterations):
             
            # print("iteration:",i)
-            if g_theta < 1:
-                print("====================query number after distortion < 1 =======================: ",opt_count)
+            if g_theta <2:
+                print("====================query number after distortion < 2 =======================: ",opt_count)
                 break
             gradient = torch.zeros(theta.size())
             q = 10
