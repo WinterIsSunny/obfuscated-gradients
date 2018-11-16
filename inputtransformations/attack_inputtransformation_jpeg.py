@@ -39,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
-        num_directions = 5000
+        num_directions = 10000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
@@ -156,6 +156,10 @@ class blackbox:
                 beta = beta * 0.1
                 if (beta <  1e-6):
                     break
+                
+            if g_theta < 50:
+                print("====================query number after distortion < 50 =======================: ",opt_count+query_count)
+                break
 
     
         print("inputtransformation_jpeg")

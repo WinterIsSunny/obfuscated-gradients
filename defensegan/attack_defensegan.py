@@ -39,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return torch.zeros(shape),0
         
-        num_directions = 5000
+        num_directions = 10000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         print("original label is ", y0)
@@ -48,7 +48,7 @@ class blackbox:
         for i in range(num_directions):
             print("iteration:",i)
             #print("generating a new distortion")
-            theta = torch.randn(shape)*10
+            theta = torch.randn(shape)
             #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/initial_lbd

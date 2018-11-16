@@ -78,9 +78,6 @@ class blackbox:
         for i in range(iterations):
             
             print("iteration and distortion:",i,g_theta)
-            if g_theta < 2:
-                print("====================query number after distortion < 2 =======================: ",opt_count+query_count)
-                break
             gradient = torch.zeros(theta.size())
             q = 10
             min_g1 = float('inf')
@@ -158,6 +155,9 @@ class blackbox:
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
+            if g_theta < 50:
+                print("====================query number after distortion < 50 =======================: ",opt_count+query_count)
+                break
 
         print("inputtransformation -- bitdepth")
         print("best distortion :", g_theta)
