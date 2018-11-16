@@ -82,8 +82,8 @@ class blackbox:
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
             #print("loc1")
             mod_norm = np.linalg.norm(orig_mod)
-            if mod_norm < 1:
-                print("====================query number after distortion < 1 =======================: ",opt_count)
+            if mod_norm < 50:
+                print("====================query number after distortion < 50 =======================: ",opt_count)
                 break
             
             gradient = torch.zeros(theta.size())
