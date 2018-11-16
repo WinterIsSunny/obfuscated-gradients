@@ -78,8 +78,8 @@ class blackbox:
         for i in range(iterations):
             print("iteration %d , g_theta %.4f" % (i,g_theta))
 
-            if g_theta < 1:
-                print("=========================> queries so far:",opt_count+query_count)
+            if g_theta < 2:
+                print("=========================> queries after distortion <2 :",opt_count+query_count)
                 break
             
             gradient = torch.zeros(theta.size())
@@ -152,7 +152,7 @@ class blackbox:
                 alpha = 1
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-5):
+                if (beta < 1e-6):
                     print("beta is too samll")
                     break
 
@@ -160,7 +160,7 @@ class blackbox:
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
         return x0 + np.array(g_theta*best_theta), opt_count+query_count
-    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=0.01):
+    def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
         
@@ -248,10 +248,12 @@ for i in range(len(images)):
         compare.append(0)
 print("accuracy of this model:", sum(compare)/len(compare))
 
+index = [9055,11773,88961,99300,17068,19601,5064,10518,91661,70857, 
+         51287,92442,68756, 36127, 68392,30867,28206,89060,77306]
 
 dist = []
 count = []
-for i in range(15):
+for i in index:
     print("================attacking image ",i+1,"=======================")
     adv,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv-images[i]))
