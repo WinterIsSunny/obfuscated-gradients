@@ -37,7 +37,7 @@ class blackbox:
 
         if (self.model.predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return x0,0,0
+            return x0,0
     
         num_directions = 1000
         num_query = 10
@@ -71,7 +71,6 @@ class blackbox:
             return x0,0
         
         
-
         print("the best initialization: ",g_theta)
         g1 = 1.0
         theta, g2 = best_theta.clone(), g_theta
@@ -79,12 +78,12 @@ class blackbox:
         opt_count = 0
         stopping = 0.01
         prev_obj = 100000
-        query_thre = 0
+        
         for i in range(iterations):
             print("iteration and distortion",i, g_theta)
-            if g_theta < 2:
-                print("=========================> distortion < 2, number of query:",opt_count+query_count)
-                query_thre = opt_count+query_count
+            if g_theta < 1:
+                print("=========================> distortion < 1, number of query:",opt_count+query_count)
+                
                 break
             
             gradient = torch.zeros(theta.size())
@@ -134,7 +133,7 @@ class blackbox:
     
             if min_g2 >= g2:
                 for _ in range(10):
-                    alpha = alpha * 0.5
+                    alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
                     new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=max(beta/10,1e-5))
@@ -153,10 +152,7 @@ class blackbox:
             if g2 < g_theta:
                 best_theta, g_theta = theta.clone(), g2
             
-#            
-            #print("%3d th iteration" % i)
-            #print("current alpha:",alpha)
-            #print("number of queries:", opt_count+query_count)
+
             if alpha < 1e-6:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
@@ -164,16 +160,10 @@ class blackbox:
                 if (beta < 1e-6):
                     print("beta is too small")
                     break
-            #print("distortion in this iteration:", g_theta)
-            #print("=-=-=-=-==-will enter next iteration=-=-=-=-=---=-")
-    
-        #target = model.predict(x0 + g_theta*best_theta)
-        
-        #print("\nAdversarial Example Found Successfully: distortion %.4f target %d queries %d \nTime: %.4f seconds" % (g_theta, target, query_count + opt_count, timeend-timestart))
         print("inputtransformation -- bitdepth2")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return np.array(g_theta*best_theta),opt_count+query_count,query_thre
+        return np.array(g_theta*best_theta),opt_count+query_count
     
     def fine_grained_binary_search_fix(self,x0,y0,theta, initial_lbd = 1.0, tol=1e-5,current_best = float('inf'),num_query = 10):
         nquery = 0
@@ -182,7 +172,7 @@ class blackbox:
                 nquery += 1
                 return float('inf'), nquery
             lbd = current_best
-        else:
+        else:   
             lbd = initial_lbd
     
         lbd_hi = lbd
@@ -283,10 +273,8 @@ count = []
 threshold_query = []
 for i in range(15):
     print("================attacking image ",i+1,"=======================")
-    adv_mod,queries,query_thre = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
+    adv_mod,queries = attack.attack_untargeted(images[i],labels[i],alpha = 1, beta = 0.01, iterations = 1000)
     dist.append(np.linalg.norm(adv_mod))
-    count.append(queries)
-    threshold_query.append(threshold_query)
     
     
 index = np.nonzero(count)
@@ -295,7 +283,6 @@ index = list(index)[0].tolist()
 
 avg_distortion = np.mean(np.array(dist)[index])
 avg_count = np.mean(np.array(count)[index])
-avg_thre_query = np.mean(np.array(threshold_query))
 
 print("the average distortion for %2d images :"%(len(index)),avg_distortion)
 print("the distortions for 15 images :")
@@ -307,7 +294,3 @@ print("the number of queries for 15 images :")
 for j in count:
     print(j)
     
-print("the number of queries for %2d images after threshold:"%(len(index)), avg_thre_query)    
-print("the number of queries for 15 images :")
-for j in threshold_query:
-    print(j)
