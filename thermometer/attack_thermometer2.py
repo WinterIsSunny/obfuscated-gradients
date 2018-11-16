@@ -58,7 +58,7 @@ class blackbox:
             theta = theta/torch.norm(theta)
             if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
                 query_count += 1
-                lbd,comp_dec,query = self.fine_grained_binary_search_fix(x0,y0,theta,tol=1e-5,initial_lbd,current_best,num_query)
+                lbd,comp_dec,query = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,tol=1e-5,current_best,num_query)
                 query_count += query
                 if comp_dec > comp_theta:
                     comp_theta = comp_dec
