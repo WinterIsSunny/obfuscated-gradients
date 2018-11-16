@@ -228,7 +228,7 @@ class blackbox:
 sess = tf.Session()
 
 # load images and lables
-index = [845,972,429, 593,281,461,504,676,656,717,938, 812,365,84, 332,627,118,498,601,645]
+index = [1,972,429, 593,281,461,504,676,656,717,938, 812,365,84, 332,627,118,498,601,645]
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",index)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)

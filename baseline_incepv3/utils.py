@@ -73,8 +73,9 @@ def read_images(path_img,path_lab,index):
     for i in index:
         dirnames = dir_list[i]
         file_list = os.listdir(os.path.join(path_img,dirnames))
-        file_index = random.sample(range(0,len(file_list)),1)
-        file = file_list[file_index[0]]
+        #file_index = random.sample(range(0,len(file_list)),1)
+        file_index = 5
+        file = file_list[file_index]
         file_path = os.path.join(path_img,dirnames,file)
         img = load_image(file_path)
         lab_name = os.path.join(dirnames,file)

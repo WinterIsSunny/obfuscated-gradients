@@ -19,8 +19,8 @@ from defense import *
 from get_image import *
 import time
 import pandas as pd
-torch.set_printoptions(precision=20)
 
+torch.set_printoptions(precision=20)
 
 class blackbox:
     def __init__(self,model):
@@ -215,7 +215,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0.0
     
-        while (lbd_hi - lbd_lo) > 1e-4:
+        while (lbd_hi - lbd_lo) > 5*1e-4:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
             #print("size of image:",x0.shape)
@@ -233,7 +233,7 @@ class blackbox:
 sess = tf.Session()
 
 # load images and lables
-index = [845,972,429, 593,281,461,504,676,656,717,938, 812,365,84, 332,627,118,498,601,645]
+index = [1,972,429, 593,281,461,504,676,656,717,938, 812,365,84, 332,627,118,498,601,645]
 images,labels = read_images("/data3/ILSVRC2012/train/","/data3/ILSVRC2012/train.txt",index)
 model = MyModel(inceptionv3,sess,[0.0,1.0])
 attack = blackbox(model)
