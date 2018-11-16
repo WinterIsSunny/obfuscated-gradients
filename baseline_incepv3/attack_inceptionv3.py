@@ -41,13 +41,14 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return x0,0
     
-        num_directions = 5000
+        num_directions = 1000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         
         timestart = time.time()
         
         for i in range(num_directions):
+            print("iteration",i)
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
             #print(theta.size())
             initial_lbd = torch.norm(theta)
