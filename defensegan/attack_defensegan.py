@@ -19,7 +19,7 @@ import numpy as np
 from wrapper import Model
 import time
 import os
-
+torch.set_printoptions(precision=20)
 
 class blackbox:
     def __init__(self,model):
@@ -39,7 +39,7 @@ class blackbox:
             print("Fail to classify the image. No need to attack.")
             return torch.zeros(shape),0
         
-        num_directions = 1000
+        num_directions = 5000
         best_theta, g_theta = None, float('inf')
         query_count = 0
         print("original label is ", y0)
@@ -53,9 +53,7 @@ class blackbox:
             theta = theta/initial_lbd
             pred,_ = self.model.predict_gan(theta*initial_lbd,x0)
             #print("predicted label is", pred)
-            
             if pred != y0:
-#                print("new feasible direction and iteration", pred,i)
                 lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
                 query_count += count
                 if lbd < g_theta:
@@ -63,6 +61,7 @@ class blackbox:
                     best_theta, g_theta = theta,lbd
                     print("--------> Found distortion %.4f" % g_theta)
         timeend = time.time()
+        print("new label in this directionn:", pred)
         print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
     
 
@@ -82,7 +81,7 @@ class blackbox:
             _,orig_mod = self.model.predict_gan(best_theta*g_theta,x0)
             #print("loc1")
             mod_norm = np.linalg.norm(orig_mod)
-            if mod_norm < 8:
+            if mod_norm < 1:
                 print("====================query number after distortion < 1 =======================: ",opt_count)
                 break
             
@@ -94,7 +93,7 @@ class blackbox:
                 u = u/torch.norm(u)
                 ttt = theta+beta * u
                 ttt = ttt/torch.norm(ttt)
-                g1, count = self.fine_grained_binary_search_local(x0, y0, ttt, initial_lbd = g2, tol=beta/500)
+                g1, count = self.fine_grained_binary_search_local(x0, y0, ttt, initial_lbd = g2, tol=beta/1000)
                 opt_count += count
                 gradient += (g1-g2)/beta * u
                 if g1 < min_g1:
@@ -116,7 +115,7 @@ class blackbox:
             for _ in range(15):
                 new_theta = theta - alpha * gradient
                 new_theta = new_theta/torch.norm(new_theta)
-                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/1000)
                 opt_count += count
                 alpha = alpha * 2
                 if new_g2 < min_g2:
@@ -131,7 +130,7 @@ class blackbox:
                     alpha = alpha * 0.25
                     new_theta = theta - alpha * gradient
                     new_theta = new_theta/torch.norm(new_theta)
-                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/500)
+                    new_g2, count = self.fine_grained_binary_search_local( x0, y0, new_theta, initial_lbd = min_g2, tol=beta/1000)
                     opt_count += count
                     if new_g2 < g2:
                         min_theta = new_theta 
@@ -151,7 +150,7 @@ class blackbox:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
                 beta = beta * 0.1
-                if (beta < 1e-6):
+                if (beta < 1e-10):
                     print("break because beta is too small")
                     break
     
@@ -214,7 +213,7 @@ class blackbox:
         lbd_hi = lbd
         lbd_lo = 0
     
-        while not np.isclose(lbd_hi,lbd_lo,1e-5):
+        while lbd_hi - lbd_lo > 3*1e-6:
             lbd_mid = (lbd_lo + lbd_hi)/2.0
             nquery += 1
 #            modi = self.get_modifier(lbd_mid*theta,x0,gan)
@@ -226,9 +225,6 @@ class blackbox:
                 lbd_lo = lbd_mid
         return lbd_hi, nquery
     
-
-
-
     
 # ================================== test ===========================================#
 session = keras.backend.get_session()
