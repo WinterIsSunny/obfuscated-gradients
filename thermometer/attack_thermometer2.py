@@ -25,6 +25,8 @@ import torch
 from wrapper import MyModel
 import time
 
+torch.set_printoptions(precision=20)
+
 class blackbox:
     def __init__(self,model):
         self.model = model

@@ -73,7 +73,7 @@ class blackbox:
         prev_obj = 100000
     
         for i in range(iterations):
-            
+            print("iteration and dist:", i, g_theta)
             if g_theta < 2:
                 print("=========================> distortion < 2, number of query:",opt_count+query_count)
                 break
