@@ -18,14 +18,14 @@ from sap_model import SAPModel
 
 import torch
 
-from wrapper import Model
+from wrapper import PyModel
 
 
 class blackbox:
     def __init__(self,model):
         self.model = model
         
-    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.05, iterations = 1000):
+    def attack_untargeted(self, x0, y0, alpha = 2, beta = 0.005, iterations = 1000):
         """ Attack the original image and return adversarial example
             model: (pytorch model)
             alpha: learning rate 
@@ -36,35 +36,62 @@ class blackbox:
 
         if (self.model.single_predict(x0) != y0):
             print("Fail to classify the image. No need to attack.")
-            return x0
-    
+            return x0, 0
+        
         num_directions = 1000
+        num_query = 10
         best_theta, g_theta = None, float('inf')
         query_count = 0
+        comp_theta = 0
+        current_best = float('inf')
         
-        #timestart = time.time()
-        
-        
+        timestart = time.time()
         for i in range(num_directions):
             theta = torch.randn(x0.shape).type(torch.FloatTensor)
-            #print(theta.size())
             initial_lbd = torch.norm(theta)
             theta = theta/torch.norm(theta)
-
-            if  self.model.predict(x0+np.array(initial_lbd*theta),y0) != y0:
-                lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+            if self.model.predict(x0+np.array(initial_lbd*theta)) != y0:
+                lbd,comp_dec,count = self.fine_grained_binary_search_fix(x0,y0,theta,initial_lbd,g_theta,current_best,num_query)
                 query_count += count
-                if lbd < g_theta:
-                    best_theta, g_theta = theta,lbd
-                    print("new g_theta :", g_theta,"***")
-                    print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta),y0))
-                    print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
-                    print("******")
-                    print("--------> Found distortion %.4f" % g_theta)
+                if comp_dec > comp_theta:
+                    comp_theta = comp_dec
+                    best_theta,g_theta = theta,lbd
+                    print("--------> Found abs-distortion %.4f with 10 queries" % g_theta)
+                    print("--------> Found comp-distortion %.4f with 10 queries" % comp_dec)
+            timeend = time.time()
+        print("==========> Found best distortion %.4f in %.4f seconds" % (g_theta, timeend-timestart))
+        #print("type of best_theta", type(best_theta))
+        #print("type of best_theta", type(g_theta))
+        lbd,count = self.fine_grained_binary_search( x0, y0, best_theta, g_theta, current_best)
+        g_theta = lbd
+        query_count += count
+
+
+        # num_directions = 1000
+        # best_theta, g_theta = None, float('inf')
+        # query_count = 0
         
-            #timeend = time.time()
-            #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
+        # #timestart = time.time()
         
+        # for i in range(num_directions):
+        #     theta = torch.randn(x0.shape).type(torch.FloatTensor)
+        #     #print(theta.size())
+        #     initial_lbd = torch.norm(theta)
+        #     theta = theta/torch.norm(theta)
+
+        #     if  self.model.predict(x0+np.array(initial_lbd*theta),y0) != y0:
+        #         lbd, count = self.fine_grained_binary_search( x0, y0, theta, initial_lbd, g_theta)
+        #         query_count += count
+        #         if lbd < g_theta:
+        #             best_theta, g_theta = theta,lbd
+        #             print("new g_theta :", g_theta,"***")
+        #             print("label for random direction:",self.model.predict(x0+np.array(g_theta*best_theta),y0))
+        #             print("norm of theta*lbd 4:", np.linalg.norm(x0+np.array(g_theta*best_theta)))
+        #             print("******")
+        #             print("--------> Found distortion %.4f" % g_theta)
+        
+        #     #timeend = time.time()
+        #     #print("==========> Found best distortion %.4f in %.4f seconds using %d queries" % (g_theta, timeend-timestart, query_count))
         
         
         
@@ -78,11 +105,11 @@ class blackbox:
         prev_obj = 100000
         for i in range(iterations):
             
-           # print("iteration:",i)
-            if g_theta < 4.2:
+            print("iteration:",i)
+            if g_theta < 1.2:
                 break
             gradient = torch.zeros(theta.size())
-            q = 30
+            q = 10
             min_g1 = float('inf')
             for j in range(q):
                 u = torch.randn(theta.size()).type(torch.FloatTensor)
@@ -98,7 +125,7 @@ class blackbox:
                     min_g1 = g1
                     min_ttt = ttt
             gradient = 1.0/q * gradient
-            print("=============================================")
+            #print("=============================================")
     
             if (i+1)%50 == 0:
                 
@@ -125,7 +152,7 @@ class blackbox:
                     min_g2 = new_g2
                 else:
                     break
-            print("=============================================")
+            #print("=============================================")
     
             if min_g2 >= g2:
                 for _ in range(15):
@@ -139,7 +166,7 @@ class blackbox:
                         min_theta = new_theta 
                         min_g2 = new_g2
                         break
-            print("=============================================")
+            #print("=============================================")
             if min_g2 <= min_g1:
                 theta, g2 = min_theta, min_g2
             else:
@@ -156,11 +183,11 @@ class blackbox:
             if alpha < 1e-4:
                 alpha = 1.0
                 print("Warning: not moving, g2 %lf gtheta %lf" % (g2, g_theta))
-                beta = beta * 0.2
+                beta = beta * 0.1
                 if (beta < 0.0005):
                     break
-            print("new label in this iteration:", self.model.single_predict(x0 + np.array(g_theta*best_theta)))
-            print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+            #print("new label in this iteration:", self.model.single_predict(x0 + np.array(g_theta*best_theta)))
+            #print("=-=-=-=-=-=-=-=-=-=-=-=-will enter next iteration=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     
         #target = model.predict(x0 + g_theta*best_theta)
         
@@ -168,7 +195,7 @@ class blackbox:
         print("lid")
         print("best distortion :", g_theta)
         print("number of queries :", opt_count+query_count)
-        return x0 + np.array(g_theta*best_theta),opt_count+query_count
+        return np.array(g_theta*best_theta),opt_count+query_count
     def fine_grained_binary_search_local(self, x0, y0, theta, initial_lbd = 1.0, tol=1e-5):
         nquery = 0
         lbd = initial_lbd
@@ -270,32 +297,47 @@ class blackbox:
         return lbd_hi, nquery
     
 
-    
-
-cifar = cifar10_input.CIFAR10Data("../cifar10_data")
-
+# ============ test ====================
 sess = tf.Session()
-model = SAPModel("../models/standard/", tiny=False, mode='eval', sess=sess)
+
+cifar = cifar10_input.CIFAR10Data("/content/drive/My Drive/STAT141C/cifar10_data")
+orig_model = Model("/content/drive/My Drive/STAT141C/models/standard/", tiny=False, mode='eval', sess=sess)
+
 model = Model(model,sess,[0.0,255.0])
 
 attack = blackbox(model)
 
 #xs = tf.placeholder(tf.float32, (1, 32, 32, 3))
-image = cifar.eval_data.xs[30:40]
-label = cifar.eval_data.ys[30:40]
+image = cifar.eval_data.xs[:15]
+label = cifar.eval_data.ys[:15]
 new_img = image/255.0
 
 #print("original label is :", label[1])
 #print(len(image))
-print("label of clean image:", model.predict(new_img[1],label[1]))
+#print("label of clean image:", model.predict(new_img[1],label[1]))
 
-#adv = attack.attack_untargeted(new_img[1],label[1],alpha = 4, beta = 0.05, iterations = 1000)
-count = []
 dist = []
+count = []
 for i in range(10):
-    adv, query = attack.attack_untargeted(new_img[i],label[i],alpha = 4, beta = 0.05, iterations = 1000)
-    dist.append(np.linalg.norm(adv-new_img[i]))
-    print("label of adv sample: ", model.single_predict(adv))
+    print("================attacking image ",i,"=======================")
+    mod,queries = attack.attack_untargeted(image[i],label[i],alpha = 4, beta = 0.005, iterations = 1000)
+    dist.append(np.linalg.norm(mod))
+    count.append(queries)
+
+#========================================================
+
+index = np.nonzero(count)
+index= list(index)[0].tolist()
+
+
+avg_distortion = np.mean(np.array(dist)[index])
+avg_count = np.mean(np.array(count)[index])
+print("the average distortion for %2d images :"%(len(index)),avg_distortion)
+for i in dist:
+    print(i)
+print("the number of queries for %2d images :"%(len(index)), avg_count)
+for j in count:
+    print(j)
 
 
 

@@ -9,7 +9,7 @@ Created on Tue Jul 31 10:21:41 2018
 import tensorflow as tf
 import numpy as np
 
-class Model:
+class PyModel:
     def __init__(self,model,sess,bounds):
         self.bounds = bounds
         self.model = model
